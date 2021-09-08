@@ -32,14 +32,13 @@ pub use pallet::*;
 #[pallet]
 pub mod pallet {
 
-	use log::debug;
-	use frame_support::pallet_prelude::*;
-	use frame_support::traits::Randomness;
-	use sp_std::vec::Vec;
+	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
+	use log::debug;
+	use nimbus_primitives::CanAuthor;
 	use sp_core::H256;
 	use sp_runtime::Percent;
-	use nimbus_primitives::CanAuthor;
+	use sp_std::vec::Vec;
 
 	/// The Author Filter pallet
 	#[pallet::pallet]
@@ -61,50 +60,52 @@ pub mod pallet {
 		type PotentialAuthors: Get<Vec<Self::AccountId>>;
 	}
 
+	/// Compute a pseudo-random subset of the input accounts by using Pallet's
+	/// source of randomness, `Config::RandomnessSource`.
+	/// Returns (Eligible, Ineligible), each is a set of accounts
+	pub fn compute_pseudo_random_subset<T: Config>(
+		mut active: Vec<T::AccountId>,
+		seed: &u32,
+	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
+		let num_eligible = EligibleRatio::<T>::get().mul_ceil(active.len());
+		let mut eligible = Vec::with_capacity(num_eligible);
+
+		for i in 0..num_eligible {
+			// A context identifier for grabbing the randomness. Consists of three parts
+			// - The constant string *b"filter" - to identify this pallet
+			// - The index `i` when we're selecting the ith eligible author
+			// - The relay parent block number so that the eligible authors at the next height
+			//   change. Avoids liveness attacks from colluding minorities of active authors.
+			// Third one may not be necessary once we leverage the relay chain's randomness.
+			let subject: [u8; 8] = [b'f', b'i', b'l', b't', b'e', b'r', i as u8, *seed as u8];
+			let (randomness, _) = T::RandomnessSource::random(&subject);
+			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
+
+			// Cast to u32 first so we get consistent results on 32- and 64-bit platforms.
+			let index = (randomness.to_fixed_bytes()[0] as u32) as usize;
+
+			// Move the selected author from the original vector into the eligible vector
+			// TODO we could short-circuit this check by returning early when the claimed
+			// author is selected. For now I'll leave it like this because:
+			// 1. it is easier to understand what our core filtering logic is
+			// 2. we currently show the entire filtered set in the debug event
+			eligible.push(active.remove(index % active.len()));
+		}
+		(eligible, active)
+	}
+
 	// This code will be called by the author-inherent pallet to check whether the reported author
 	// of this block is eligible in this slot. We calculate that result on demand and do not
 	// record it in storage (although we do emit a debugging event for now).
 	impl<T: Config> CanAuthor<T::AccountId> for Pallet<T> {
 		fn can_author(author: &T::AccountId, slot: &u32) -> bool {
-			let mut active: Vec<T::AccountId> = T::PotentialAuthors::get();
-
-			let num_eligible = EligibleRatio::<T>::get().mul_ceil(active.len());
-			let mut eligible = Vec::with_capacity(num_eligible);
-
-			for i in 0..num_eligible {
-				// A context identifier for grabbing the randomness. Consists of three parts
-				// - The constant string *b"filter" - to identify this pallet
-				// - The index `i` when we're selecting the ith eligible author
-				// - The relay parent block number so that the eligible authors at the next height
-				//   change. Avoids liveness attacks from colluding minorities of active authors.
-				// Third one may not be necessary once we leverage the relay chain's randomness.
-				let subject: [u8; 8] = [
-					b'f',
-					b'i',
-					b'l',
-					b't',
-					b'e',
-					b'r',
-					i as u8,
-					*slot as u8,
-				];
-				let (randomness, _) = T::RandomnessSource::random(&subject);
-				debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
-
-				// Cast to u32 first so we get consistent results on 32- and 64-bit platforms.
-				let index = (randomness.to_fixed_bytes()[0] as u32) as usize;
-
-				// Move the selected author from the original vector into the eligible vector
-				// TODO we could short-circuit this check by returning early when the claimed
-				// author is selected. For now I'll leave it like this because:
-				// 1. it is easier to understand what our core filtering logic is
-				// 2. we currently show the entire filtered set in the debug event
-				eligible.push(active.remove(index % active.len()));
-			}
+			// Compute pseudo-random subset of potential authors
+			let (eligible, ineligible) =
+				compute_pseudo_random_subset::<T>(T::PotentialAuthors::get(), slot);
 
 			// Print some logs for debugging purposes.
 			debug!(target: "author-filter", "Eligible Authors: {:?}", eligible);
-			debug!(target: "author-filter", "Ineligible Authors: {:?}", &active);
+			debug!(target: "author-filter", "Ineligible Authors: {:?}", &ineligible);
 			debug!(target: "author-filter",
 				"Current author, {:?}, is eligible: {}",
 				author,
