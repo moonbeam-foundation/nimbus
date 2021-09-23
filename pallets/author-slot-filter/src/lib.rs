@@ -46,7 +46,7 @@ pub mod pallet {
 
 	/// Configuration trait of this pallet.
 	#[pallet::config]
-	pub trait Config: frame_system::Config + cumulus_pallet_parachain_system::Config {
+	pub trait Config: frame_system::Config {
 		/// The overarching event type
 		type Event: From<Event> + IsType<<Self as frame_system::Config>::Event>;
 		/// Deterministic on-chain pseudo-randomness used to do the filtering
