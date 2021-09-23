@@ -32,8 +32,8 @@ use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use nimbus_primitives::{NimbusId, NimbusSignature, NimbusPair};
-use sp_application_crypto::{TryFrom, Pair as _, Public as _};
+use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem};
+use sp_application_crypto::{Pair as _, Public as _};
 use log::debug;
 
 /// The Nimbus verifier strips the seal digest, and checks that it is a valid signature by
@@ -67,18 +67,14 @@ where
 	> {
 
 		debug!(target: crate::LOG_TARGET, "🪲 Header hash before popping digest {:?}", block_params.header.hash());
-		// Grab the digest from the seal
-		//TODO use CompatibleDigest trait here once I write it. For now assume the seal is last.
+		// Grab the seal digest. Assume it is last (since it is a seal after-all).
 		let seal = block_params.header.digest_mut().pop().expect("Block should have at least one digest on it");
 
-		let sig = match seal {
-			DigestItem::Seal(id, ref sig) if id == *b"nmbs" => sig.clone(),
-			_ => return Err("HeaderUnsealed".into()),
-		};
+		let signature = seal.as_nimbus_seal().ok_or_else(||String::from("HeaderUnsealed"))?;
 
 		debug!(target: crate::LOG_TARGET, "🪲 Header hash after popping digest {:?}", block_params.header.hash());
 
-		debug!(target: crate::LOG_TARGET, "🪲 Signature according to verifier is {:?}", sig);
+		debug!(target: crate::LOG_TARGET, "🪲 Signature according to verifier is {:?}", signature);
 
 		// Grab the digest from the runtime
 		//TODO use the trait. Maybe this code should move to the trait.
@@ -103,7 +99,7 @@ where
 
 		// Verify the signature
 		let valid_signature = NimbusPair::verify(
-			&NimbusSignature::try_from(sig).expect("Bytes should convert to signature correctly"),
+			&signature,
 			block_params.header.hash(),
 			&NimbusId::from_slice(&claimed_author),
 		);
