@@ -51,7 +51,6 @@ where
 		// Set the seal aside for checking.
 		let seal = header
 			.digest_mut()
-			.logs
 			.pop()
 			.expect("Seal digest is present and is last item");
 
