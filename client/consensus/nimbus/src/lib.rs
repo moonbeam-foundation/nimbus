@@ -30,7 +30,7 @@ use cumulus_primitives_core::{
 pub use import_queue::import_queue;
 use log::{info, warn, debug};
 use parking_lot::Mutex;
-use polkadot_service::ClientHandle;
+use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
 use sp_api::{ProvideRuntimeApi, BlockId, ApiExt};
 use sp_consensus::{
@@ -351,7 +351,7 @@ pub struct BuildNimbusConsensusParams<PF, BI, RBackend, ParaClient, CIDP> {
 	pub proposer_factory: PF,
 	pub create_inherent_data_providers: CIDP,
 	pub block_import: BI,
-	pub relay_chain_client: polkadot_service::Client,
+	pub relay_chain_client: polkadot_client::Client,
 	pub relay_chain_backend: Arc<RBackend>,
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
@@ -409,8 +409,8 @@ where
 /// Nimbus consensus builder.
 ///
 /// Builds a [`NimbusConsensus`] for a parachain. As this requires
-/// a concrete relay chain client instance, the builder takes a [`polkadot_service::Client`]
-/// that wraps this concrete instanace. By using [`polkadot_service::ExecuteWithClient`]
+/// a concrete relay chain client instance, the builder takes a [`polkadot_client::Client`]
+/// that wraps this concrete instanace. By using [`polkadot_client::ExecuteWithClient`]
 /// the builder gets access to this concrete instance.
 struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient,CIDP> {
 	para_id: ParaId,
@@ -419,7 +419,7 @@ struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient,CIDP> {
 	create_inherent_data_providers: CIDP,
 	block_import: BI,
 	relay_chain_backend: Arc<RBackend>,
-	relay_chain_client: polkadot_service::Client,
+	relay_chain_client: polkadot_client::Client,
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
@@ -448,7 +448,7 @@ where
 		proposer_factory: PF,
 		block_import: BI,
 		create_inherent_data_providers: CIDP,
-		relay_chain_client: polkadot_service::Client,
+		relay_chain_client: polkadot_client::Client,
 		relay_chain_backend: Arc<RBackend>,
 		parachain_client: Arc<ParaClient>,
 		keystore: SyncCryptoStorePtr,
@@ -477,7 +477,7 @@ where
 	}
 }
 
-impl<Block, PF, BI, RBackend, ParaClient, CIDP> polkadot_service::ExecuteWithClient
+impl<Block, PF, BI, RBackend, ParaClient, CIDP> polkadot_client::ExecuteWithClient
 	for NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP>
 where
 	Block: BlockT,
@@ -503,8 +503,8 @@ where
 		<Api as sp_api::ApiExt<PBlock>>::StateBackend: sp_api::StateBackend<HashFor<PBlock>>,
 		PBackend: Backend<PBlock>,
 		PBackend::State: sp_api::StateBackend<sp_runtime::traits::BlakeTwo256>,
-		Api: polkadot_service::RuntimeApiCollection<StateBackend = PBackend::State>,
-		PClient: polkadot_service::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
+		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
+		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
 		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		Box::new(NimbusConsensus::new(

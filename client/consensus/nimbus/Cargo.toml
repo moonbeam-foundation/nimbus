@@ -20,7 +20,7 @@ sp-keystore = { git = "https://github.com/paritytech/substrate", branch = "maste
 sp-application-crypto = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 # Polkadot dependencies
-polkadot-service = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+polkadot-client = { git = "https://github.com/paritytech/polkadot", branch = "master", default-features = false }
 
 # Cumulus dependencies
 nimbus-primitives = { path = "../../../primitives/nimbus" }
