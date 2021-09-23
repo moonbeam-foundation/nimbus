@@ -22,8 +22,8 @@ use sp_api::{BlockT, HeaderT};
 // For some reason I can't get these logs to actually print
 use log::debug;
 use sp_runtime::{RuntimeAppPublic, generic::DigestItem};
-use nimbus_primitives::{NIMBUS_ENGINE_ID, NimbusId, NimbusSignature};
-use sp_application_crypto::{TryFrom, Public as _};
+use nimbus_primitives::{NIMBUS_ENGINE_ID, NimbusId, digests::CompatibleDigestItem};
+use sp_application_crypto::Public as _;
 
 /// Block executive to be used by relay chain validators when validating parachain blocks built
 /// with the nimubs consensus family.
@@ -57,14 +57,15 @@ where
 		debug!(target: "executive", "In hacked Executive. digests after stripping {:?}", header.digest());
 		debug!(target: "executive", "The seal we got {:?}", seal);
 
-		let sig = match seal {
-			DigestItem::Seal(id, ref sig) if id == NIMBUS_ENGINE_ID => sig.clone(),
-			_ => panic!("HeaderUnsealed"),
-		};
+		// let sig = match seal {
+		// 	DigestItem::Seal(id, ref sig) if id == NIMBUS_ENGINE_ID => sig.clone(),
+		// 	_ => panic!("HeaderUnsealed"),
+		// };
+		let signature = seal.as_nimbus_seal().unwrap_or_else(||panic!("HeaderUnsealed"));
 
 		debug!(target: "executive", "🪲 Header hash after popping digest {:?}", header.hash());
 
-		debug!(target: "executive", "🪲 Signature according to executive is {:?}", sig);
+		debug!(target: "executive", "🪲 Signature according to executive is {:?}", signature);
 
 		// Grab the digest from the runtime
 		//TODO use the CompatibleDigest trait. Maybe this code should move to the trait.
@@ -90,7 +91,7 @@ where
 		// Verify the signature
 		let valid_signature = NimbusId::from_slice(&claimed_author).verify(
 			&header.hash(),
-			&NimbusSignature::try_from(sig).expect("Bytes should convert to signature correctly"),
+			&signature
 		);
 
 		debug!(target: "executive", "🪲 Valid signature? {:?}", valid_signature);
