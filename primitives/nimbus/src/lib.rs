@@ -27,7 +27,7 @@ use sp_application_crypto::KeyTypeId;
 use sp_runtime::ConsensusEngineId;
 use sp_runtime::traits::BlockNumberProvider;
 
-mod digests;
+pub mod digests;
 mod inherents;
 
 pub use inherents::{INHERENT_IDENTIFIER, InherentDataProvider};

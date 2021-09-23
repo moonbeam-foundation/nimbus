@@ -44,7 +44,8 @@ use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
-use nimbus_primitives::{AuthorFilterAPI, NIMBUS_ENGINE_ID, NIMBUS_KEY_ID, NimbusId};
+use sp_std::convert::TryInto;
+use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId};
 mod import_queue;
 
 const LOG_TARGET: &str = "filtering-consensus";
@@ -283,7 +284,7 @@ where
 
 		let pre_hash = header.hash();
 
-		let sig = SyncCryptoStore::sign_with(
+		let raw_sig = SyncCryptoStore::sign_with(
 			&*self.keystore,
 			NIMBUS_KEY_ID,
 			&type_public_pair,
@@ -294,11 +295,14 @@ where
 		
 		debug!(
 			target: LOG_TARGET,
-			"The signature is \n{:?}", sig
+			"The signature is \n{:?}", raw_sig
 		);
 
-		// TODO Make a proper CompatibleDigest trait https://github.com/paritytech/substrate/blob/master/primitives/consensus/aura/src/digests.rs#L45
-		let sig_digest = sp_runtime::generic::DigestItem::Seal(NIMBUS_ENGINE_ID, sig);
+		let signature = raw_sig
+				.clone()
+				.try_into().ok()?;
+		
+		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
