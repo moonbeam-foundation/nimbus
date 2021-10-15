@@ -163,11 +163,11 @@ pub mod pallet {
 			let author = author_raw
 				.expect("Gets and decodes authorship inherent data")?;
 
-			Some(Call::set_author(author))
+			Some(Call::set_author{author})
 		}
 
 		fn is_inherent(call: &Self::Call) -> bool {
-			matches!(call, Call::set_author(_))
+			matches!(call, Call::set_author{..})
 		}
 	}
 
