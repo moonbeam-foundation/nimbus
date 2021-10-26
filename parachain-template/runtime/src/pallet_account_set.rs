@@ -69,7 +69,7 @@ pub mod pallet {
 	/// Genesis config for author mapping pallet
 	pub struct GenesisConfig<T: Config> {
 		/// The associations that should exist at chain genesis
-		pub mapping: Vec<(T::AuthorId, T::AccountId)>,
+		pub mapping: Vec<(T::AccountId, T::AuthorId)>,
 	}
 
 	#[cfg(feature = "std")]
@@ -85,7 +85,7 @@ pub mod pallet {
 			if self.mapping.is_empty() {
 				warn!(target: "account-set", "No mappings at genesis. Your chain will have no valid authors.");
 			}
-			for (author_id, account_id) in &self.mapping {
+			for (account_id, author_id) in &self.mapping {
 				Mapping::<T>::insert(author_id, account_id);
 				StoredAccounts::<T>::append(account_id);
 			}

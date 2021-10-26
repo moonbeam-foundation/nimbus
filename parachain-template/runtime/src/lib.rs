@@ -16,7 +16,7 @@ use sp_runtime::{
 	ApplyExtrinsicResult, MultiSignature,
 };
 
-use nimbus_primitives::{NimbusId};
+pub use nimbus_primitives::NimbusId;
 
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
@@ -25,7 +25,7 @@ use sp_version::RuntimeVersion;
 
 use frame_support::{
 	construct_runtime, match_type, parameter_types,
-	traits::Everything,
+	traits::{Everything, OnInitialize},
 	weights::{
 		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, WEIGHT_PER_SECOND},
 		DispatchClass, IdentityFee, Weight, WeightToFeeCoefficient, WeightToFeeCoefficients,
@@ -693,6 +693,18 @@ impl_runtime_apis! {
 		}
 	}
 
+	impl nimbus_primitives::AuthorFilterAPI<Block, nimbus_primitives::NimbusId> for Runtime {
+		fn can_author(author: nimbus_primitives::NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
+			// This runtime uses an entropy source that is updated during block initialization
+			// Therefore we need to initialize it to match the state it will be in when the
+			// next block is being executed.
+			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest, frame_system::InitKind::Inspection);
+			<Self as pallet_author_slot_filter::Config>::RandomnessSource::on_initialize(System::block_number());
+
+			// And now the actual prediction call
+			<AuthorInherent as nimbus_primitives::CanAuthor<_>>::can_author(&author, &slot)
+		}
+	}
 
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {

@@ -1,5 +1,5 @@
 use cumulus_primitives_core::ParaId;
-use parachain_template_runtime::{AccountId, AuraId, Signature, EXISTENTIAL_DEPOSIT};
+use parachain_template_runtime::{AccountId, NimbusId, Signature};
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
 use sc_service::ChainType;
 use serde::{Deserialize, Serialize};
@@ -39,8 +39,8 @@ type AccountPublic = <Signature as Verify>::Signer;
 /// Generate collator keys from seed.
 ///
 /// This function's return type must always match the session keys of the chain in tuple format.
-pub fn get_collator_keys_from_seed(seed: &str) -> AuraId {
-	get_pair_from_seed::<AuraId>(seed)
+pub fn get_collator_keys_from_seed(seed: &str) -> NimbusId {
+	get_pair_from_seed::<NimbusId>(seed)
 }
 
 /// Helper function to generate an account ID from seed
@@ -49,13 +49,6 @@ where
 	AccountPublic: From<<TPublic::Pair as Pair>::Public>,
 {
 	AccountPublic::from(get_pair_from_seed::<TPublic>(seed)).into_account()
-}
-
-/// Generate the session keys from individual elements.
-///
-/// The input must be a tuple of individual keys (a single arg for now since we have just one key).
-pub fn template_session_keys(keys: AuraId) -> parachain_template_runtime::SessionKeys {
-	parachain_template_runtime::SessionKeys { aura: keys }
 }
 
 pub fn development_config(id: ParaId) -> ChainSpec {
@@ -172,7 +165,7 @@ pub fn local_testnet_config(id: ParaId) -> ChainSpec {
 }
 
 fn testnet_genesis(
-	invulnerables: Vec<(AccountId, AuraId)>,
+	authorities: Vec<(AccountId, NimbusId)>,
 	endowed_accounts: Vec<AccountId>,
 	id: ParaId,
 ) -> parachain_template_runtime::GenesisConfig {
@@ -187,28 +180,12 @@ fn testnet_genesis(
 			balances: endowed_accounts.iter().cloned().map(|k| (k, 1 << 60)).collect(),
 		},
 		parachain_info: parachain_template_runtime::ParachainInfoConfig { parachain_id: id },
-		collator_selection: parachain_template_runtime::CollatorSelectionConfig {
-			invulnerables: invulnerables.iter().cloned().map(|(acc, _)| acc).collect(),
-			candidacy_bond: EXISTENTIAL_DEPOSIT * 16,
-			..Default::default()
+		author_filter: parachain_template_runtime::AuthorFilterConfig {
+			eligible_ratio: sp_runtime::Percent::from_percent(50),
 		},
-		session: parachain_template_runtime::SessionConfig {
-			keys: invulnerables
-				.iter()
-				.cloned()
-				.map(|(acc, aura)| {
-					(
-						acc.clone(),                 // account id
-						acc,                         // validator id
-						template_session_keys(aura), // session keys
-					)
-				})
-				.collect(),
+		potential_author_set: parachain_template_runtime::PotentialAuthorSetConfig {
+			mapping: authorities
 		},
-		// no need to pass anything to aura, in fact it will panic if we do. Session will take care
-		// of this.
-		aura: Default::default(),
-		aura_ext: Default::default(),
 		parachain_system: Default::default(),
 	}
 }

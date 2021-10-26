@@ -35,6 +35,8 @@ jsonrpc-core = "18.0.0"
 
 # Local Dependencies
 parachain-template-runtime = { path = "../runtime" }
+nimbus-primitives = { path = "../../primitives/nimbus"}
+nimbus-consensus = { path = "../../client/consensus/nimbus"}
 
 # Substrate Dependencies
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "master" }
@@ -66,8 +68,7 @@ sc-tracing = { git = "https://github.com/paritytech/substrate", branch = "master
 sp-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-blockchain = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sp-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sp-consensus-aura = { git = "https://github.com/paritytech/substrate", branch = "master" }
+#sp-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-core = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-inherents = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-keystore = { git = "https://github.com/paritytech/substrate", branch = "master" }
@@ -80,7 +81,6 @@ sp-transaction-pool = { git = "https://github.com/paritytech/substrate", branch 
 # Cumulus dependencies
 cumulus-client-cli = { path = "../../client/cli" }
 cumulus-client-collator = { path = "../../client/collator" }
-cumulus-client-consensus-aura = { path = "../../client/consensus/aura" }
 cumulus-client-consensus-common = { path = "../../client/consensus/common" }
 cumulus-client-network = { path = "../../client/network" }
 cumulus-client-service = { path = "../../client/service" }
