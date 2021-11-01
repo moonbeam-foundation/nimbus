@@ -33,7 +33,7 @@ jobs:
           CARGO_INCREMENTAL: "0"
         with:
           command: doc
-          args: --all
+          args: --all --no-deps
 
       # Make an index.html file so we start at the nimbus consensus worker
       # Copied from https://github.com/substrate-developer-hub/rustdocs/blob/master/index.html
