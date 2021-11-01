@@ -136,9 +136,9 @@ sp_application_crypto::with_pair! {
 
 
 sp_api::decl_runtime_apis! {
-	/// The runtime api used to predict whether an author will be eligible in the given slot
+	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
 	#[api_version(2)]
-	pub trait AuthorFilterAPI<AuthorId: Codec> {
+	pub trait NimbusApi<AuthorId: Codec> {
 		#[changed_in(2)]
 		fn can_author(author: AuthorId, relay_parent: u32) -> bool;
 
