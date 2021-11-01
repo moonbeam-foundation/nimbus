@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["nimbus_consensus","nimbus_primitives","pallet_aura_style_filter","pallet_author_inherent","pallet_author_slot_filter","pallet_template","parachain_collator","parachain_template_runtime"];

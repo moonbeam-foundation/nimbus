@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["InherentError",""]],"mod":[["pallet","The module that hosts all the FRAME types needed to add this pallet to a runtime."]],"struct":[["BlockExecutor","Block executive to be used by relay chain validators when validating parachain blocks built with the nimubs consensus family."]]});

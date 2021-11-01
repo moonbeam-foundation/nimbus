@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Call","Contains one variant per dispatchable that can be called by an extrinsic."]],"struct":[["Pallet","The Author Filter pallet"]],"trait":[["Config","Configuration trait of this pallet."]],"type":[["Module","Type alias to `Pallet`, to be used by `construct_runtime`."]]});

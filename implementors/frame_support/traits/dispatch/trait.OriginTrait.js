@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["parachain_template_runtime"] = [{"text":"impl OriginTrait for <a class=\"struct\" href=\"parachain_template_runtime/struct.Origin.html\" title=\"struct parachain_template_runtime::Origin\">Origin</a>","synthetic":false,"types":["parachain_template_runtime::Origin"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["pallet_author_inherent"] = [{"text":"impl&lt;Block, T, I&gt; ExecuteBlock&lt;Block&gt; for <a class=\"struct\" href=\"pallet_author_inherent/struct.BlockExecutor.html\" title=\"struct pallet_author_inherent::BlockExecutor\">BlockExecutor</a>&lt;T, I&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Block: BlockT,<br>&nbsp;&nbsp;&nbsp;&nbsp;I: ExecuteBlock&lt;Block&gt;,&nbsp;</span>","synthetic":false,"types":["pallet_author_inherent::exec::BlockExecutor"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
