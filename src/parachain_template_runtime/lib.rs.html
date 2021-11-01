@@ -1491,7 +1491,7 @@
 		}
 	}
 
-	<span class="kw">impl</span> <span class="ident">nimbus_primitives::AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">nimbus_primitives::NimbusId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
+	<span class="kw">impl</span> <span class="ident">nimbus_primitives::NimbusApi</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">nimbus_primitives::NimbusId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="ident">nimbus_primitives::NimbusId</span>, <span class="ident">slot</span>: <span class="ident">u32</span>, <span class="ident">parent_header</span>: <span class="kw-2">&amp;</span><span class="op">&lt;</span><span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span><span class="op">&gt;</span><span class="ident">::Header</span>) -&gt; <span class="ident">bool</span> {
 			<span class="comment">// This runtime uses an entropy source that is updated during block initialization</span>
 			<span class="comment">// Therefore we need to initialize it to match the state it will be in when the</span>
