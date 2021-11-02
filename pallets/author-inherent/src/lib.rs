@@ -20,16 +20,14 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_support::{
-	traits::FindAuthor,
+use frame_support::traits::FindAuthor;
+use log::debug;
+use nimbus_primitives::{
+	AccountLookup, CanAuthor, EventHandler, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID,
 };
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
-use sp_runtime::{
-	ConsensusEngineId, DigestItem, RuntimeString, RuntimeAppPublic,
-};
-use log::debug;
-use nimbus_primitives::{AccountLookup, CanAuthor, NIMBUS_ENGINE_ID, SlotBeacon, EventHandler, INHERENT_IDENTIFIER};
+use sp_runtime::{ConsensusEngineId, DigestItem, RuntimeAppPublic, RuntimeString};
 
 mod exec;
 pub use exec::BlockExecutor;
@@ -90,7 +88,6 @@ pub mod pallet {
 		CannotBeAuthor,
 	}
 
-
 	/// Author of current block.
 	#[pallet::storage]
 	pub type Author<T: Config> = StorageValue<_, T::AccountId, OptionQuery>;
@@ -101,14 +98,23 @@ pub mod pallet {
 			<Author<T>>::kill();
 			0
 		}
+
+		fn on_finalize(_: T::BlockNumber) {
+			// Because we still support the author inherent, we cannot ensure that some author has been
+			// set until on_finalize TODO Actually, maybe we could do this on post inherent.... Gotta look into that
+			// TODO this should be moved into `on_initialize` after support for the author inehrent is dropped entirely
+			assert!(
+				<Author<T>>::get().is_some(),
+				"Block invalid, no authorship information supplied."
+			)
+		}
 	}
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		/// Inherent to set the author of a block
-		#[pallet::weight((0, DispatchClass::Mandatory))]
+		#[pallet::weight(0)]
 		pub fn set_author(origin: OriginFor<T>, author: T::AuthorId) -> DispatchResult {
-
 			ensure_none(origin)?;
 
 			ensure!(<Author<T>>::get().is_none(), Error::<T>::AuthorAlreadySet);
@@ -176,9 +182,21 @@ pub mod pallet {
 		where
 			I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
 		{
-			// We don't use the digests at all.
-			// This will only return the correct author _after_ the authorship inherent is processed.
-			<Author<T>>::get()
+			// We don't use the digests at all for two reasons:
+			// 1. We still support the author inherent which means the authorship info may not be available from the digests
+			// 2. We want to memoize the result so that we don't continually re-calculate it.
+			if let Some(author) = <Author<T>>::get() {
+				Some(author)
+			} else {
+				let digest = <frame_system::Pallet<T>>::digest();
+				let mut pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
+				pre_runtime_digests
+					.find(|(id, _)| id == &NIMBUS_ENGINE_ID)
+					.map(|(_, mut data)| {
+						T::AccountId::decode(&mut data)
+							.expect("account encoded in preruntime digest must be valid")
+					})
+			}
 		}
 	}
 
@@ -225,7 +243,6 @@ impl InherentError {
 	}
 }
 
-
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -235,14 +252,14 @@ mod tests {
 		assert_noop, assert_ok, parameter_types,
 		traits::{OnFinalize, OnInitialize},
 	};
+	use nimbus_primitives::NimbusId;
+	use sp_core::Public;
 	use sp_core::H256;
 	use sp_io::TestExternalities;
 	use sp_runtime::{
 		testing::Header,
 		traits::{BlakeTwo256, IdentityLookup},
 	};
-	use nimbus_primitives::NimbusId;
-	use sp_core::Public;
 	const TEST_AUTHOR_ID: [u8; 32] = [0u8; 32];
 	const BOGUS_AUTHOR_ID: [u8; 32] = [1u8; 32];
 
