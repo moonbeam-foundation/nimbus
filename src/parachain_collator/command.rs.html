@@ -401,8 +401,6 @@
 <span id="401">401</span>
 <span id="402">402</span>
 <span id="403">403</span>
-<span id="404">404</span>
-<span id="405">405</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">chain_spec</span>,
 	<span class="ident">cli</span>::{<span class="ident">Cli</span>, <span class="ident">RelayChainCli</span>, <span class="ident">Subcommand</span>},
@@ -530,10 +528,8 @@
 			<span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">components</span> <span class="op">=</span> <span class="ident">new_partial</span>::<span class="op">&lt;</span>
 				<span class="ident">RuntimeApi</span>,
 				<span class="ident">TemplateRuntimeExecutor</span>,
-				<span class="kw">_</span>
 			<span class="op">&gt;</span>(
 				<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">config</span>,
-				<span class="ident"><span class="kw">crate</span>::service::parachain_build_import_queue</span>,
 			)<span class="question-mark">?</span>;
 			<span class="kw">let</span> <span class="ident">task_manager</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">components</span>.<span class="ident">task_manager</span>;
 			{ $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">code</span> )<span class="op">*</span> }.<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> (<span class="ident">v</span>, <span class="ident">task_manager</span>))
