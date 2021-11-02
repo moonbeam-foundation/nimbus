@@ -125,10 +125,8 @@ macro_rules! construct_async_run {
 			let $components = new_partial::<
 				RuntimeApi,
 				TemplateRuntimeExecutor,
-				_
 			>(
 				&$config,
-				crate::service::parachain_build_import_queue,
 			)?;
 			let task_manager = $components.task_manager;
 			{ $( $code )* }.map(|v| (v, task_manager))
