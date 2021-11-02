@@ -19,6 +19,7 @@ use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
 use cumulus_primitives_core::ParaId;
+use cumulus_primitives_parachain_inherent::MockValidationDataInherentDataProvider;
 
 // Substrate Imports
 use sc_executor::NativeElseWasmExecutor;
@@ -29,6 +30,8 @@ use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
+use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
+use sp_core::H256;
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
@@ -56,7 +59,7 @@ pub fn new_partial<RuntimeApi, Executor>(
 	PartialComponents<
 		TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>,
 		TFullBackend<Block>,
-		(),
+		sc_consensus::LongestChain<TFullBackend<Block>, Block>,
 		sc_consensus::DefaultImportQueue<
 			Block,
 			TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>,
@@ -117,6 +120,10 @@ where
 		telemetry
 	});
 
+	// Although this will not be used by the parachain collator, it will be used by the instant seal
+	// And sovereign nodes, so we create it anyway.
+	let select_chain = sc_consensus::LongestChain::new(backend.clone());
+
 	let transaction_pool = sc_transaction_pool::BasicPool::new_full(
 		config.transaction_pool.clone(),
 		config.role.is_authority().into(),
@@ -144,7 +151,7 @@ where
 		keystore_container,
 		task_manager,
 		transaction_pool,
-		select_chain: (),
+		select_chain,
 		other: (telemetry, telemetry_worker_handle),
 	};
 
@@ -402,4 +409,121 @@ pub async fn start_parachain_node(
 		},
 	)
 	.await
+}
+
+/// Builds a new service for a full client.
+pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_service::Error> {
+	let sc_service::PartialComponents {
+		client,
+		backend,
+		mut task_manager,
+		import_queue,
+		keystore_container,
+		select_chain,//TODO this isn't used right?
+		transaction_pool,
+		other: (telemetry, _),
+		..
+	} = new_partial(&config)?;
+
+	let (network, network_status_sinks, network_starter) =
+		sc_service::build_network(sc_service::BuildNetworkParams {
+			config: &config,
+			client: client.clone(),
+			transaction_pool: transaction_pool.clone(),
+			spawn_handle: task_manager.spawn_handle(),
+			import_queue,
+			on_demand: None,
+			block_announce_validator_builder: None,
+			warp_sync: None,
+		})?;
+
+	if config.offchain_worker.enabled {
+		sc_service::build_offchain_workers(
+			&config,
+			task_manager.spawn_handle(),
+			client.clone(),
+			network.clone(),
+		);
+	}
+
+	let is_authority = config.role.is_authority();
+	let prometheus_registry = config.prometheus_registry().cloned();
+
+	let rpc_extensions_builder = {
+		let client = client.clone();
+		let transaction_pool = transaction_pool.clone();
+
+		Box::new(move |deny_unsafe, _| {
+			let deps = crate::rpc::FullDeps {
+				client: client.clone(),
+				pool: transaction_pool.clone(),
+				deny_unsafe,
+			};
+
+			Ok(crate::rpc::create_full(deps))
+		})
+	};
+
+	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
+		network,
+		client: client.clone(),
+		keystore: keystore_container.sync_keystore(),
+		task_manager: &mut task_manager,
+		transaction_pool: transaction_pool.clone(),
+		rpc_extensions_builder,
+		on_demand: None,
+		remote_blockchain: None,
+		backend,
+		system_rpc_tx,
+		config,
+		telemetry,
+	})?;
+
+	if is_authority {
+		let proposer = sc_basic_authorship::ProposerFactory::new(
+			task_manager.spawn_handle(),
+			client.clone(),
+			transaction_pool.clone(),
+			prometheus_registry.as_ref(),
+		);
+
+		let authorship_future = run_instant_seal(InstantSealParams {
+			block_import: client.clone(),
+			env: proposer,
+			client,
+			pool: transaction_pool.pool().clone(),
+			select_chain,
+			consensus_data_provider: None,
+			create_inherent_data_providers,
+		});
+
+		task_manager
+			.spawn_essential_handle()
+			.spawn_blocking("instant-seal", authorship_future);
+	};
+
+	network_starter.start_network();
+	Ok(task_manager)
+}
+
+//I got a pretty good start here, but I'm realizing that I shoould pivot away from inehrents sooner rather than later.
+// I'm gonna check this in so I have it somewhere, but then sstart working on the inherent approach first.
+fn create_inherent_data_providers(block: H256, _extra_args: ()) -> sp_inherents::CreateInherentDataProviders {
+	let author_id = crate::chain_spec::get_collator_keys_from_seed("Alice");
+
+	async move {
+		let time = sp_timestamp::InherentDataProvider::from_system_time();
+
+		// The nimbus runtime is shared among all nodes including the parachain node.
+		// Because this is not a parachain context, we need to mock the parachain inherent data provider.
+		let mocked_parachain = MockValidationDataInherentDataProvider {
+			current_para_block: 0,
+			relay_offset: 0,
+			relay_blocks_per_para_block: 0,
+		};
+
+		let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
+
+		Ok((time, mocked_parachain, author))
+	}
 }
