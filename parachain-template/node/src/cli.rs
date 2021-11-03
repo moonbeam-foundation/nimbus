@@ -35,7 +35,7 @@ pub enum Subcommand {
 	Revert(sc_cli::RevertCmd),
 
 	/// Run Instant Seal
-	RunInstantSeal,
+	RunInstantSeal(sc_cli::RunCmd),
 
 	/// The custom benchmark subcommmand benchmarking runtime pallets.
 	#[structopt(name = "benchmark", about = "Benchmark runtime pallets.")]
