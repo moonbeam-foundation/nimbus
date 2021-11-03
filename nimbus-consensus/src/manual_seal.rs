@@ -9,7 +9,7 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi};
 use sp_inherents::InherentData;
-use nimbus_primitives::{NimbusApi, NimbusId, NimbusSignature, CompatibleDigestItem};
+use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
 
 //TODO Do I need the generic B? I copied it from Babe impl in Substrate.
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
