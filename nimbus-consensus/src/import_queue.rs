@@ -76,24 +76,20 @@ where
 
 		debug!(target: crate::LOG_TARGET, "🪲 Signature according to verifier is {:?}", signature);
 
-		// Grab the digest from the runtime
-		//TODO use the trait. Maybe this code should move to the trait.
-		let consensus_digest = block_params.header
+		// Grab the author information from either the preruntime digest or the consensus digest
+		//TODO use the trait
+		let claimed_author = block_params.header
 			.digest()
 			.logs
 			.iter()
-			.find(|digest| {
+			.find_map(|digest| {
 				match *digest {
-					DigestItem::Consensus(id, _) if id == b"nmbs" => true,
-					_ => false,
+					DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					_ => None,
 				}
 			})
-			.expect("A single consensus digest should be added by the runtime when executing the author inherent.");
-		
-		let claimed_author = match *consensus_digest {
-			DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => author_id.clone(),
-			_ => panic!("Expected consensus digest to contains author id bytes"),
-		};
+			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
 
 		debug!(target: crate::LOG_TARGET, "🪲 Claimed Author according to verifier is {:?}", claimed_author);
 
