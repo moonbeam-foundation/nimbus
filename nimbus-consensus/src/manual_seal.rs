@@ -53,8 +53,7 @@ where
 				})
 			},
 			None => {
-				todo!("Grrr how to return this fucking error!");
-				// Err(Error::Other(Box::new(String::from("no nimbus keys available to manual seal"))))
+				Err(Error::StringError(String::from("no nimbus keys available to manual seal")))
 			},
 		}
 		
@@ -67,6 +66,6 @@ where
 		_params: &mut BlockImportParams<B, Self::Transaction>,
 		_inherents: &InherentData,
 	) -> Result<(), Error> {
-		todo!("inside append block import. I guess we at least need something here.")
+		Ok(())
 	}
 }
