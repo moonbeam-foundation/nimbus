@@ -1,11 +1,15 @@
 use std::sync::Arc;
 use sp_keystore::SyncCryptoStorePtr;
-use sp_runtime::traits::{Block as BlockT, DigestFor};
+use sp_runtime::{
+	traits::{Block as BlockT, DigestFor},
+	generic::{Digest, DigestItem},
+};
+use sp_core::crypto::Public;
 use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi};
 use sp_inherents::InherentData;
-use nimbus_primitives::{NimbusApi, NimbusId};
+use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
 
 //TODO Do I need the generic B? I copied it from Babe impl in Substrate.
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
@@ -33,15 +37,26 @@ where
 		_inherents: &InherentData,
 	) -> Result<DigestFor<B>, Error> {
 		// Fetch first eligible key from keystore
-		let _maybe_key = crate::first_eligible_key::<B, C>(
+		let maybe_key = crate::first_eligible_key::<B, C>(
 			self.client.clone(),
 			&*self.keystore,
 			parent,
 		0, //TODO Come up with some real slot number. Maybe just use our own block height
-	);
+		);
 
-		// If we're eligible, construct and the return the digest
-		todo!()
+		// If we aren't eligible, return an appropriate error
+		match maybe_key {
+			Some(key) => {
+				Ok(Digest{
+					logs: vec![DigestItem::nimbus_pre_digest(NimbusId::from_slice(&key.1))],
+				})
+			},
+			None => {
+				todo!("Grrr how to return this fucking error!");
+				// Err(Error::Other(Box::new(String::from("no nimbus keys available to manual seal"))))
+			},
+		}
+		
 	}
 
 	// IDK WTF this is for yet. Maybe we won't need it :)
