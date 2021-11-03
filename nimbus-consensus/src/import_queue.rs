@@ -148,6 +148,8 @@ where
 
 		block_params.post_digests.push(seal);
 
+		block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::LongestChain);
+
 		debug!(target: crate::LOG_TARGET, "🪲 Just finished verifier. posthash from params is {:?}", &block_params.post_hash());
 
 		Ok((block_params, None))
@@ -155,7 +157,7 @@ where
 }
 
 /// Start an import queue for a Cumulus collator that does not uses any special authoring logic.
-pub fn import_queue<Client, Block: BlockT, I, CIDP>(
+pub fn parachain_import_queue<Client, Block: BlockT, I, CIDP>(
 	client: Arc<Client>,
 	block_import: I,
 	create_inherent_data_providers: CIDP,
@@ -180,6 +182,35 @@ where
 		Box::new(cumulus_client_consensus_common::ParachainBlockImport::new(
 			block_import,
 		)),
+		None,
+		spawner,
+		registry,
+	))
+}
+
+pub fn import_queue<Client, Block: BlockT, I, CIDP>(
+	client: Arc<Client>,
+	block_import: I,
+	create_inherent_data_providers: CIDP,
+	spawner: &impl sp_core::traits::SpawnEssentialNamed,
+	registry: Option<&substrate_prometheus_endpoint::Registry>,
+) -> ClientResult<BasicQueue<Block, I::Transaction>>
+where
+	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
+	I::Transaction: Send,
+	Client: ProvideRuntimeApi<Block> + Send + Sync + 'static,
+	<Client as ProvideRuntimeApi<Block>>::Api: BlockBuilderApi<Block>,
+	CIDP: CreateInherentDataProviders<Block, ()> + 'static,
+{
+	let verifier = Verifier {
+		client,
+		create_inherent_data_providers,
+		_marker: PhantomData,
+	};
+
+	Ok(BasicQueue::new(
+		verifier,
+		Box::new(block_import),
 		None,
 		spawner,
 		registry,

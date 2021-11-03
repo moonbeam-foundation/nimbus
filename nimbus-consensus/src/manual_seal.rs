@@ -66,7 +66,7 @@ where
 		params: &mut BlockImportParams<B, Self::Transaction>,
 		_inherents: &InherentData,
 	) -> Result<(), Error> {
-		
+
 		// We have to reconstruct the type-public pair which is only communicated through the pre-runtime digest
 		let claimed_author = params
 			.header
