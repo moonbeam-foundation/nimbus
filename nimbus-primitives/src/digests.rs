@@ -39,7 +39,7 @@ impl<Hash> CompatibleDigestItem for DigestItem<Hash> where
 	Hash: Debug + Send + Sync + Eq + Clone + Codec + 'static
 {
 	fn nimbus_pre_digest(author: NimbusId) -> Self {
-		DigestItem::Consensus(NIMBUS_ENGINE_ID, author.encode())
+		DigestItem::PreRuntime(NIMBUS_ENGINE_ID, author.encode())
 	}
 
 	fn as_nimbus_pre_digest(&self) -> Option<NimbusId> {

@@ -95,22 +95,25 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
-			// Overwrite the author storage with whatever info we get from the preruntime digests.
-			// If there is a preruntime digest, this writes the new author information for this block.
-			// If there is no digest, this kills the storage so it is clear to be filled later by the inherent.
-			// We pass no digests because we know that the impl doesn't use them.
-			// TODO rethink the previous comment. If the interface expects us to pass the digests, let's just pass them.
-			// Otherwise they just get read in the implementation anyway which is also nonstandard.
-			match Self::find_author(sp_std::vec::Vec::new()) {
-				Some(author) => {
-					<Author<T>>::put(author);
-				},
-				None => {
-					<Author<T>>::kill();
-				},
+			// Start by clearning out the previous block's author
+			<Author<T>>::kill();
+
+			// Now extract the author from the digest
+			let digest = <frame_system::Pallet<T>>::digest();
+			log::info!("In on_initialize. about to find author. all digests are:");
+			log::info!("{:?}", digest);
+
+			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
+			let author_from_digest = Self::find_author(pre_runtime_digests);
+
+			//TODO this could be done with a .map on the previous line
+			// If we got an author id this way, store the account in pallet storage so we can
+			// confirm its existence in on_finalize
+			if let Some(author_account) = author_from_digest {
+				log::info!("About to store author in on_initialize");
+				<Author<T>>::put(author_account);
 			}
 
-			//TODO Weight
 			0
 		}
 
@@ -193,25 +196,23 @@ pub mod pallet {
 	}
 
 	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
-		fn find_author<'a, I>(_digests: I) -> Option<T::AccountId>
+		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
 		where
 			I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
 		{
-			// We don't use the digests at all for two reasons:
-			// 1. We still support the author inherent which means the authorship info may not be available from the digests
-			// 2. We want to memoize the result so that we don't continually re-calculate it.
-			if let Some(author) = <Author<T>>::get() {
-				Some(author)
-			} else {
-				let digest = <frame_system::Pallet<T>>::digest();
-				let mut pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-				pre_runtime_digests
-					.find(|(id, _)| id == &NIMBUS_ENGINE_ID)
-					.map(|(_, mut data)| {
-						T::AccountId::decode(&mut data)
-							.expect("account encoded in preruntime digest must be valid")
-					})
+			for (id, mut data) in digests.into_iter() {
+				if id == NIMBUS_ENGINE_ID {
+					//TODO maybe I shouldn't be decoding manually here. Isn't this what the trait is for?
+					// let author_id = digest_item.as_nimbus_pre_digest().expect("account encoded in preruntime digest must be valid");
+					// let author_account = T::AccountLookup::lookup_account(&author_id).expect("author_id should have an account mapped");
+					// return Some(author_account);
+
+					return Some(T::AccountId::decode(&mut data)
+					.expect("account encoded in preruntime digest must be valid"))
+				}
 			}
+	
+			None
 		}
 	}
 
