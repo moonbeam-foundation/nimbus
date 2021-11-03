@@ -9,7 +9,7 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi};
 use sp_inherents::InherentData;
-use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
+use nimbus_primitives::{NimbusApi, NimbusId, NimbusSignature, CompatibleDigestItem};
 
 //TODO Do I need the generic B? I copied it from Babe impl in Substrate.
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
@@ -59,13 +59,23 @@ where
 		
 	}
 
-	// IDK WTF this is for yet. Maybe we won't need it :)
+	// This is where we actually sign with the nimbus key and attach the seal
 	fn append_block_import(
 		&self,
 		_parent: &B::Header,
-		_params: &mut BlockImportParams<B, Self::Transaction>,
+		params: &mut BlockImportParams<B, Self::Transaction>,
 		_inherents: &InherentData,
 	) -> Result<(), Error> {
+		//TODO Get the header hash and sign it. This should be extracted in the consensus worker.
+		// Let's start by just inserting an invalid signature to see if we get the right error
+		use std::convert::TryInto;
+		let fake_signature = [0u8]
+			.repeat(64)
+			.try_into()
+			.expect("my fake data should have the right length");
+		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(fake_signature);
+		params.post_digests.push(sig_digest
+		);
 		Ok(())
 	}
 }
