@@ -31,7 +31,6 @@ use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
-use sp_core::H256;
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
@@ -421,11 +420,10 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		keystore_container,
 		select_chain,
 		transaction_pool,
-		other: (telemetry, _),
-		..
-	} = new_partial(&config)?;
+		other: (mut telemetry, _),
+	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config)?;
 
-	let (network, network_status_sinks, network_starter) =
+	let (network, system_rpc_tx, network_starter) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
 			client: client.clone(),
@@ -476,7 +474,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		backend,
 		system_rpc_tx,
 		config,
-		telemetry: telemetry.clone(),
+		telemetry: telemetry.as_mut(),
 	})?;
 
 	if is_authority {
@@ -485,14 +483,14 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			client.clone(),
 			transaction_pool.clone(),
 			prometheus_registry.as_ref(),
-			telemetry,
+			telemetry.as_ref().map(|t| t.handle()),
 		);
 
 		let authorship_future = run_instant_seal(InstantSealParams {
 			block_import: client.clone(),
 			env: proposer,
 			client,
-			pool: transaction_pool.pool().clone(),
+			pool: transaction_pool.clone(),
 			select_chain,
 			consensus_data_provider: None,
 			create_inherent_data_providers: |_block, _extra_args| {
