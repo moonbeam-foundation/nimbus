@@ -47,7 +47,6 @@ where
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
 			Some(key) => {
-				println!("Found an eligible key: {:?}", key);
 				Ok(Digest{
 					logs: vec![DigestItem::nimbus_pre_digest(NimbusId::from_slice(&key.1))],
 				})

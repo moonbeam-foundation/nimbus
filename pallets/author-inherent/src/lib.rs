@@ -100,8 +100,6 @@ pub mod pallet {
 
 			// Now extract the author from the digest
 			let digest = <frame_system::Pallet<T>>::digest();
-			log::info!("In on_initialize. about to find author. all digests are:");
-			log::info!("{:?}", digest);
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
 			let author_from_digest = Self::find_author(pre_runtime_digests);
@@ -110,7 +108,6 @@ pub mod pallet {
 			// If we got an author id this way, store the account in pallet storage so we can
 			// confirm its existence in on_finalize
 			if let Some(author_account) = author_from_digest {
-				log::info!("About to store author in on_initialize");
 				<Author<T>>::put(author_account);
 			}
 
