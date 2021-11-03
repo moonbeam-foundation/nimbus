@@ -7,7 +7,7 @@ use sp_runtime::{
 use sp_core::crypto::Public;
 use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
-use sp_api::{TransactionFor, ProvideRuntimeApi};
+use sp_api::{TransactionFor, ProvideRuntimeApi, HeaderT};
 use sp_inherents::InherentData;
 use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
 
@@ -66,16 +66,28 @@ where
 		params: &mut BlockImportParams<B, Self::Transaction>,
 		_inherents: &InherentData,
 	) -> Result<(), Error> {
-		//TODO Get the header hash and sign it. This should be extracted in the consensus worker.
-		// Let's start by just inserting an invalid signature to see if we get the right error
-		use std::convert::TryInto;
-		let fake_signature = [0u8]
-			.repeat(64)
-			.try_into()
-			.expect("my fake data should have the right length");
-		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(fake_signature);
-		params.post_digests.push(sig_digest
-		);
+		
+		// We have to reconstruct the type-public pair which is only communicated through the pre-runtime digest
+		let claimed_author = params
+			.header
+			.digest()
+			.logs
+			.iter()
+			.find_map(|digest| {
+				match *digest {
+					// We do not support the older author inherent in manual seal
+					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					_ => None,
+				}
+			})
+			.expect("Expected one pre-runtime digest that contains author id bytes");
+		
+		let nimbus_public = NimbusId::from_slice(&claimed_author);
+
+		let sig_digest = crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.into());
+
+		params.post_digests.push(sig_digest);
+
 		Ok(())
 	}
 }

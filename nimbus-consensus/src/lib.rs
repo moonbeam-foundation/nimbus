@@ -40,7 +40,7 @@ use sp_consensus::{
 };
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT};
+use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT, DigestItemFor};
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
@@ -248,6 +248,34 @@ where
 	maybe_key
 }
 
+pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItemFor<B>
+where
+	B: BlockT,
+{
+	let pre_hash = header.hash();
+
+	let raw_sig = SyncCryptoStore::sign_with(
+		&*keystore,
+		NIMBUS_KEY_ID,
+		type_public_pair,
+		pre_hash.as_ref(),
+	)
+	.expect("Keystore should be able to sign")
+	.expect("We already checked that the key was present");
+	
+	debug!(
+		target: LOG_TARGET,
+		"The signature is \n{:?}", raw_sig
+	);
+
+	let signature = raw_sig
+			.clone()
+			.try_into()
+			.expect("signature bytes produced by keystore should be right length");
+	
+	<DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature)
+}
+
 #[async_trait::async_trait]
 impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> ParachainConsensus<B>
 	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
@@ -319,27 +347,7 @@ where
 
 		let (header, extrinsics) = block.clone().deconstruct();
 
-		let pre_hash = header.hash();
-
-		let raw_sig = SyncCryptoStore::sign_with(
-			&*self.keystore,
-			NIMBUS_KEY_ID,
-			&type_public_pair,
-			pre_hash.as_ref(),
-		)
-		.expect("Keystore should be able to sign")
-		.expect("We already checked that the key was present");
-		
-		debug!(
-			target: LOG_TARGET,
-			"The signature is \n{:?}", raw_sig
-		);
-
-		let signature = raw_sig
-				.clone()
-				.try_into().ok()?;
-		
-		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
+		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
@@ -353,7 +361,7 @@ where
 			"🔖 Sealed block for proposal at {}. Hash now {:?}, previously {:?}.",
 			*header.number(),
 			block_import_params.post_hash(),
-			pre_hash,
+			header.hash(),
 		);
 
 		if let Err(err) = self
