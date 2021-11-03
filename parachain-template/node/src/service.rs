@@ -419,7 +419,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		mut task_manager,
 		import_queue,
 		keystore_container,
-		select_chain,//TODO this isn't used right?
+		select_chain,
 		transaction_pool,
 		other: (telemetry, _),
 		..
