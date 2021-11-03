@@ -202,11 +202,6 @@ pub mod pallet {
 		{
 			for (id, mut data) in digests.into_iter() {
 				if id == NIMBUS_ENGINE_ID {
-					//TODO maybe I shouldn't be decoding manually here. Isn't this what the trait is for?
-					// let author_id = digest_item.as_nimbus_pre_digest().expect("account encoded in preruntime digest must be valid");
-					// let author_account = T::AccountLookup::lookup_account(&author_id).expect("author_id should have an account mapped");
-					// return Some(author_account);
-
 					return Some(T::AccountId::decode(&mut data)
 					.expect("account encoded in preruntime digest must be valid"))
 				}
