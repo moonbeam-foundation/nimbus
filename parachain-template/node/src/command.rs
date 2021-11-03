@@ -242,6 +242,13 @@ pub fn run() -> Result<()> {
 				You can enable it with `--features runtime-benchmarks`."
 					.into())
 			},
+		Some(Subcommand::RunInstantSeal) => {
+			let runner = cli.create_runner(&cli.run.normalize())?;
+			runner.run_node_until_exit(|config| async move {
+				crate::service::start_instant_seal_node(config)
+				.map_err(sc_cli::Error::Service)
+			})
+		},
 		None => {
 			let runner = cli.create_runner(&cli.run.normalize())?;
 
