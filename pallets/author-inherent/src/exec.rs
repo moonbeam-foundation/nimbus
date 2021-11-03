@@ -57,34 +57,26 @@ where
 		debug!(target: "executive", "In hacked Executive. digests after stripping {:?}", header.digest());
 		debug!(target: "executive", "The seal we got {:?}", seal);
 
-		// let sig = match seal {
-		// 	DigestItem::Seal(id, ref sig) if id == NIMBUS_ENGINE_ID => sig.clone(),
-		// 	_ => panic!("HeaderUnsealed"),
-		// };
 		let signature = seal.as_nimbus_seal().unwrap_or_else(||panic!("HeaderUnsealed"));
 
 		debug!(target: "executive", "🪲 Header hash after popping digest {:?}", header.hash());
 
 		debug!(target: "executive", "🪲 Signature according to executive is {:?}", signature);
 
-		// Grab the digest from the runtime
-		//TODO use the CompatibleDigest trait. Maybe this code should move to the trait.
-		let consensus_digest = header
+		// Grab the author information from either the preruntime digest or the consensus digest
+		//TODO use the trait
+		let claimed_author = header
 			.digest()
 			.logs
 			.iter()
-			.find(|digest| {
+			.find_map(|digest| {
 				match *digest {
-					DigestItem::Consensus(id, _) if id == &NIMBUS_ENGINE_ID => true,
-					_ => false,
+					DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					_ => None,
 				}
 			})
-			.expect("A single consensus digest should be added by the runtime when executing the author inherent.");
-		
-		let claimed_author = match *consensus_digest {
-			DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => author_id.clone(),
-			_ => panic!("Expected consensus digest to contains author id bytes"),
-		};
+			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
 
 		debug!(target: "executive", "🪲 Claimed Author according to executive is {:?}", claimed_author);
 
