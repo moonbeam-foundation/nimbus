@@ -9,7 +9,7 @@ use parachain_template_runtime::{
 };
 
 use nimbus_consensus::{
-	build_nimbus_consensus, BuildNimbusConsensusParams,
+	build_nimbus_consensus, BuildNimbusConsensusParams, NimbusManualSealConsensusDataProvider,
 };
 
 // Cumulus Imports
@@ -489,10 +489,15 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		let authorship_future = run_instant_seal(InstantSealParams {
 			block_import: client.clone(),
 			env: proposer,
-			client,
+			client: client.clone(),
 			pool: transaction_pool.clone(),
 			select_chain,
-			consensus_data_provider: None,
+			consensus_data_provider: Some(Box::new(
+				NimbusManualSealConsensusDataProvider{
+					keystore: keystore_container.sync_keystore(),
+					client: client.clone()
+				}
+			)),
 			create_inherent_data_providers: |_block, _extra_args| {
 				async move {
 					let time = sp_timestamp::InherentDataProvider::from_system_time();

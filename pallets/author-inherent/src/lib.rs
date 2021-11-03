@@ -95,7 +95,22 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
-			<Author<T>>::kill();
+			// Overwrite the author storage with whatever info we get from the preruntime digests.
+			// If there is a preruntime digest, this writes the new author information for this block.
+			// If there is no digest, this kills the storage so it is clear to be filled later by the inherent.
+			// We pass no digests because we know that the impl doesn't use them.
+			// TODO rethink the previous comment. If the interface expects us to pass the digests, let's just pass them.
+			// Otherwise they just get read in the implementation anyway which is also nonstandard.
+			match Self::find_author(sp_std::vec::Vec::new()) {
+				Some(author) => {
+					<Author<T>>::put(author);
+				},
+				None => {
+					<Author<T>>::kill();
+				},
+			}
+
+			//TODO Weight
 			0
 		}
 

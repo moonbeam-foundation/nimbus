@@ -50,6 +50,7 @@ use sp_std::convert::TryInto;
 use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId};
 mod import_queue;
 mod manual_seal;
+pub use manual_seal::NimbusManualSealConsensusDataProvider;
 
 const LOG_TARGET: &str = "filtering-consensus";
 

@@ -15,10 +15,10 @@ use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider</*B: BlockT,*/ C> {
 	/// Shared reference to keystore
-	keystore: SyncCryptoStorePtr,
+	pub keystore: SyncCryptoStorePtr,
 
 	/// Shared reference to the client
-	client: Arc<C>,
+	pub client: Arc<C>,
 
 	// Could have a skip_prediction field here if it becomes desireable
 }
@@ -47,6 +47,7 @@ where
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
 			Some(key) => {
+				println!("Found an eligible key: {:?}", key);
 				Ok(Digest{
 					logs: vec![DigestItem::nimbus_pre_digest(NimbusId::from_slice(&key.1))],
 				})
