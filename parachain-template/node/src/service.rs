@@ -524,24 +524,3 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 	network_starter.start_network();
 	Ok(task_manager)
 }
-
-//I got a pretty good start here, but I'm realizing that I shoould pivot away from inehrents sooner rather than later.
-// I'm gonna check this in so I have it somewhere, but then sstart working on the inherent approach first.
-// fn create_inherent_data_providers(block: H256, _extra_args: ()) -> sp_inherents::CreateInherentDataProviders {
-// 	let author_id = crate::chain_spec::get_collator_keys_from_seed("Alice");
-
-// 	async move {
-// 		let time = sp_timestamp::InherentDataProvider::from_system_time();
-
-// 		// The nimbus runtime is shared among all nodes including the parachain node.
-// 		// Because this is not a parachain context, we need to mock the parachain inherent data provider.
-// 		let mocked_parachain = MockValidationDataInherentDataProvider {
-// 			current_para_block: 0,
-// 			relay_offset: 0,
-// 			relay_blocks_per_para_block: 0,
-// 		};
-
-// 		Ok((time, mocked_parachain))
-// 	}
-// }
-
