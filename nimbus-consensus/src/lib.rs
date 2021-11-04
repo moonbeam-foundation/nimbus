@@ -45,8 +45,7 @@ use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
-//TODO Shouldn't this come from `std` and not need `sp-std` at all?
-use sp_std::convert::TryInto;
+use std::convert::TryInto;
 use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId};
 mod import_queue;
 mod manual_seal;
