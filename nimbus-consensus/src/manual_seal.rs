@@ -40,7 +40,10 @@ where
 			self.client.clone(),
 			&*self.keystore,
 			parent,
-		0, //TODO Come up with some real slot number. Maybe just use our own block height
+			// For now we author all blocks in slot zero, which is consistent with  how we are
+			// mocking the relay chain height which the runtime uses for slot beacon.
+			// This should improve. See https://github.com/PureStake/nimbus/issues/3
+			0,
 		);
 
 		// If we aren't eligible, return an appropriate error
