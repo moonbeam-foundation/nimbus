@@ -126,7 +126,8 @@ macro_rules! construct_async_run {
 				RuntimeApi,
 				TemplateRuntimeExecutor,
 			>(
-				&$config,
+				// We default to the non-parachain import queue and select chain.
+				&$config, false,
 			)?;
 			let task_manager = $components.task_manager;
 			{ $( $code )* }.map(|v| (v, task_manager))

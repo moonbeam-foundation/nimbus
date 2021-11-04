@@ -157,12 +157,13 @@ where
 }
 
 /// Start an import queue for a Cumulus collator that does not uses any special authoring logic.
-pub fn parachain_import_queue<Client, Block: BlockT, I, CIDP>(
+pub fn import_queue<Client, Block: BlockT, I, CIDP>(
 	client: Arc<Client>,
 	block_import: I,
 	create_inherent_data_providers: CIDP,
 	spawner: &impl sp_core::traits::SpawnEssentialNamed,
 	registry: Option<&substrate_prometheus_endpoint::Registry>,
+	parachain: bool,
 ) -> ClientResult<BasicQueue<Block, I::Transaction>>
 where
 	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
@@ -179,8 +180,9 @@ where
 
 	Ok(BasicQueue::new(
 		verifier,
-		Box::new(cumulus_client_consensus_common::ParachainBlockImport::new(
+		Box::new(NimbusBlockImport::new(
 			block_import,
+			parachain,
 		)),
 		None,
 		spawner,
@@ -188,31 +190,60 @@ where
 	))
 }
 
-pub fn import_queue<Client, Block: BlockT, I, CIDP>(
-	client: Arc<Client>,
-	block_import: I,
-	create_inherent_data_providers: CIDP,
-	spawner: &impl sp_core::traits::SpawnEssentialNamed,
-	registry: Option<&substrate_prometheus_endpoint::Registry>,
-) -> ClientResult<BasicQueue<Block, I::Transaction>>
-where
-	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
-	I::Transaction: Send,
-	Client: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	<Client as ProvideRuntimeApi<Block>>::Api: BlockBuilderApi<Block>,
-	CIDP: CreateInherentDataProviders<Block, ()> + 'static,
-{
-	let verifier = Verifier {
-		client,
-		create_inherent_data_providers,
-		_marker: PhantomData,
-	};
+/// Nimbus specific block import.
+///
+/// Nimbus supports both parachain and non-parachain contexts. In the parachain
+/// context, new blocks should not be imported as best. Cumulus's ParachainBlockImport
+/// handles this correctly, but does not work in non-parachain contexts.
+/// This block import has a field indicating whether we should apply parachain rules or not.
+/// 
+/// There may be additional nimbus-specific logic here in the future, but for now it is
+/// only the conditional parachain logic
+pub struct NimbusBlockImport<I>{
+	inner: I,
+	parachain_context: bool,
+}
 
-	Ok(BasicQueue::new(
-		verifier,
-		Box::new(block_import),
-		None,
-		spawner,
-		registry,
-	))
+impl<I> NimbusBlockImport<I> {
+	/// Create a new instance.
+	pub fn new(inner: I, parachain_context: bool) -> Self {
+		Self{
+			inner,
+			parachain_context,
+		}
+	}
+}
+
+#[async_trait::async_trait]
+impl<Block, I> BlockImport<Block> for NimbusBlockImport<I>
+where
+	Block: BlockT,
+	I: BlockImport<Block> + Send,
+{
+	type Error = I::Error;
+	type Transaction = I::Transaction;
+
+	async fn check_block(
+		&mut self,
+		block: sc_consensus::BlockCheckParams<Block>,
+	) -> Result<sc_consensus::ImportResult, Self::Error> {
+		self.inner.check_block(block).await
+	}
+
+	async fn import_block(
+		&mut self,
+		mut block_import_params: sc_consensus::BlockImportParams<Block, Self::Transaction>,
+		cache: std::collections::HashMap<sp_consensus::CacheKeyId, Vec<u8>>,
+	) -> Result<sc_consensus::ImportResult, Self::Error> {
+		// If we are in the parachain context, best block is determined by the relay chain
+		// except during initial sync
+		if self.parachain_context {
+			block_import_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::Custom(
+				block_import_params.origin == sp_consensus::BlockOrigin::NetworkInitialSync,
+			));
+		}
+
+		// Now continue on to the rest of the import pipeline.
+		self.inner.import_block(block_import_params, cache).await
+	}
 }

@@ -54,6 +54,7 @@ impl sc_executor::NativeExecutionDispatch for TemplateRuntimeExecutor {
 #[allow(clippy::type_complexity)]
 pub fn new_partial<RuntimeApi, Executor>(
 	config: &Configuration,
+	parachain: bool,
 ) -> Result<
 	PartialComponents<
 		TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>,
@@ -141,6 +142,7 @@ where
 			},
 			&task_manager.spawn_essential_handle(),
 			config.prometheus_registry().clone(),
+			parachain,
 		)?;
 
 	let params = PartialComponents {
@@ -217,7 +219,7 @@ where
 
 	let parachain_config = prepare_node_config(parachain_config);
 
-	let params = new_partial::<RuntimeApi, Executor>(&parachain_config)?;
+	let params = new_partial::<RuntimeApi, Executor>(&parachain_config, true)?;
 	let (mut telemetry, telemetry_worker_handle) = params.other;
 
 	let relay_chain_full_node =
@@ -421,7 +423,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		select_chain,
 		transaction_pool,
 		other: (mut telemetry, _),
-	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config)?;
+	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 
 	let (network, system_rpc_tx, network_starter) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
