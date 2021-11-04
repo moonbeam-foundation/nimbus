@@ -10,6 +10,7 @@ use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi, HeaderT};
 use sp_inherents::InherentData;
 use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem, NIMBUS_ENGINE_ID};
+use cumulus_primitives_parachain_inherent::{ParachainInherentData, INHERENT_IDENTIFIER as PARACHAIN_INHERENT_IDENTIFIER};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider<C> {
@@ -33,8 +34,16 @@ where
 	fn create_digest(
 		&self,
 		parent: &B::Header,
-		_inherents: &InherentData,
+		inherents: &InherentData,
 	) -> Result<DigestFor<B>, Error> {
+		// Retrieve the relay chain block number to use as the slot number from the parachain inherent
+		let slot_number = inherents
+			.get_data::<ParachainInherentData>(&PARACHAIN_INHERENT_IDENTIFIER)
+			.expect("Parachain inherent should decode correctly")
+			.expect("Parachain inherent should be present because we are mocking it")
+			.validation_data
+			.relay_parent_number;
+
 		// Fetch first eligible key from keystore
 		let maybe_key = crate::first_eligible_key::<B, C>(
 			self.client.clone(),
@@ -43,7 +52,7 @@ where
 			// For now we author all blocks in slot zero, which is consistent with  how we are
 			// mocking the relay chain height which the runtime uses for slot beacon.
 			// This should improve. See https://github.com/PureStake/nimbus/issues/3
-			0,
+			slot_number,
 		);
 
 		// If we aren't eligible, return an appropriate error
