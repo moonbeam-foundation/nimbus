@@ -102,14 +102,11 @@ pub mod pallet {
 			let digest = <frame_system::Pallet<T>>::digest();
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			let author_from_digest = Self::find_author(pre_runtime_digests);
-
-			//TODO this could be done with a .map on the previous line
-			// If we got an author id this way, store the account in pallet storage so we can
-			// confirm its existence in on_finalize
-			if let Some(author_account) = author_from_digest {
+			Self::find_author(pre_runtime_digests).map(|author_account|{
+				// If we got an author id this way, store the account in pallet storage so we can
+				// confirm its existence in on_finalize
 				<Author<T>>::put(author_account);
-			}
+			});
 
 			0
 		}
