@@ -125,10 +125,9 @@ macro_rules! construct_async_run {
 			let $components = new_partial::<
 				RuntimeApi,
 				TemplateRuntimeExecutor,
-				_
 			>(
-				&$config,
-				crate::service::parachain_build_import_queue,
+				// We default to the non-parachain import queue and select chain.
+				&$config, false,
 			)?;
 			let task_manager = $components.task_manager;
 			{ $( $code )* }.map(|v| (v, task_manager))
@@ -244,6 +243,13 @@ pub fn run() -> Result<()> {
 				You can enable it with `--features runtime-benchmarks`."
 					.into())
 			},
+		Some(Subcommand::RunInstantSeal(run_cmd)) => {
+			let runner = cli.create_runner(run_cmd)?;
+			runner.run_node_until_exit(|config| async move {
+				crate::service::start_instant_seal_node(config)
+				.map_err(sc_cli::Error::Service)
+			})
+		},
 		None => {
 			let runner = cli.create_runner(&cli.run.normalize())?;
 
