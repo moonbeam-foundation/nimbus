@@ -11,9 +11,8 @@ use sp_api::{TransactionFor, ProvideRuntimeApi, HeaderT};
 use sp_inherents::InherentData;
 use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
 
-//TODO Do I need the generic B? I copied it from Babe impl in Substrate.
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
-pub struct NimbusManualSealConsensusDataProvider</*B: BlockT,*/ C> {
+pub struct NimbusManualSealConsensusDataProvider<C> {
 	/// Shared reference to keystore
 	pub keystore: SyncCryptoStorePtr,
 
@@ -23,7 +22,7 @@ pub struct NimbusManualSealConsensusDataProvider</*B: BlockT,*/ C> {
 	// Could have a skip_prediction field here if it becomes desireable
 }
 
-impl<B, C> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider</*B,*/ C>
+impl<B, C> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider<C>
 where
 	B: BlockT,
 	C: ProvideRuntimeApi<B> + Send + Sync,
