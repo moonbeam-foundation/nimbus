@@ -9,7 +9,7 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi, HeaderT};
 use sp_inherents::InherentData;
-use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem};
+use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem, NIMBUS_ENGINE_ID};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider<C> {
@@ -77,7 +77,7 @@ where
 			.find_map(|digest| {
 				match *digest {
 					// We do not support the older author inherent in manual seal
-					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
 					_ => None,
 				}
 			})

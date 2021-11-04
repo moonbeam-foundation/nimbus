@@ -32,7 +32,7 @@ use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem};
+use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem, NIMBUS_ENGINE_ID};
 use sp_application_crypto::{Pair as _, Public as _};
 use log::debug;
 
@@ -84,8 +84,8 @@ where
 			.iter()
 			.find_map(|digest| {
 				match *digest {
-					DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
-					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
 					_ => None,
 				}
 			})

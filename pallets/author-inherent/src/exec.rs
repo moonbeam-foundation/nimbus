@@ -71,8 +71,8 @@ where
 			.iter()
 			.find_map(|digest| {
 				match *digest {
-					DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
-					DigestItem::PreRuntime(id, ref author_id) if id == *b"nmbs" => Some(author_id.clone()),
+					DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
 					_ => None,
 				}
 			})
