@@ -1222,7 +1222,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-cli"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "sc-cli",
  "sc-service",
@@ -1232,7 +1232,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-collator"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-client-consensus-common",
  "cumulus-client-network",
@@ -1255,7 +1255,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-consensus-common"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "async-trait",
  "dyn-clone",
@@ -1275,7 +1275,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-network"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "derive_more",
  "futures 0.3.17",
@@ -1298,7 +1298,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-pov-recovery"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "futures 0.3.17",
@@ -1321,7 +1321,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-service"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-client-collator",
  "cumulus-client-consensus-common",
@@ -1350,7 +1350,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-dmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1368,7 +1368,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-pallet-parachain-system-proc-macro",
  "cumulus-primitives-core",
@@ -1397,7 +1397,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system-proc-macro"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "proc-macro-crate 1.1.0",
  "proc-macro2",
@@ -1408,7 +1408,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcm"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1425,7 +1425,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1443,7 +1443,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-core"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "frame-support",
  "impl-trait-for-tuples",
@@ -1460,11 +1460,12 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-parachain-inherent"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
  "cumulus-test-relay-sproof-builder",
+ "hex-literal",
  "parity-scale-codec",
  "polkadot-client",
  "sc-client-api",
@@ -1482,7 +1483,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-timestamp"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "sp-inherents",
@@ -1493,7 +1494,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-utility"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1510,7 +1511,7 @@ dependencies = [
 [[package]]
 name = "cumulus-test-relay-sproof-builder"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "parity-scale-codec",
@@ -4638,7 +4639,7 @@ dependencies = [
 [[package]]
 name = "pallet-collator-selection"
 version = "3.0.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -5184,7 +5185,7 @@ dependencies = [
 [[package]]
 name = "parachain-info"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.11#e0ef78f83dd9d1167d6fc520598f53cdcac5a1e1"
+source = "git+https://github.com/purestake/cumulus?branch=joshy-mock-xcm#bad0d70e3e56bea6fa71a697af22c91c1911f4db"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
