@@ -550,9 +550,7 @@ impl pallet_author_slot_filter::Config for Runtime {
 	type PotentialAuthors = PotentialAuthorSet;
 }
 
-impl pallet_account_set::Config for Runtime {
-	type AuthorId = NimbusId;
-}
+impl pallet_account_set::Config for Runtime {}
 
 /// Configure the pallet template in pallets/template.
 impl pallet_template::Config for Runtime {
