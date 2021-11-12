@@ -91,7 +91,7 @@ where
 	RClient::Api: ParachainHost<PBlock>,
 	RBackend: Backend<PBlock>,
 	ParaClient: ProvideRuntimeApi<B>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData)>,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn new(
@@ -128,11 +128,10 @@ where
 		parent: B::Hash,
 		validation_data: &PersistedValidationData,
 		relay_parent: PHash,
-		author_id: NimbusId,
 	) -> Option<InherentData> {
 		let inherent_data_providers = self
 			.create_inherent_data_providers
-			.create_inherent_data_providers(parent, (relay_parent, validation_data.clone(), author_id))
+			.create_inherent_data_providers(parent, (relay_parent, validation_data.clone()))
 			.await
 			.map_err(|e| {
 				tracing::error!(
@@ -322,7 +321,11 @@ where
 			)
 			.ok()?;
 
-		let inherent_data = self.inherent_data(parent.hash(),&validation_data, relay_parent, NimbusId::from_slice(&type_public_pair.1)).await?;
+		let inherent_data = self.inherent_data(parent.hash(),&validation_data, relay_parent).await?;
+
+		let inherent_digests = vec![
+			CompatibleDigestItem::nimbus_pre_digest(NimbusId::from_slice(&type_public_pair.1)),
+		];
 
 		let Proposal {
 			block,
