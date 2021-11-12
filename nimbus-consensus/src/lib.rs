@@ -156,13 +156,13 @@ where
 	}
 }
 
-/// Grabs any available nimbus key fro mthe keystore.
+/// Grabs any available nimbus key from the keystore.
 /// This may be useful in situations where you expect exactly one key
 /// and intend to perform an operation with it regardless of whether it is
 /// expected to be eligible. Concretely, this is used in the consensus worker
 /// to implement the `skip_prediction` feature.
 pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<CryptoTypePublicPair> {
-	// Get allthe available keys
+	// Get all the available keys
 	let available_keys =
 		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
 		.expect("keystore should return the keys it has");
@@ -185,7 +185,7 @@ where
 	C: ProvideRuntimeApi<B>,
 	C::Api: NimbusApi<B, NimbusId>,
 {
-	// Get allthe available keys
+	// Get all the available keys
 	let available_keys =
 		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
 		.expect("keystore should return the keys it has");
@@ -210,8 +210,8 @@ where
 	let api_version = api_version.unwrap();
 
 	// Iterate keys until we find an eligible one, or run out of candidates.
-	// If we are skipping prediction, then we author withthe first key we find.
-	// prediction skipping only really amkes sense when there is a single key in the keystore.
+	// If we are skipping prediction, then we author with the first key we find.
+	// prediction skipping only really makes sense when there is a single key in the keystore.
 	//TODO I think there is a nicer way to do this than handle the type_public_pair. We only use the .1 field
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
 
@@ -232,7 +232,7 @@ where
 				NimbusId::from_slice(&type_public_pair.1),
 				slot_number,
 			)
-			.expect("Author API version 2 should not return error")
+			.expect("Author API before version 2 should not return error")
 		}
 	});
 

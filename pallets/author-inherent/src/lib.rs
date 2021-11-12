@@ -95,7 +95,7 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
-			// Start by clearning out the previous block's author
+			// Start by clearing out the previous block's author
 			<Author<T>>::kill();
 
 			// Now extract the author from the digest
