@@ -46,7 +46,7 @@ use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use std::convert::TryInto;
-use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId};
+use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId, CompatibleDigestItem};
 mod import_queue;
 mod manual_seal;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
@@ -292,7 +292,7 @@ where
 	>,
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
 	ParaClient::Api: NimbusApi<B, NimbusId>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData)>,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -323,9 +323,11 @@ where
 
 		let inherent_data = self.inherent_data(parent.hash(),&validation_data, relay_parent).await?;
 
-		let inherent_digests = vec![
-			CompatibleDigestItem::nimbus_pre_digest(NimbusId::from_slice(&type_public_pair.1)),
-		];
+		let inherent_digests = sp_runtime::generic::Digest {
+			logs: vec![
+				CompatibleDigestItem::nimbus_pre_digest(NimbusId::from_slice(&type_public_pair.1)),
+			]
+		};
 
 		let Proposal {
 			block,
@@ -334,7 +336,7 @@ where
 		} = proposer
 			.propose(
 				inherent_data,
-				Default::default(),
+				inherent_digests,
 				//TODO: Fix this.
 				Duration::from_millis(500),
 				// Set the block limit to 50% of the maximum PoV size.
@@ -441,7 +443,7 @@ where
 	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	NimbusConsensusBuilder::new(
 		para_id,
@@ -491,7 +493,7 @@ where
 	BI: BlockImport<Block> + Send + Sync + 'static,
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	/// Create a new instance of the builder.
 	fn new(
@@ -545,7 +547,7 @@ where
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	type Output = Box<dyn ParachainConsensus<Block>>;
 
