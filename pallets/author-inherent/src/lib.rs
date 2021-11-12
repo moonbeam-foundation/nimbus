@@ -182,9 +182,6 @@ pub mod pallet {
 		}
 	}
 
-	//TODO Something is wrong here. Where did I map from nimbus id to accout id?
-	// I can see how it would have kind of "Worked" in the template node because I used the same sr25519
-	// But how did this ever work in Moonbeam?
 	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
 		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
 		where
@@ -192,8 +189,13 @@ pub mod pallet {
 		{
 			for (id, mut data) in digests.into_iter() {
 				if id == NIMBUS_ENGINE_ID {
-					return Some(T::AccountId::decode(&mut data)
-					.expect("account encoded in preruntime digest must be valid"))
+					let author_id = T::AuthorId::decode(&mut data)
+						.expect("NimbusId encoded in preruntime digest must be valid");
+					
+					let author_account = T::AccountLookup::lookup_account(&author_id)
+						.expect("No Account Mapped to this NimbusId");
+					
+					return Some(author_account);
 				}
 			}
 	
@@ -253,7 +255,6 @@ mod tests {
 		assert_noop, assert_ok, parameter_types,
 		traits::{OnFinalize, OnInitialize},
 	};
-	use nimbus_primitives::NimbusId;
 	use sp_core::Public;
 	use sp_core::H256;
 	use sp_io::TestExternalities;
