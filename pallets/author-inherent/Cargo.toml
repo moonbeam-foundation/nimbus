@@ -8,21 +8,21 @@ license = 'GPL-3.0-only'
 
 [dependencies]
 log = { version = "0.4", default-features = false }
-frame-support = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-frame-system = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+frame-support = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+frame-system = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
 parity-scale-codec = { version = "2.0.0", default-features = false, features = ["derive"] }
-sp-application-crypto = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-authorship = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-inherents = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-runtime = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-api = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+sp-application-crypto = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-authorship = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-inherents = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-runtime = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-std = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-api = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
 scale-info = { version = "1.0.0", default-features = false, features = ["derive"] }
 
 [dev-dependencies]
-sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+sp-io = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
+sp-core = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para", default-features = false }
 
 [features]
 default = ["std"]

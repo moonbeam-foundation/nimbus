@@ -12,7 +12,7 @@ edition = "2018"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+substrate-wasm-builder = { git = "https://github.com/purestake/substrate", branch = "elois-sig-para" }
 
 [dependencies]
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"]}
@@ -26,45 +26,45 @@ pallet-template = { path = "../pallets/template", default-features = false }
 
 # Substrate Dependencies
 ## Substrate Primitive Dependencies
-sp-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-block-builder = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-core = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-inherents = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-io = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-offchain = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-runtime = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-std = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-transaction-pool = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-version = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+sp-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-block-builder = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-core = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-inherents = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-io = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-offchain = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-runtime = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-std = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-transaction-pool = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+sp-version = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
 
 ## Substrate FRAME Dependencies
-frame-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-frame-executive = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-frame-support = { git = "https://github.com/purestake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.12" }
-frame-system = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-frame-system-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-frame-system-rpc-runtime-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+frame-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "elois-sig-para" }
+frame-executive = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+frame-support = { git = "https://github.com/purestake/substrate", default-features = false, branch = "elois-sig-para" }
+frame-system = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+frame-system-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "elois-sig-para" }
+frame-system-rpc-runtime-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
 
 ## Substrate Pallet Dependencies
-pallet-balances = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-randomness-collective-flip = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-sudo = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-timestamp = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-transaction-payment = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+pallet-balances = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-randomness-collective-flip = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-sudo = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-timestamp = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-transaction-payment = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
+pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "elois-sig-para" }
 
 # Cumulus dependencies
-cumulus-pallet-dmp-queue = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-parachain-system = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-xcm = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-xcmp-queue = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-timestamp = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-utility = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-pallet-collator-selection = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-parachain-info = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+cumulus-pallet-dmp-queue = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-pallet-parachain-system = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-pallet-xcm = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-pallet-xcmp-queue = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-primitives-timestamp = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+cumulus-primitives-utility = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+pallet-collator-selection = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
+parachain-info = { git = "https://github.com/purestake/cumulus", branch = "elois-sig-para", default-features = false }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
@@ -73,12 +73,12 @@ pallet-author-inherent = { path = "../../pallets/author-inherent", default-featu
 
 
 # Polkadot Dependencies
-pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "moonbeam-polkadot-v0.9.12" }
-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "elois-sig-para" }
+polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "elois-sig-para" }
+polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "elois-sig-para" }
+xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "elois-sig-para" }
+xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "elois-sig-para" }
+xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "elois-sig-para" }
 
 [features]
 default = [
