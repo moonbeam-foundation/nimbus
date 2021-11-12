@@ -170,7 +170,7 @@ where
 		Proof = <EnableProofRecording as ProofRecording>::Proof,
 	>,
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
-	ParaClient::Api: NimbusApi<B, NimbusId>,
+	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
 {
 	async fn produce_candidate(
@@ -197,7 +197,7 @@ where
 		let at = BlockId::Hash(parent.hash());
 		// Get `NimbusApi` version.
 		let api_version = self.parachain_client.runtime_api()
-			.api_version::<dyn NimbusApi<B, NimbusId>>(&at)
+			.api_version::<dyn NimbusApi<B>>(&at)
 			.expect("Runtime api access to not error.");
 
 		if api_version.is_none() {
@@ -393,7 +393,7 @@ where
 	// Rust bug: https://github.com/rust-lang/rust/issues/24159
 	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block, NimbusId>,
+	ParaClient::Api: NimbusApi<Block>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	NimbusConsensusBuilder::new(
@@ -475,7 +475,7 @@ where
 	/// Build the nimbus consensus.
 	fn build(self) -> Box<dyn ParachainConsensus<Block>>
 	where
-		ParaClient::Api: NimbusApi<Block, NimbusId>,
+		ParaClient::Api: NimbusApi<Block>,
 	{
 		self.relay_chain_client.clone().execute_with(self)
 	}
@@ -497,7 +497,7 @@ where
 	BI: BlockImport<Block> + Send + Sync + 'static,
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block, NimbusId>,
+	ParaClient::Api: NimbusApi<Block>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	type Output = Box<dyn ParachainConsensus<Block>>;
@@ -509,7 +509,7 @@ where
 		PBackend::State: sp_api::StateBackend<sp_runtime::traits::BlakeTwo256>,
 		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
 		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
-		ParaClient::Api: NimbusApi<Block, NimbusId>,
+		ParaClient::Api: NimbusApi<Block>,
 	{
 		Box::new(NimbusConsensus::new(
 			self.para_id,
