@@ -22,7 +22,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sp_std::vec::Vec;
-use parity_scale_codec::Codec;
 use sp_application_crypto::KeyTypeId;
 use sp_runtime::ConsensusEngineId;
 use sp_runtime::traits::BlockNumberProvider;
@@ -95,13 +94,13 @@ impl<T> CanAuthor<T> for () {
 /// different notions of AccoutId. It is also generic over the AuthorId to
 /// support the usecase where the author inherent is used for beneficiary info
 /// and contains an AccountId directly.
-pub trait AccountLookup<AuthorId, AccountId> {
-	fn lookup_account(author: &AuthorId) -> Option<AccountId>;
+pub trait AccountLookup<AccountId> {
+	fn lookup_account(author: &NimbusId) -> Option<AccountId>;
 }
 
 // A dummy impl used in simple tests
-impl<AuthorId, AccountId> AccountLookup<AuthorId, AccountId> for () {
-	fn lookup_account(_: &AuthorId) -> Option<AccountId> {
+impl<AccountId> AccountLookup<AccountId> for () {
+	fn lookup_account(_: &NimbusId) -> Option<AccountId> {
 		None
 	}
 }
@@ -138,10 +137,10 @@ sp_application_crypto::with_pair! {
 sp_api::decl_runtime_apis! {
 	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
 	#[api_version(2)]
-	pub trait NimbusApi<AuthorId: Codec> {
+	pub trait NimbusApi {
 		#[changed_in(2)]
-		fn can_author(author: AuthorId, relay_parent: u32) -> bool;
+		fn can_author(author: NimbusId, relay_parent: u32) -> bool;
 
-		fn can_author(author: AuthorId, relay_parent: u32, parent_header: &Block::Header) -> bool;
+		fn can_author(author: NimbusId, relay_parent: u32, parent_header: &Block::Header) -> bool;
 	}
 }
