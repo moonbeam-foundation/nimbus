@@ -173,7 +173,7 @@ pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<Cryp
 		return None;
 	}
 
-	Some(available_keys[1].clone())
+	Some(available_keys[0].clone())
 }
 
 /// Grab the first eligible nimbus key from the keystore
