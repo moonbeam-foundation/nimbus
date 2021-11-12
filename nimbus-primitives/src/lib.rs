@@ -136,11 +136,23 @@ sp_application_crypto::with_pair! {
 
 sp_api::decl_runtime_apis! {
 	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
-	#[api_version(2)]
 	pub trait NimbusApi {
-		#[changed_in(2)]
-		fn can_author(author: NimbusId, relay_parent: u32) -> bool;
-
 		fn can_author(author: NimbusId, relay_parent: u32, parent_header: &Block::Header) -> bool;
+	}
+
+
+	// #[deprecated]
+	// The macro ended up always making the warning print
+	// so I decided to bail on that.
+	
+	/// Deprecated Runtime API from earlier versions of Nimbus.
+	/// It is retained for now so that live chains can temporarily support both
+	/// for a smooth migration. It will be removed soon.
+	#[api_version(2)]
+	pub trait AuthorFilterAPI<AuthorId: parity_scale_codec::Codec> {
+		#[changed_in(2)]
+		fn can_author(author: AuthorId, relay_parent: u32) -> bool;
+
+		fn can_author(author: AuthorId, relay_parent: u32, parent_header: &Block::Header) -> bool;
 	}
 }

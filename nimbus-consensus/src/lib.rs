@@ -32,7 +32,7 @@ use log::{info, warn, debug};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
-use sp_api::{ProvideRuntimeApi, BlockId, ApiExt};
+use sp_api::{ProvideRuntimeApi, BlockId};
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment,
 	ProofRecording, Proposal, Proposer,
@@ -195,18 +195,6 @@ where
 		}
 
 		let at = BlockId::Hash(parent.hash());
-		// Get `NimbusApi` version.
-		let api_version = self.parachain_client.runtime_api()
-			.api_version::<dyn NimbusApi<B>>(&at)
-			.expect("Runtime api access to not error.");
-
-		if api_version.is_none() {
-			tracing::error!(
-				target: LOG_TARGET, "Could not find `NimbusApi` version.",
-			);
-			return None;
-		}
-		let api_version = api_version.unwrap();
 
 		// Iterate keys until we find an eligible one, or run out of candidates.
 		// If we are skipping prediction, then we author withthe first key we find.
@@ -218,23 +206,13 @@ where
 
 			// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 			// That I should be passing Vec<u8> across the wasm boundary?
-			if api_version >= 2 {
-				self.parachain_client.runtime_api().can_author(
-					&at,
-					NimbusId::from_slice(&type_public_pair.1),
-					validation_data.relay_parent_number,
-					parent,
-				)
-				.expect("Author API should not return error")
-			} else {
-				#[allow(deprecated)]
-				self.parachain_client.runtime_api().can_author_before_version_2(
-					&at,
-					NimbusId::from_slice(&type_public_pair.1),
-					validation_data.relay_parent_number,
-				)
-				.expect("Author API version 2 should not return error")
-			}
+			self.parachain_client.runtime_api().can_author(
+				&at,
+				NimbusId::from_slice(&type_public_pair.1),
+				validation_data.relay_parent_number,
+				parent,
+			)
+			.expect("NimbusAPI should not return error")
 		});
 
 		// If there are no eligible keys, print the log, and exit early.
