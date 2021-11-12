@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 // Local Runtime Types
 use parachain_template_runtime::{
-	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi, NimbusId
+	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi
 };
 
 use nimbus_consensus::{
@@ -381,7 +381,7 @@ pub async fn start_parachain_node(
 						keystore,
 						skip_prediction: force_authoring,
 						create_inherent_data_providers:
-							move |_, (relay_parent, validation_data, author_id)| {
+							move |_, (relay_parent, validation_data)| {
 								let parachain_inherent =
 								cumulus_primitives_parachain_inherent::ParachainInherentData::create_at_with_client(
 									relay_parent,
@@ -399,9 +399,7 @@ pub async fn start_parachain_node(
 										)
 									})?;
 
-									let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
-
-									Ok((time, parachain_inherent, author))
+									Ok((time, parachain_inherent))
 								}
 							},
 					},
