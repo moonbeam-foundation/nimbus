@@ -26,10 +26,10 @@ use frame_support::{
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
 use sp_runtime::{
-	ConsensusEngineId, DigestItem, RuntimeString, RuntimeAppPublic,
+	ConsensusEngineId, DigestItem, RuntimeString,
 };
 use log::debug;
-use nimbus_primitives::{AccountLookup, CanAuthor, NIMBUS_ENGINE_ID, SlotBeacon, EventHandler, INHERENT_IDENTIFIER};
+use nimbus_primitives::{AccountLookup, CanAuthor, NimbusId, NIMBUS_ENGINE_ID, SlotBeacon, EventHandler, INHERENT_IDENTIFIER};
 
 mod exec;
 pub use exec::BlockExecutor;
@@ -48,15 +48,10 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		// This is copied from Aura. I wonder if I really need all those trait bounds. For now I'll leave them.
-		// TODO could I remove this type entirely and just always use NimbusId? Why didn't Aura do that?
-		/// The identifier type for an authority.
-		type AuthorId: Member + Parameter + RuntimeAppPublic + Default + MaybeSerializeDeserialize;
-
 		/// A type to convert between AuthorId and AccountId. This is useful when you want to associate
 		/// Block authoring behavior with an AccoutId for rewards or slashing. If you do not need to
 		/// hold an AccountID responsible for authoring use `()` which acts as an identity mapping.
-		type AccountLookup: AccountLookup<Self::AuthorId, Self::AccountId>;
+		type AccountLookup: AccountLookup<Self::AccountId>;
 
 		/// Other pallets that want to be informed about block authorship
 		type EventHandler: EventHandler<Self::AccountId>;
@@ -74,11 +69,11 @@ pub mod pallet {
 
 	// If the AccountId type supports it, then this pallet can be BoundToRuntimeAppPublic
 	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T>
-	where
-		T: Config,
-		T::AuthorId: RuntimeAppPublic,
+	// where
+	// 	T: Config,
+	// 	T::AuthorId: RuntimeAppPublic,
 	{
-		type Public = T::AuthorId;
+		type Public = NimbusId;
 	}
 	#[pallet::error]
 	pub enum Error<T> {
@@ -107,7 +102,7 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Inherent to set the author of a block
 		#[pallet::weight((0, DispatchClass::Mandatory))]
-		pub fn set_author(origin: OriginFor<T>, author: T::AuthorId) -> DispatchResult {
+		pub fn set_author(origin: OriginFor<T>, author: NimbusId) -> DispatchResult {
 
 			ensure_none(origin)?;
 
@@ -155,7 +150,7 @@ pub mod pallet {
 
 		fn create_inherent(data: &InherentData) -> Option<Self::Call> {
 			let author_raw = data
-				.get_data::<T::AuthorId>(&INHERENT_IDENTIFIER);
+				.get_data::<NimbusId>(&INHERENT_IDENTIFIER);
 
 			debug!("In create_inherent (runtime side). data is");
 			debug!("{:?}", author_raw);
@@ -182,10 +177,10 @@ pub mod pallet {
 		}
 	}
 
-	/// To learn whether a given AuthorId can author, you call the author-inherent directly.
-	/// It will do the mapping lookup.
-	impl<T: Config> CanAuthor<T::AuthorId> for Pallet<T> {
-		fn can_author(author: &T::AuthorId, slot: &u32) -> bool {
+	/// To learn whether a given NimbusId can author, as opposed to an account id, you
+	/// can ask this pallet idrectly. It will do the mapping for you.
+	impl<T: Config> CanAuthor<NimbusId> for Pallet<T> {
+		fn can_author(author: &NimbusId, slot: &u32) -> bool {
 			let account = match T::AccountLookup::lookup_account(&author) {
 				Some(account) => account,
 				// Authors whose account lookups fail will not be eligible
@@ -241,7 +236,6 @@ mod tests {
 		testing::Header,
 		traits::{BlakeTwo256, IdentityLookup},
 	};
-	use nimbus_primitives::NimbusId;
 	use sp_core::Public;
 	const TEST_AUTHOR_ID: [u8; 32] = [0u8; 32];
 	const BOGUS_AUTHOR_ID: [u8; 32] = [1u8; 32];
