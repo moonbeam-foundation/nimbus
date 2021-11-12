@@ -105,20 +105,26 @@ pub mod pallet {
 			Self::find_author(pre_runtime_digests).map(|author_account|{
 				// If we got an author id this way, store the account in pallet storage so we can
 				// confirm its existence in on_finalize
-				<Author<T>>::put(author_account);
+				<Author<T>>::put(&author_account);
+
+				//TODO, should we reuse the same trait that Pallet Authorship uses?
+				// Notify any other pallets that are listening (eg rewards) about the author
+				T::EventHandler::note_author(author_account);
 			});
 
 			0
 		}
 
 		fn on_finalize(_: T::BlockNumber) {
-			// Because we still support the author inherent, we cannot ensure that some author has been
-			// set until on_finalize TODO Actually, maybe we could do this on post inherent.... Gotta look into that
-			// TODO this should be moved into `on_initialize` after support for the author inehrent is dropped entirely
+			//TODO this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
+			// In the meantime, it will allow Alan to more easily profile block authorship.
+			let author = <Author<T>>::get()
+				.expect("Block invalid, no authorship information supplied.");
+			
 			assert!(
-				<Author<T>>::get().is_some(),
-				"Block invalid, no authorship information supplied."
-			)
+				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
+				"Block invalid, supplied author is not eligible."
+			);
 		}
 	}
 
@@ -132,14 +138,9 @@ pub mod pallet {
 			ensure!(<Author<T>>::get().is_none(), Error::<T>::AuthorAlreadySet);
 			debug!(target: "author-inherent", "Author was not already set");
 
-			let slot = T::SlotBeacon::slot();
-			debug!(target: "author-inherent", "Slot is {:?}", slot);
-
 			let account = T::AccountLookup::lookup_account(&author).ok_or(
 				Error::<T>::NoAccountId
 			)?;
-
-			ensure!(T::CanAuthor::can_author(&account, &slot), Error::<T>::CannotBeAuthor);
 
 			// Update storage
 			Author::<T>::put(&account);
@@ -181,6 +182,9 @@ pub mod pallet {
 		}
 	}
 
+	//TODO Something is wrong here. Where did I map from nimbus id to accout id?
+	// I can see how it would have kind of "Worked" in the template node because I used the same sr25519
+	// But how did this ever work in Moonbeam?
 	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
 		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
 		where
