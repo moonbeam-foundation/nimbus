@@ -537,7 +537,6 @@ impl cumulus_pallet_dmp_queue::Config for Runtime {
 }
 
 impl pallet_author_inherent::Config for Runtime {
-	type AuthorId = NimbusId;
 	// We start a new slot each time we see a new relay block.
 	type SlotBeacon = cumulus_pallet_parachain_system::RelaychainBlockNumberProvider<Self>;
 	type AccountLookup = PotentialAuthorSet;
@@ -693,8 +692,8 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl nimbus_primitives::NimbusApi<Block, nimbus_primitives::NimbusId> for Runtime {
-		fn can_author(author: nimbus_primitives::NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
+	impl nimbus_primitives::NimbusApi<Block> for Runtime {
+		fn can_author(author: NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
 			// This runtime uses an entropy source that is updated during block initialization
 			// Therefore we need to initialize it to match the state it will be in when the
 			// next block is being executed.
