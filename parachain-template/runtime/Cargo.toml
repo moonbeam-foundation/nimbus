@@ -73,12 +73,12 @@ pallet-author-inherent = { path = "../../pallets/author-inherent", default-featu
 
 
 # Polkadot Dependencies
-pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "moonbeam-polkadot-v0.9.12" }
-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "notlesh-xcm-vm-no-inline" }
+polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "notlesh-xcm-vm-no-inline" }
+polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "notlesh-xcm-vm-no-inline" }
+xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "notlesh-xcm-vm-no-inline" }
+xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "notlesh-xcm-vm-no-inline" }
+xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "notlesh-xcm-vm-no-inline" }
 
 [features]
 default = [

@@ -21,7 +21,7 @@ sp-application-crypto = { git = "https://github.com/purestake/substrate", branch
 sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
 
 # Polkadot dependencies
-polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "notlesh-xcm-vm-no-inline", default-features = false }
 
 # Cumulus dependencies
 cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
