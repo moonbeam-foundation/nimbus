@@ -79,13 +79,13 @@ sp-timestamp = { git = "https://github.com/purestake/substrate", branch = "moonb
 sp-transaction-pool = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
 
 # Cumulus dependencies
-cumulus-client-cli = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-client-collator = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-client-network = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-client-service = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
+cumulus-client-cli = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-client-collator = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-client-network = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-client-service = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
 
 # Polkadot dependencies
 polkadot-cli = { git = "https://github.com/purestake/polkadot", branch = "notlesh-xcm-vm-no-inline" }

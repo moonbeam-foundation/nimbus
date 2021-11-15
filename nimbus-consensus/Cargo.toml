@@ -24,9 +24,9 @@ sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-po
 polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "notlesh-xcm-vm-no-inline", default-features = false }
 
 # Cumulus dependencies
-cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
+cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "notlesh-xcm-vm-no-inline" }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../nimbus-primitives" }
