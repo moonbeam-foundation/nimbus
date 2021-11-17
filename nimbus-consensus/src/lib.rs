@@ -302,7 +302,7 @@ where
 				.clone()
 				.try_into().ok()?;
 		
-		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
+		let sig_digest = <sp_runtime::DigestItem as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
