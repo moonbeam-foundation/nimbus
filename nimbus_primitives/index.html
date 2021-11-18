@@ -22,10 +22,10 @@ The trait is generic over the AccountId, becuase different runtimes use
 different notions of AccoutId. It is also generic over the AuthorId to
 support the usecase where the author inherent is used for beneficiary info
 and contains an AccountId directly.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.AuthorFilterAPI.html" title="nimbus_primitives::AuthorFilterAPI trait">AuthorFilterAPI</a></div><div class="item-right docblock-short"><p>The runtime api used to predict whether an author will be eligible in the given slot</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.CanAuthor.html" title="nimbus_primitives::CanAuthor trait">CanAuthor</a></div><div class="item-right docblock-short"><p>Trait to determine whether this author is eligible to author in this slot.
 This is the primary trait your nimbus filter needs to implement.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.EventHandler.html" title="nimbus_primitives::EventHandler trait">EventHandler</a></div><div class="item-right docblock-short"><p>The given account ID is the author of the current block.</p>
-</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.NimbusApi.html" title="nimbus_primitives::NimbusApi trait">NimbusApi</a></div><div class="item-right docblock-short"><p>The runtime api used to predict whether a Nimbus author will be eligible in the given slot</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.SlotBeacon.html" title="nimbus_primitives::SlotBeacon trait">SlotBeacon</a></div><div class="item-right docblock-short"><p>A mechanism for determining the current slot.
 For now we use u32 as the slot type everywhere. Let’s see how long we can get away with that.</p>
 </div></div></div><h2 id="types" class="section-header"><a href="#types">Type Definitions</a></h2>
