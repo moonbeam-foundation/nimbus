@@ -174,7 +174,7 @@ pub mod pallet {
 	}
 
 	/// To learn whether a given NimbusId can author, as opposed to an account id, you
-	/// can ask this pallet idrectly. It will do the mapping for you.
+	/// can ask this pallet directly. It will do the mapping for you.
 	impl<T: Config> CanAuthor<NimbusId> for Pallet<T> {
 		fn can_author(author: &NimbusId, slot: &u32) -> bool {
 			let account = match T::AccountLookup::lookup_account(&author) {
