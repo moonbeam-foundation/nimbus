@@ -67,14 +67,10 @@ pub mod pallet {
 		type SlotBeacon: SlotBeacon;
 	}
 
-	// If the AccountId type supports it, then this pallet can be BoundToRuntimeAppPublic
-	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T>
-	// where
-	// 	T: Config,
-	// 	T::AuthorId: RuntimeAppPublic,
-	{
+	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T> {
 		type Public = NimbusId;
 	}
+
 	#[pallet::error]
 	pub enum Error<T> {
 		/// Author already set in block.
