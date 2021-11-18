@@ -89,8 +89,9 @@ pub mod pallet {
 		}
 	}
 
-	/// This pallet is compatible with the nimbus consensus system.
-	/// Any account stored in this pallet is a valid author.
+	/// This pallet is compatible with nimbus's author filtering system. Any account stored in this pallet
+	/// is a valid author. Notice that this implementation does not have an inner filter, so it
+	/// can only be the beginning of the nimbus filter pipeline.
 	impl<T: Config> CanAuthor<T::AccountId> for Pallet<T> {
 		fn can_author(author: &T::AccountId, _slot: &u32) -> bool {
 			StoredAccounts::<T>::get().contains(author)

@@ -45,7 +45,7 @@ use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use sp_std::convert::TryInto;
-use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId};
+use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId};
 mod import_queue;
 
 const LOG_TARGET: &str = "filtering-consensus";

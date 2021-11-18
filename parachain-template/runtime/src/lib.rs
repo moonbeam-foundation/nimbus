@@ -703,6 +703,15 @@ impl_runtime_apis! {
 		}
 	}
 
+	// We also implement the olf AuthorFilterAPI to support nodes that have not yet updated the client side.
+	impl nimbus_primitives::AuthorFilterAPI<Block, NimbusId> for Runtime {
+		fn can_author(author: NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
+			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest, frame_system::InitKind::Inspection);
+			<Self as pallet_author_slot_filter::Config>::RandomnessSource::on_initialize(System::block_number());
+			<AuthorInherent as nimbus_primitives::CanAuthor<_>>::can_author(&author, &slot)
+		}
+	}
+
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {
 		fn benchmark_metadata(extra: bool) -> (
