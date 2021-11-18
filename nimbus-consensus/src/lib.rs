@@ -46,7 +46,7 @@ use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use std::convert::TryInto;
-use nimbus_primitives::{NimbusApi, NIMBUS_KEY_ID, NimbusId, CompatibleDigestItem};
+use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId, CompatibleDigestItem};
 mod import_queue;
 mod manual_seal;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
@@ -182,7 +182,7 @@ pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<Cryp
 pub(crate) fn first_eligible_key<B: BlockT, C>(client: Arc<C>, keystore: &dyn SyncCryptoStore, parent: &B::Header, slot_number: u32) -> Option<CryptoTypePublicPair>
 where
 	C: ProvideRuntimeApi<B>,
-	C::Api: NimbusApi<B, NimbusId>,
+	C::Api: AuthorFilterAPI<B, NimbusId>,
 {
 	// Get all the available keys
 	let available_keys =
@@ -195,14 +195,14 @@ where
 		return None;
 	}
 
-	// Get `NimbusApi` version.
+	// Get `AuthorFilterAPI` version.
 	let api_version = client.runtime_api()
-		.api_version::<dyn NimbusApi<B, NimbusId>>(&BlockId::Hash(parent.hash()))
+		.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&BlockId::Hash(parent.hash()))
 		.expect("Runtime api access to not error.");
 
 	if api_version.is_none() {
 		tracing::error!(
-			target: LOG_TARGET, "Could not find `NimbusApi` version.",
+			target: LOG_TARGET, "Could not find `AuthorFilterAPI` version.",
 		);
 		return None;
 	}
@@ -271,7 +271,7 @@ where
 			.try_into()
 			.expect("signature bytes produced by keystore should be right length");
 	
-	<DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature)
+	<DigestItemFor<B> as CompatibleDigestItem>::nimbus_seal(signature)
 }
 
 #[async_trait::async_trait]
@@ -291,7 +291,7 @@ where
 		Proof = <EnableProofRecording as ProofRecording>::Proof,
 	>,
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
-	ParaClient::Api: NimbusApi<B, NimbusId>,
+	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData)>,
 {
 	async fn produce_candidate(
@@ -442,7 +442,7 @@ where
 	// Rust bug: https://github.com/rust-lang/rust/issues/24159
 	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block, NimbusId>,
+	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	NimbusConsensusBuilder::new(
@@ -524,7 +524,7 @@ where
 	/// Build the nimbus consensus.
 	fn build(self) -> Box<dyn ParachainConsensus<Block>>
 	where
-		ParaClient::Api: NimbusApi<Block, NimbusId>,
+		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		self.relay_chain_client.clone().execute_with(self)
 	}
@@ -546,7 +546,7 @@ where
 	BI: BlockImport<Block> + Send + Sync + 'static,
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block, NimbusId>,
+	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	type Output = Box<dyn ParachainConsensus<Block>>;
@@ -558,7 +558,7 @@ where
 		PBackend::State: sp_api::StateBackend<sp_runtime::traits::BlakeTwo256>,
 		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
 		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
-		ParaClient::Api: NimbusApi<Block, NimbusId>,
+		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		Box::new(NimbusConsensus::new(
 			self.para_id,

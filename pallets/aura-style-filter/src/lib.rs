@@ -49,8 +49,8 @@ pub mod pallet {
 	use sp_std::vec::Vec;
 
 	//TODO Now that the CanAuthor trait takes a slot number, I don't think this even needs to be a pallet.
-	// I think it could be just a simple type.
-	/// The Nimbus Aura pallet
+	// I think it could eb jsut a simple type.
+	/// The Author Filter pallet
 	#[pallet::pallet]
 	pub struct Pallet<T>(PhantomData<T>);
 

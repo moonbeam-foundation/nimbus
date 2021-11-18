@@ -19,6 +19,7 @@ jobs:
       - name: Setup Rust toolchain
         run: rustup show
 
+      #TODO consider using the rust Cache action like tin the rust CI
       - uses: actions/cache@v2
         with:
           path: |
