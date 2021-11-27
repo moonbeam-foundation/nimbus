@@ -4,7 +4,7 @@ Nimbus is a framework for building parachain consensus systems on [cumulus](http
 
 Given the regular six-second pulse-like nature of the relay chain, it is natural to think about slot-
 based consensus algorithms for parachains. The parachain network is responsible for liveness and
-decetralization and the relay chain is responsible for finality. There is a rich design space for such
+decentralization and the relay chain is responsible for finality. There is a rich design space for such
 algorithms, yet some tasks are common to all (or most) of them. These common tasks include:
 
 * Signing and signature checking blocks
@@ -19,13 +19,13 @@ along with helpful traits for implementing the parts that researchers and develo
 ## Try the Demo
 
 While Nimbus is primarily a development framework meant to be included in other projects, it is useful
-to see a basic network in action. An example network is included in the `polkadot-parachains` example collator. You
-can build it with `cargo build --release` and launch it like any other cumulus parachian.
+to see a basic network in action. An example network is included in the `parachain-template` example collator. You
+can build it with `cargo build --release` and launch it like any other cumulus parachain.
 Make sure to specify `--chain nimbus`.
 
 Rather than reiterate how to start a relay-para network here, I'll simply recommend you use the
 excellent [Polkadot Launch](https://github.com/paritytech/polkadot-launch) tool. This repo was tested with version 1.4.1.
-A [lauch config file](./nimbus-launch-config.json) is provided.
+A [lauch config file](./parachain-template/polkadot-launch/config.json) is provided.
 
 ```bash
 # Install polkadot launch (I used v1.4.1)
@@ -42,7 +42,7 @@ git checkout nimbus
 cargo build --release
 
 # Launch the multi-chain
-polkdot-launch ./nimbus-launch-config.json
+polkdot-launch ./parachain-template/polkadot-launch/config.json
 ```
 
 To learn more about launching relay-para networks, check out the [cumulus workshop](https://substrate.dev/cumulus-workshop).
@@ -88,7 +88,7 @@ A primary job of a consensus engine is deciding who can author each block. Some 
 may rotate the set each era, others may elect an always-changing subset of all potential authors. There
 is much space for creativity, research, and design, and Nimbus strives to provide a flexible interface
 for this creative work. You can express all the interesting parts of your
-consensus engine simply by creating filters that implement the `CanAuthor` trait. The rest of Nimubs will #JustWork for you.
+consensus engine simply by creating filters that implement the `CanAuthor` trait. The rest of Nimbus will #JustWork for you.
 
 This repository comes with a few example filters already, and additional examples are welcome. The examples are:
 * PseudoRandom FixedSized Subset - This filter takes a finite set (eg a staked set) and filters it down to a pseudo-random
@@ -175,8 +175,7 @@ One node authors the block, then it is processed in three different ways.
 
 ## Roadmap
 
-The Nimbus framework is intended to be loosely coupled with Cumulus. It remains to be
-seen whether it should live with Cumulus or in its own repository.
+The Nimbus framework is intended to be loosely coupled with Cumulus.
 
 ### Next tasks
 * Proper trait for interacting with digests
