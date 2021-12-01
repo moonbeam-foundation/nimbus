@@ -148,6 +148,7 @@ where
 
 		block_params.post_digests.push(seal);
 
+		// The standard is to use the longest chain rule. This is overridden by the `NimbusBlockImport` in the parachain context.
 		block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::LongestChain);
 
 		debug!(target: crate::LOG_TARGET, "🪲 Just finished verifier. posthash from params is {:?}", &block_params.post_hash());
