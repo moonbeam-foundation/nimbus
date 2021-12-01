@@ -185,7 +185,7 @@ where
 		// those keys until we find one that is eligible. If none are eligible, we skip this slot.
 		// If multiple are eligible, we only author with the first one.
 
-		// Get allthe available keys
+		// Get all the available keys
 		let available_keys =
 			SyncCryptoStore::keys(&*self.keystore, NIMBUS_KEY_ID)
 			.expect("keystore should return the keys it has");
@@ -208,9 +208,7 @@ where
 				.expect("should be able to dynamically detect the api");
 			
 			if has_nimbus_api {
-				// I understand that this is ambiguous, but I don't understand how to disambiguate.
-				// The compiler's suggestion does not work. See where I called the author filter api below.
-				self.parachain_client.runtime_api().can_author(at, nimbus_id, slot, parent)
+				NimbusApi::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
 					.expect("NimbusAPI should not return error")
 			} else {
 				// There are two versions of the author filter, so we do that dynamically also.
@@ -220,7 +218,7 @@ where
 					.expect("Should be able to detect author filter version");
 
 				if api_version >= 2 {
-					AuthorFilterAPI::can_author(&self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
+					AuthorFilterAPI::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
 						.expect("Author API should not return error")
 				} else {
 					#[allow(deprecated)]
