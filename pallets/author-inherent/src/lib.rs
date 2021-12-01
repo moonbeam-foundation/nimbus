@@ -103,8 +103,7 @@ pub mod pallet {
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
 			Self::find_author(pre_runtime_digests).map(|author_account|{
-				// If we got an author id this way, store the account in pallet storage so we can
-				// confirm its existence in on_finalize
+				// Store the author so we can confirm eligibility after the inherents have executed
 				<Author<T>>::put(&author_account);
 
 				//TODO, should we reuse the same trait that Pallet Authorship uses?
@@ -130,29 +129,12 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Inherent to set the author of a block
+		/// This inherent is now a no-op. The extrinsic remains to facilitate a smooth transition
+		/// for live chains. All nodes must begin including the pre-runtime digest before
+		/// this runtime goes live.
 		#[pallet::weight(0)]
 		pub fn set_author(origin: OriginFor<T>, author: T::AuthorId) -> DispatchResult {
 			ensure_none(origin)?;
-
-			ensure!(<Author<T>>::get().is_none(), Error::<T>::AuthorAlreadySet);
-			debug!(target: "author-inherent", "Author was not already set");
-
-			let account = T::AccountLookup::lookup_account(&author).ok_or(
-				Error::<T>::NoAccountId
-			)?;
-
-			// Update storage
-			Author::<T>::put(&account);
-
-			// Add a consensus digest so the client-side worker can verify the block is signed by the right person.
-			frame_system::Pallet::<T>::deposit_log(DigestItem::<T::Hash>::Consensus(
-				NIMBUS_ENGINE_ID,
-				author.encode(),
-			));
-
-			// Notify any other pallets that are listening (eg rewards) about the author
-			T::EventHandler::note_author(account);
 
 			Ok(())
 		}
