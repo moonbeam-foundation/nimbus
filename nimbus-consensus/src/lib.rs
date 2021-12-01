@@ -32,7 +32,7 @@ use log::{info, warn, debug};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
-use sp_api::{ProvideRuntimeApi, BlockId};
+use sp_api::{ProvideRuntimeApi, BlockId, ApiExt as _};
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment,
 	ProofRecording, Proposal, Proposer,
@@ -45,7 +45,7 @@ use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use sp_std::convert::TryInto;
-use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId};
+use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NIMBUS_KEY_ID, NimbusId};
 mod import_queue;
 
 const LOG_TARGET: &str = "filtering-consensus";
@@ -170,6 +170,8 @@ where
 		Proof = <EnableProofRecording as ProofRecording>::Proof,
 	>,
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
+	// We require the client to provide both runtime apis, but only one will be called
+	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
 {
@@ -196,6 +198,42 @@ where
 
 		let at = BlockId::Hash(parent.hash());
 
+		// helper function for calling the various runtime apis and versions
+		let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
+
+			let has_nimbus_api = self
+				.parachain_client
+				.runtime_api()
+				.has_api::<dyn NimbusApi<B>>(at)
+				.expect("should be able to dynamically detect the api");
+			
+			if has_nimbus_api {
+				// I understand that this is ambiguous, but I don't understand how to disambiguate.
+				// The compiler's suggestion does not work. See where I called the author filter api below.
+				self.parachain_client.runtime_api().can_author(at, nimbus_id, slot, parent)
+					.expect("NimbusAPI should not return error")
+			} else {
+				// There are two versions of the author filter, so we do that dynamically also.
+				let api_version = self.parachain_client.runtime_api()
+					.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
+					.expect("Runtime api access to not error.")
+					.expect("Should be able to detect author filter version");
+
+				if api_version >= 2 {
+					AuthorFilterAPI::can_author(&self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
+						.expect("Author API should not return error")
+				} else {
+					#[allow(deprecated)]
+					self.parachain_client.runtime_api().can_author_before_version_2(
+						&at,
+						nimbus_id,
+						slot,
+					)
+					.expect("Author API version 2 should not return error")
+				}
+			}
+		};
+
 		// Iterate keys until we find an eligible one, or run out of candidates.
 		// If we are skipping prediction, then we author withthe first key we find.
 		// prediction skipping only really amkes sense when there is a single key in the keystore.
@@ -206,13 +244,12 @@ where
 
 			// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 			// That I should be passing Vec<u8> across the wasm boundary?
-			self.parachain_client.runtime_api().can_author(
+			prediction_helper(
 				&at,
 				NimbusId::from_slice(&type_public_pair.1),
 				validation_data.relay_parent_number,
 				parent,
 			)
-			.expect("NimbusAPI should not return error")
 		});
 
 		// If there are no eligible keys, print the log, and exit early.
@@ -372,6 +409,7 @@ where
 	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block>,
+	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	NimbusConsensusBuilder::new(
@@ -454,6 +492,7 @@ where
 	fn build(self) -> Box<dyn ParachainConsensus<Block>>
 	where
 		ParaClient::Api: NimbusApi<Block>,
+		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		self.relay_chain_client.clone().execute_with(self)
 	}
@@ -476,6 +515,7 @@ where
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block>,
+	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	type Output = Box<dyn ParachainConsensus<Block>>;
@@ -488,6 +528,7 @@ where
 		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
 		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
 		ParaClient::Api: NimbusApi<Block>,
+		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		Box::new(NimbusConsensus::new(
 			self.para_id,
