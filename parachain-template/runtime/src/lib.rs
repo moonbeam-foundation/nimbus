@@ -703,12 +703,10 @@ impl_runtime_apis! {
 		}
 	}
 
-	// We also implement the olf AuthorFilterAPI to support nodes that have not yet updated the client side.
+	// We also implement the olf AuthorFilterAPI to meet the trait bounds on the client side.
 	impl nimbus_primitives::AuthorFilterAPI<Block, NimbusId> for Runtime {
-		fn can_author(author: NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
-			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest, frame_system::InitKind::Inspection);
-			<Self as pallet_author_slot_filter::Config>::RandomnessSource::on_initialize(System::block_number());
-			<AuthorInherent as nimbus_primitives::CanAuthor<_>>::can_author(&author, &slot)
+		fn can_author(_: NimbusId, _: u32, _: &<Block as BlockT>::Header) -> bool {
+			panic!("AuthorFilterAPI is no longer supported. Please update your client.")
 		}
 	}
 
