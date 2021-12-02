@@ -12,8 +12,8 @@ on:
       - main
 
 jobs:
-  check:
-    name: Check
+  cargo-check:
+    name: Cargo check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -29,3 +29,19 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+
+  check-copyright:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Find un-copyrighted files
+        run: |
+          find . -name '*.rs' -not -path "*/parachain-template/*" -exec grep  -H -E -o -c Copyright {} \; | grep ':0' || true
+          FILECOUNT=$(find . -name '*.rs' -not -path "*/parachain-template/*" -exec grep  -H -E -o -c  'Copyright'  {} \; | grep -c ':0' || true)
+          if [[ $FILECOUNT -eq 0 ]]; then
+            true
+          else
+            false
+          fi
