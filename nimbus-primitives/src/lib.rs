@@ -22,7 +22,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sp_std::vec::Vec;
-use parity_scale_codec::Codec;
 use sp_application_crypto::KeyTypeId;
 use sp_runtime::ConsensusEngineId;
 use sp_runtime::traits::BlockNumberProvider;
@@ -95,13 +94,13 @@ impl<T> CanAuthor<T> for () {
 /// different notions of AccoutId. It is also generic over the AuthorId to
 /// support the usecase where the author inherent is used for beneficiary info
 /// and contains an AccountId directly.
-pub trait AccountLookup<AuthorId, AccountId> {
-	fn lookup_account(author: &AuthorId) -> Option<AccountId>;
+pub trait AccountLookup<AccountId> {
+	fn lookup_account(author: &NimbusId) -> Option<AccountId>;
 }
 
 // A dummy impl used in simple tests
-impl<AuthorId, AccountId> AccountLookup<AuthorId, AccountId> for () {
-	fn lookup_account(_: &AuthorId) -> Option<AccountId> {
+impl<AccountId> AccountLookup<AccountId> for () {
+	fn lookup_account(_: &NimbusId) -> Option<AccountId> {
 		None
 	}
 }
@@ -136,9 +135,21 @@ sp_application_crypto::with_pair! {
 
 
 sp_api::decl_runtime_apis! {
-	/// The runtime api used to predict whether an author will be eligible in the given slot
+	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
+	pub trait NimbusApi {
+		fn can_author(author: NimbusId, relay_parent: u32, parent_header: &Block::Header) -> bool;
+	}
+
+
+	// #[deprecated]
+	// The macro ended up always making the warning print
+	// so I decided to bail on that.
+	
+	/// Deprecated Runtime API from earlier versions of Nimbus.
+	/// It is retained for now so that live chains can temporarily support both
+	/// for a smooth migration. It will be removed soon.
 	#[api_version(2)]
-	pub trait AuthorFilterAPI<AuthorId: Codec> {
+	pub trait AuthorFilterAPI<AuthorId: parity_scale_codec::Codec> {
 		#[changed_in(2)]
 		fn can_author(author: AuthorId, relay_parent: u32) -> bool;
 
