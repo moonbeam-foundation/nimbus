@@ -145,6 +145,17 @@
 <span id="145">145</span>
 <span id="146">146</span>
 <span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
 
@@ -169,7 +180,6 @@
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">sp_std::vec::Vec</span>;
-<span class="kw">use</span> <span class="ident">parity_scale_codec::Codec</span>;
 <span class="kw">use</span> <span class="ident">sp_application_crypto::KeyTypeId</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::ConsensusEngineId</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::BlockNumberProvider</span>;
@@ -242,13 +252,13 @@
 <span class="doccomment">/// different notions of AccoutId. It is also generic over the AuthorId to</span>
 <span class="doccomment">/// support the usecase where the author inherent is used for beneficiary info</span>
 <span class="doccomment">/// and contains an AccountId directly.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident">AuthorId</span>, <span class="ident">AccountId</span><span class="op">&gt;</span> {
-	<span class="kw">fn</span> <span class="ident">lookup_account</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">AuthorId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> {
+	<span class="kw">fn</span> <span class="ident">lookup_account</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">NimbusId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span>;
 }
 
 <span class="comment">// A dummy impl used in simple tests</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">AuthorId</span>, <span class="ident">AccountId</span><span class="op">&gt;</span> <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident">AuthorId</span>, <span class="ident">AccountId</span><span class="op">&gt;</span> <span class="kw">for</span> () {
-	<span class="kw">fn</span> <span class="ident">lookup_account</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">AuthorId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> <span class="kw">for</span> () {
+	<span class="kw">fn</span> <span class="ident">lookup_account</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">NimbusId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> {
 		<span class="prelude-val">None</span>
 	}
 }
@@ -283,16 +293,27 @@
 
 
 <span class="macro">sp_api::decl_runtime_apis!</span> {
-	<span class="doccomment">/// The runtime api used to predict whether an author will be eligible in the given slot</span>
+	<span class="doccomment">/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot</span>
+	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">NimbusApi</span> {
+		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="ident">NimbusId</span>, <span class="ident">relay_parent</span>: <span class="ident">u32</span>, <span class="ident">parent_header</span>: <span class="kw-2">&amp;</span><span class="ident">Block::Header</span>) -&gt; <span class="ident">bool</span>;
+	}
+
+
+	<span class="comment">// #[deprecated]</span>
+	<span class="comment">// The macro ended up always making the warning print</span>
+	<span class="comment">// so I decided to bail on that.</span>
+	
+	<span class="doccomment">/// Deprecated Runtime API from earlier versions of Nimbus.</span>
+	<span class="doccomment">/// It is retained for now so that live chains can temporarily support both</span>
+	<span class="doccomment">/// for a smooth migration. It will be removed soon.</span>
 	<span class="attribute">#[<span class="ident">api_version</span>(<span class="number">2</span>)]</span>
-	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">AuthorId</span>: <span class="ident">Codec</span><span class="op">&gt;</span> {
+	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">AuthorId</span>: <span class="ident">parity_scale_codec::Codec</span><span class="op">&gt;</span> {
 		<span class="attribute">#[<span class="ident">changed_in</span>(<span class="number">2</span>)]</span>
 		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="ident">AuthorId</span>, <span class="ident">relay_parent</span>: <span class="ident">u32</span>) -&gt; <span class="ident">bool</span>;
 
 		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="ident">AuthorId</span>, <span class="ident">relay_parent</span>: <span class="ident">u32</span>, <span class="ident">parent_header</span>: <span class="kw-2">&amp;</span><span class="ident">Block::Header</span>) -&gt; <span class="ident">bool</span>;
 	}
-}
-</code></pre></div>
+}</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_primitives" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>

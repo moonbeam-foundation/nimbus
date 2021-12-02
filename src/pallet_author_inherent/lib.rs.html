@@ -355,16 +355,6 @@
 <span id="355">355</span>
 <span id="356">356</span>
 <span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
-<span id="364">364</span>
-<span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2021 Parity Technologies (UK) Ltd.</span>
 <span class="comment">// This file is part of Cumulus.</span>
 
@@ -393,10 +383,10 @@
 <span class="kw">use</span> <span class="ident">parity_scale_codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
 <span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">InherentIdentifier</span>, <span class="ident">IsFatalError</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
-	<span class="ident">ConsensusEngineId</span>, <span class="ident">DigestItem</span>, <span class="ident">RuntimeString</span>, <span class="ident">RuntimeAppPublic</span>,
+	<span class="ident">ConsensusEngineId</span>, <span class="ident">DigestItem</span>, <span class="ident">RuntimeString</span>,
 };
 <span class="kw">use</span> <span class="ident">log::debug</span>;
-<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AccountLookup</span>, <span class="ident">CanAuthor</span>, <span class="ident">NIMBUS_ENGINE_ID</span>, <span class="ident">SlotBeacon</span>, <span class="ident">EventHandler</span>, <span class="ident">INHERENT_IDENTIFIER</span>};
+<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AccountLookup</span>, <span class="ident">CanAuthor</span>, <span class="ident">NimbusId</span>, <span class="ident">NIMBUS_ENGINE_ID</span>, <span class="ident">SlotBeacon</span>, <span class="ident">EventHandler</span>, <span class="ident">INHERENT_IDENTIFIER</span>};
 
 <span class="kw">mod</span> <span class="ident">exec</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">exec::BlockExecutor</span>;
@@ -415,15 +405,10 @@
 
 	<span class="attribute">#[<span class="ident">pallet::config</span>]</span>
 	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Config</span>: <span class="ident">frame_system::Config</span> {
-		<span class="comment">// This is copied from Aura. I wonder if I really need all those trait bounds. For now I&#39;ll leave them.</span>
-		<span class="comment">// TODO could I remove this type entirely and just always use NimbusId? Why didn&#39;t Aura do that?</span>
-		<span class="doccomment">/// The identifier type for an authority.</span>
-		<span class="kw">type</span> <span class="ident">AuthorId</span>: <span class="ident">Member</span> <span class="op">+</span> <span class="ident">Parameter</span> <span class="op">+</span> <span class="ident">RuntimeAppPublic</span> <span class="op">+</span> <span class="ident">Default</span> <span class="op">+</span> <span class="ident">MaybeSerializeDeserialize</span>;
-
 		<span class="doccomment">/// A type to convert between AuthorId and AccountId. This is useful when you want to associate</span>
 		<span class="doccomment">/// Block authoring behavior with an AccoutId for rewards or slashing. If you do not need to</span>
 		<span class="doccomment">/// hold an AccountID responsible for authoring use `()` which acts as an identity mapping.</span>
-		<span class="kw">type</span> <span class="ident">AccountLookup</span>: <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::AuthorId</span>, <span class="ident"><span class="self">Self</span>::AccountId</span><span class="op">&gt;</span>;
+		<span class="kw">type</span> <span class="ident">AccountLookup</span>: <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::AccountId</span><span class="op">&gt;</span>;
 
 		<span class="doccomment">/// Other pallets that want to be informed about block authorship</span>
 		<span class="kw">type</span> <span class="ident">EventHandler</span>: <span class="ident">EventHandler</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::AccountId</span><span class="op">&gt;</span>;
@@ -439,14 +424,10 @@
 		<span class="kw">type</span> <span class="ident">SlotBeacon</span>: <span class="ident">SlotBeacon</span>;
 	}
 
-	<span class="comment">// If the AccountId type supports it, then this pallet can be BoundToRuntimeAppPublic</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">sp_runtime::BoundToRuntimeAppPublic</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-	<span class="kw">where</span>
-		<span class="ident">T</span>: <span class="ident">Config</span>,
-		<span class="ident">T::AuthorId</span>: <span class="ident">RuntimeAppPublic</span>,
-	{
-		<span class="kw">type</span> <span class="ident">Public</span> <span class="op">=</span> <span class="ident">T::AuthorId</span>;
+	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">sp_runtime::BoundToRuntimeAppPublic</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+		<span class="kw">type</span> <span class="ident">Public</span> <span class="op">=</span> <span class="ident">NimbusId</span>;
 	}
+
 	<span class="attribute">#[<span class="ident">pallet::error</span>]</span>
 	<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="doccomment">/// Author already set in block.</span>
@@ -474,7 +455,7 @@
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="doccomment">/// Inherent to set the author of a block</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>((<span class="number">0</span>, <span class="ident">DispatchClass::Mandatory</span>))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_author</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">author</span>: <span class="ident">T::AuthorId</span>) -&gt; <span class="ident">DispatchResult</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_author</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">author</span>: <span class="ident">NimbusId</span>) -&gt; <span class="ident">DispatchResult</span> {
 
 			<span class="ident">ensure_none</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 
@@ -522,7 +503,7 @@
 
 		<span class="kw">fn</span> <span class="ident">create_inherent</span>(<span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">InherentData</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Call</span><span class="op">&gt;</span> {
 			<span class="kw">let</span> <span class="ident">author_raw</span> <span class="op">=</span> <span class="ident">data</span>
-				.<span class="ident">get_data</span>::<span class="op">&lt;</span><span class="ident">T::AuthorId</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">INHERENT_IDENTIFIER</span>);
+				.<span class="ident">get_data</span>::<span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">INHERENT_IDENTIFIER</span>);
 
 			<span class="macro">debug!</span>(<span class="string">&quot;In create_inherent (runtime side). data is&quot;</span>);
 			<span class="macro">debug!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">author_raw</span>);
@@ -549,10 +530,10 @@
 		}
 	}
 
-	<span class="doccomment">/// To learn whether a given AuthorId can author, you call the author-inherent directly.</span>
-	<span class="doccomment">/// It will do the mapping lookup.</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">CanAuthor</span><span class="op">&lt;</span><span class="ident">T::AuthorId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">T::AuthorId</span>, <span class="ident">slot</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">bool</span> {
+	<span class="doccomment">/// To learn whether a given NimbusId can author, as opposed to an account id, you</span>
+	<span class="doccomment">/// can ask this pallet directly. It will do the mapping for you.</span>
+	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">CanAuthor</span><span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">NimbusId</span>, <span class="ident">slot</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">bool</span> {
 			<span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">T::AccountLookup::lookup_account</span>(<span class="kw-2">&amp;</span><span class="ident">author</span>) {
 				<span class="prelude-val">Some</span>(<span class="ident">account</span>) =&gt; <span class="ident">account</span>,
 				<span class="comment">// Authors whose account lookups fail will not be eligible</span>
@@ -608,7 +589,6 @@
 		<span class="ident">testing::Header</span>,
 		<span class="ident">traits</span>::{<span class="ident">BlakeTwo256</span>, <span class="ident">IdentityLookup</span>},
 	};
-	<span class="kw">use</span> <span class="ident">nimbus_primitives::NimbusId</span>;
 	<span class="kw">use</span> <span class="ident">sp_core::Public</span>;
 	<span class="kw">const</span> <span class="ident">TEST_AUTHOR_ID</span>: [<span class="ident">u8</span>; <span class="number">32</span>] <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">32</span>];
 	<span class="kw">const</span> <span class="ident">BOGUS_AUTHOR_ID</span>: [<span class="ident">u8</span>; <span class="number">32</span>] <span class="op">=</span> [<span class="number">1u8</span>; <span class="number">32</span>];
