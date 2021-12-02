@@ -537,7 +537,6 @@ impl cumulus_pallet_dmp_queue::Config for Runtime {
 }
 
 impl pallet_author_inherent::Config for Runtime {
-	type AuthorId = NimbusId;
 	// We start a new slot each time we see a new relay block.
 	type SlotBeacon = cumulus_pallet_parachain_system::RelaychainBlockNumberProvider<Self>;
 	type AccountLookup = PotentialAuthorSet;
@@ -551,9 +550,7 @@ impl pallet_author_slot_filter::Config for Runtime {
 	type PotentialAuthors = PotentialAuthorSet;
 }
 
-impl pallet_account_set::Config for Runtime {
-	type AuthorId = NimbusId;
-}
+impl pallet_account_set::Config for Runtime {}
 
 /// Configure the pallet template in pallets/template.
 impl pallet_template::Config for Runtime {
@@ -693,8 +690,8 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl nimbus_primitives::AuthorFilterAPI<Block, nimbus_primitives::NimbusId> for Runtime {
-		fn can_author(author: nimbus_primitives::NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
+	impl nimbus_primitives::NimbusApi<Block> for Runtime {
+		fn can_author(author: NimbusId, slot: u32, parent_header: &<Block as BlockT>::Header) -> bool {
 			// This runtime uses an entropy source that is updated during block initialization
 			// Therefore we need to initialize it to match the state it will be in when the
 			// next block is being executed.
@@ -703,6 +700,13 @@ impl_runtime_apis! {
 
 			// And now the actual prediction call
 			<AuthorInherent as nimbus_primitives::CanAuthor<_>>::can_author(&author, &slot)
+		}
+	}
+
+	// We also implement the olf AuthorFilterAPI to meet the trait bounds on the client side.
+	impl nimbus_primitives::AuthorFilterAPI<Block, NimbusId> for Runtime {
+		fn can_author(_: NimbusId, _: u32, _: &<Block as BlockT>::Header) -> bool {
+			panic!("AuthorFilterAPI is no longer supported. Please update your client.")
 		}
 	}
 
