@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-// You should have received a copy of the GNU General Public License
-// along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
-
 //! The nimbus consensus client-side worker
 //!
 //! It queries the in-runtime filter to determine whether any keys
