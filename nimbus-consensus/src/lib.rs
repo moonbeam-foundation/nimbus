@@ -305,7 +305,7 @@ where
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
 {
-	async fn produce_candidate( 
+	async fn produce_candidate(
 		&mut self,
 		parent: &B::Header,
 		relay_parent: PHash,
