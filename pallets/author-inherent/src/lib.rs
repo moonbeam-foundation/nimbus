@@ -27,7 +27,7 @@ use nimbus_primitives::{
 };
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
-use sp_runtime::{ConsensusEngineId, DigestItem, RuntimeAppPublic, RuntimeString};
+use sp_runtime::{ConsensusEngineId, RuntimeString};
 
 mod exec;
 pub use exec::BlockExecutor;
@@ -124,7 +124,7 @@ pub mod pallet {
 		/// for live chains. All nodes must begin including the pre-runtime digest before
 		/// this runtime goes live.
 		#[pallet::weight(0)]
-		pub fn set_author(origin: OriginFor<T>, author: NimbusId) -> DispatchResult {
+		pub fn set_author(origin: OriginFor<T>, _author: NimbusId) -> DispatchResult {
 			ensure_none(origin)?;
 
 			Ok(())
