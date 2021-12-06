@@ -183,6 +183,7 @@ pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<Cryp
 pub(crate) fn first_eligible_key<B: BlockT, C>(client: Arc<C>, keystore: &dyn SyncCryptoStore, parent: &B::Header, slot_number: u32) -> Option<CryptoTypePublicPair>
 where
 	C: ProvideRuntimeApi<B>,
+	C::Api: NimbusApi<B>,
 	C::Api: AuthorFilterAPI<B, NimbusId>,
 {
 	// Get all the available keys
@@ -194,46 +195,53 @@ where
 	if available_keys.is_empty() {
 		warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
 		return None;
-	}
+	}let at = BlockId::Hash(parent.hash());
 
-	// Get `AuthorFilterAPI` version.
-	let api_version = client.runtime_api()
-		.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&BlockId::Hash(parent.hash()))
-		.expect("Runtime api access to not error.");
+	// helper function for calling the various runtime apis and versions
+	let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
 
-	if api_version.is_none() {
-		tracing::error!(
-			target: LOG_TARGET, "Could not find `AuthorFilterAPI` version.",
-		);
-		return None;
-	}
-	let api_version = api_version.unwrap();
+		let has_nimbus_api = client
+			.runtime_api()
+			.has_api::<dyn NimbusApi<B>>(at)
+			.expect("should be able to dynamically detect the api");
+		
+		if has_nimbus_api {
+			NimbusApi::can_author(&*client.runtime_api(), at, nimbus_id, slot, parent)
+				.expect("NimbusAPI should not return error")
+		} else {
+			// There are two versions of the author filter, so we do that dynamically also.
+			let api_version = client.runtime_api()
+				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
+				.expect("Runtime api access to not error.")
+				.expect("Should be able to detect author filter version");
+
+			if api_version >= 2 {
+				AuthorFilterAPI::can_author(&*client.runtime_api(), at, nimbus_id, slot, parent)
+					.expect("Author API should not return error")
+			} else {
+				#[allow(deprecated)]
+				client.runtime_api().can_author_before_version_2(
+					&at,
+					nimbus_id,
+					slot_number,
+				)
+				.expect("Author API version 2 should not return error")
+			}
+		}
+	};
 
 	// Iterate keys until we find an eligible one, or run out of candidates.
-	// If we are skipping prediction, then we author with the first key we find.
-	// prediction skipping only really makes sense when there is a single key in the keystore.
-	//TODO I think there is a nicer way to do this than handle the type_public_pair. We only use the .1 field
+	// If we are skipping prediction, then we author withthe first key we find.
+	// prediction skipping only really amkes sense when there is a single key in the keystore.
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
-
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
-		if api_version >= 2 {
-			client.runtime_api().can_author(
-				&BlockId::Hash(parent.hash()),
-				NimbusId::from_slice(&type_public_pair.1),
-				slot_number,
-				parent,
-			)
-			.expect("Author API should not return error")
-		} else {
-			#[allow(deprecated)]
-			client.runtime_api().can_author_before_version_2(
-				&BlockId::Hash(parent.hash()),
-				NimbusId::from_slice(&type_public_pair.1),
-				slot_number,
-			)
-			.expect("Author API before version 2 should not return error")
-		}
+		prediction_helper(
+			&at,
+			NimbusId::from_slice(&type_public_pair.1),
+			slot_number,
+			parent,
+		)
 	});
 
 	// If there are no eligible keys, print the log, and exit early.
@@ -297,83 +305,19 @@ where
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
 {
-	async fn produce_candidate(
+	async fn produce_candidate( 
 		&mut self,
 		parent: &B::Header,
 		relay_parent: PHash,
 		validation_data: &PersistedValidationData,
 	) -> Option<ParachainCandidate<B>> {
-		// Design decision: We will check the keystore for any available keys. Then we will iterate
-		// those keys until we find one that is eligible. If none are eligible, we skip this slot.
-		// If multiple are eligible, we only author with the first one.
 
-		// Get all the available keys
-		let available_keys =
-			SyncCryptoStore::keys(&*self.keystore, NIMBUS_KEY_ID)
-			.expect("keystore should return the keys it has");
-
-		// Print a more helpful message than "not eligible" when there are no keys at all.
-		if available_keys.is_empty() {
-			warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
-			return None;
+		let maybe_key = if self.skip_prediction {
+			first_available_key(&*self.keystore)
 		}
 		else {
 			first_eligible_key::<B, ParaClient>(self.parachain_client.clone(), &*self.keystore, parent, validation_data.relay_parent_number)
 		};
-
-		let at = BlockId::Hash(parent.hash());
-
-		// helper function for calling the various runtime apis and versions
-		let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
-
-			let has_nimbus_api = self
-				.parachain_client
-				.runtime_api()
-				.has_api::<dyn NimbusApi<B>>(at)
-				.expect("should be able to dynamically detect the api");
-			
-			if has_nimbus_api {
-				NimbusApi::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
-					.expect("NimbusAPI should not return error")
-			} else {
-				// There are two versions of the author filter, so we do that dynamically also.
-				let api_version = self.parachain_client.runtime_api()
-					.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
-					.expect("Runtime api access to not error.")
-					.expect("Should be able to detect author filter version");
-
-				if api_version >= 2 {
-					AuthorFilterAPI::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
-						.expect("Author API should not return error")
-				} else {
-					#[allow(deprecated)]
-					self.parachain_client.runtime_api().can_author_before_version_2(
-						&at,
-						nimbus_id,
-						slot,
-					)
-					.expect("Author API version 2 should not return error")
-				}
-			}
-		};
-
-		// Iterate keys until we find an eligible one, or run out of candidates.
-		// If we are skipping prediction, then we author withthe first key we find.
-		// prediction skipping only really amkes sense when there is a single key in the keystore.
-		let maybe_key = available_keys.into_iter().find(|type_public_pair| {
-
-			// If we are not predicting, just return the first one we find.
-			self.skip_prediction ||
-
-			// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
-			// That I should be passing Vec<u8> across the wasm boundary?
-			prediction_helper(
-				&at,
-				NimbusId::from_slice(&type_public_pair.1),
-				validation_data.relay_parent_number,
-				parent,
-			)
-		});
 
 		// If there are no eligible keys, print the log, and exit early.
 		let type_public_pair = match maybe_key {
