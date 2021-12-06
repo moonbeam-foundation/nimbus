@@ -2,7 +2,7 @@
 name = "nimbus-consensus"
 description = "Client-side worker for the Nimbus family of slot-based consensus algorithms"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 # Substrate deps
