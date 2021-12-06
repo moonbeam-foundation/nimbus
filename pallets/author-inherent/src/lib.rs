@@ -118,7 +118,7 @@ pub mod pallet {
 			Author::<T>::put(&account);
 
 			// Add a consensus digest so the client-side worker can verify the block is signed by the right person.
-			frame_system::Pallet::<T>::deposit_log(DigestItem::<T::Hash>::Consensus(
+			frame_system::Pallet::<T>::deposit_log(DigestItem::Consensus(
 				NIMBUS_ENGINE_ID,
 				author.encode(),
 			));

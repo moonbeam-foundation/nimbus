@@ -45,7 +45,7 @@ use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use sp_std::convert::TryInto;
-use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NIMBUS_KEY_ID, NimbusId};
+use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NIMBUS_KEY_ID, NimbusId, digests::CompatibleDigestItem};
 mod import_queue;
 
 const LOG_TARGET: &str = "filtering-consensus";
@@ -315,7 +315,7 @@ where
 				.clone()
 				.try_into().ok()?;
 		
-		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
+		let sig_digest = <sp_runtime::DigestItem as CompatibleDigestItem>::nimbus_seal(signature);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
