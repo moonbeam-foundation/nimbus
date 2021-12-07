@@ -63,7 +63,7 @@ where
 
 		debug!(target: "executive", "🪲 Signature according to executive is {:?}", signature);
 
-		// Grab the author information from either the preruntime digest or the consensus digest
+		// Grab the author information from the preruntime digest
 		//TODO use the trait
 		let claimed_author = header
 			.digest()
@@ -75,7 +75,7 @@ where
 					_ => None,
 				}
 			})
-			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
+			.expect("Expected pre-runtime digest that contains author id bytes");
 
 		debug!(target: "executive", "🪲 Claimed Author according to executive is {:?}", claimed_author);
 

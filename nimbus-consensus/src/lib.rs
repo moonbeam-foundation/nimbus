@@ -232,7 +232,7 @@ where
 
 	// Iterate keys until we find an eligible one, or run out of candidates.
 	// If we are skipping prediction, then we author with the first key we find.
-	// prediction skipping only really amkes sense when there is a single key in the keystore.
+	// prediction skipping only really makes sense when there is a single key in the keystore.
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
