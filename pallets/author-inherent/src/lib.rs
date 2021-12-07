@@ -104,18 +104,6 @@ pub mod pallet {
 
 			T::DbWeight::get().write * 2
 		}
-
-		fn on_finalize(_: T::BlockNumber) {
-			//TODO this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
-			// In the meantime, it will allow Alan to more easily profile block authorship.
-			let author = <Author<T>>::get()
-				.expect("Block invalid, no authorship information supplied.");
-			
-			assert!(
-				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
-				"Block invalid, supplied author is not eligible."
-			);
-		}
 	}
 
 	#[pallet::call]
@@ -123,7 +111,9 @@ pub mod pallet {
 		/// This inherent is now a no-op. The extrinsic remains to facilitate a smooth transition
 		/// for live chains. All nodes must begin including the pre-runtime digest before
 		/// this runtime goes live.
-		#[pallet::weight(0)]
+		/// 
+		/// The weight is increased for economic security and as an incentive mechanism to upgrade nodes.
+		#[pallet::weight(10 * T::DbWeight::get().write)]
 		pub fn set_author(origin: OriginFor<T>, _author: NimbusId) -> DispatchResult {
 			ensure_none(origin)?;
 
@@ -134,6 +124,26 @@ pub mod pallet {
 			//
 			// But from a practical standpoint, there are no good usecases for inserting different
 			// data, and there is some risk of offchain tools or indexers getting confused.
+
+			Ok(())
+		}
+
+
+		/// This inherent is a workaround to run code after the "real" inherents have executed,
+		/// but before transactions are executed.
+		/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
+		/// TODO better weight. For now we jsut set a somewhat soncervative fudge factor
+		#[pallet::weight(10 * T::DbWeight::get().write)]
+		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResult {
+			ensure_none(origin)?;
+
+			let author = <Author<T>>::get()
+				.expect("Block invalid, no authorship information supplied in preruntime digest.");
+			
+			assert!(
+				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
+				"Block invalid, supplied author is not eligible."
+			);
 
 			Ok(())
 		}
