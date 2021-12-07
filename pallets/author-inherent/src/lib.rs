@@ -133,8 +133,8 @@ pub mod pallet {
 		/// but before transactions are executed.
 		/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
 		/// TODO better weight. For now we jsut set a somewhat soncervative fudge factor
-		#[pallet::weight(10 * T::DbWeight::get().write)]
-		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResult {
+		#[pallet::weight((10 * T::DbWeight::get().write, DispatchClass::Mandatory))]
+		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
 
 			let author = <Author<T>>::get()
@@ -145,7 +145,7 @@ pub mod pallet {
 				"Block invalid, supplied author is not eligible."
 			);
 
-			Ok(())
+			Ok(Pays::No.into())
 		}
 	}
 
