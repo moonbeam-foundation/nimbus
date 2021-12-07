@@ -127,6 +127,14 @@ pub mod pallet {
 		pub fn set_author(origin: OriginFor<T>, _author: NimbusId) -> DispatchResult {
 			ensure_none(origin)?;
 
+			//TODO Consider asserting that the data included here matches the preruntime digest.
+			//
+			// I don't believe the runtime is any more correct by asserting that. This data
+			// is now just grafitti.
+			//
+			// But from a practical standpoint, there are no good usecases for inserting different
+			// data, and there is some risk of offchain tools or indexers getting confused.
+
 			Ok(())
 		}
 	}
