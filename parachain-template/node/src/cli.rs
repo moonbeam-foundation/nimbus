@@ -92,7 +92,7 @@ pub struct Cli {
 
 	/// Relaychain arguments
 	#[structopt(raw = true)]
-	pub relaychain_args: Vec<String>,
+	pub relay_chain_args: Vec<String>,
 }
 
 #[derive(Debug)]
