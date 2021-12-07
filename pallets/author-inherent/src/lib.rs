@@ -21,7 +21,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use frame_support::traits::FindAuthor;
-use log::debug;
 use nimbus_primitives::{
 	AccountLookup, CanAuthor, EventHandler, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID, NimbusId,
 };
@@ -108,27 +107,6 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// This inherent is now a no-op. The extrinsic remains to facilitate a smooth transition
-		/// for live chains. All nodes must begin including the pre-runtime digest before
-		/// this runtime goes live.
-		/// 
-		/// The weight is increased for economic security and as an incentive mechanism to upgrade nodes.
-		#[pallet::weight(10 * T::DbWeight::get().write)]
-		pub fn set_author(origin: OriginFor<T>, _author: NimbusId) -> DispatchResult {
-			ensure_none(origin)?;
-
-			//TODO Consider asserting that the data included here matches the preruntime digest.
-			//
-			// I don't believe the runtime is any more correct by asserting that. This data
-			// is now just grafitti.
-			//
-			// But from a practical standpoint, there are no good usecases for inserting different
-			// data, and there is some risk of offchain tools or indexers getting confused.
-
-			Ok(())
-		}
-
-
 		/// This inherent is a workaround to run code after the "real" inherents have executed,
 		/// but before transactions are executed.
 		/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
@@ -155,21 +133,22 @@ pub mod pallet {
 		type Error = InherentError;
 		const INHERENT_IDENTIFIER: InherentIdentifier = INHERENT_IDENTIFIER;
 
-		fn create_inherent(data: &InherentData) -> Option<Self::Call> {
-			let author_raw = data
-				.get_data::<NimbusId>(&INHERENT_IDENTIFIER);
+		fn is_inherent_required(_: &InherentData) -> Result<Option<Self::Error>, Self::Error> {
+			// Return Ok(Some(_)) unconditionally because this inherent is required in every block
+			// If it is not found, throw an AuthorInherentRequired error.
+			Ok(Some(InherentError::Other(
+				sp_runtime::RuntimeString::Borrowed("Inherent required to manually initiate author validation"),
+			)))
+		}
 
-			debug!("In create_inherent (runtime side). data is");
-			debug!("{:?}", author_raw);
-
-			let author = author_raw
-				.expect("Gets and decodes authorship inherent data")?;
-
-			Some(Call::set_author{author})
+		// Regardless of whether the client is still supplying the author id,
+		// we will create the new empty-payload inherent extrinsic.
+		fn create_inherent(_data: &InherentData) -> Option<Self::Call> {
+			Some(Call::kick_off_authorship_validation{})
 		}
 
 		fn is_inherent(call: &Self::Call) -> bool {
-			matches!(call, Call::set_author{..})
+			matches!(call, Call::kick_off_authorship_validation{..})
 		}
 	}
 
