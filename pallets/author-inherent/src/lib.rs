@@ -102,7 +102,7 @@ pub mod pallet {
 				T::EventHandler::note_author(author_account);
 			});
 
-			0
+			T::DbWeight::get().write * 2
 		}
 
 		fn on_finalize(_: T::BlockNumber) {
