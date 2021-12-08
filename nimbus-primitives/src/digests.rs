@@ -25,8 +25,7 @@
 
 use crate::{NIMBUS_ENGINE_ID, NimbusSignature, NimbusId};
 use sp_runtime::generic::DigestItem;
-use parity_scale_codec::{Encode, Codec};
-use sp_std::fmt::Debug;
+use parity_scale_codec::Encode;
 
 /// A digest item which is usable with aura consensus.
 pub trait CompatibleDigestItem: Sized {
@@ -51,9 +50,7 @@ pub trait CompatibleDigestItem: Sized {
 	fn as_nimbus_consensus_digest(&self) -> Option<NimbusId>;
 }
 
-impl<Hash> CompatibleDigestItem for DigestItem<Hash> where
-	Hash: Debug + Send + Sync + Eq + Clone + Codec + 'static
-{
+impl CompatibleDigestItem for DigestItem {
 	fn nimbus_pre_digest(author: NimbusId) -> Self {
 		DigestItem::PreRuntime(NIMBUS_ENGINE_ID, author.encode())
 	}
