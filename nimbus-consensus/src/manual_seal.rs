@@ -25,7 +25,7 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{TransactionFor, ProvideRuntimeApi, HeaderT};
 use sp_inherents::InherentData;
-use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NimbusId, CompatibleDigestItem, NIMBUS_ENGINE_ID};
+use nimbus_primitives::{NimbusApi, NimbusId, CompatibleDigestItem, NIMBUS_ENGINE_ID};
 use cumulus_primitives_parachain_inherent::{ParachainInherentData, INHERENT_IDENTIFIER as PARACHAIN_INHERENT_IDENTIFIER};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
@@ -44,7 +44,6 @@ where
 	B: BlockT,
 	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: NimbusApi<B>,
-	C::Api: AuthorFilterAPI<B, NimbusId>,
 	{
 	type Transaction = TransactionFor<C, B>;
 
