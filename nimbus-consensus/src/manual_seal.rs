@@ -17,7 +17,7 @@
 use std::sync::Arc;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::{
-	traits::{Block as BlockT, DigestFor},
+	traits::{Block as BlockT},
 	generic::{Digest, DigestItem},
 };
 use sp_core::crypto::Public;
@@ -52,7 +52,7 @@ where
 		&self,
 		parent: &B::Header,
 		inherents: &InherentData,
-	) -> Result<DigestFor<B>, Error> {
+	) -> Result<Digest, Error> {
 		// Retrieve the relay chain block number to use as the slot number from the parachain inherent
 		let slot_number = inherents
 			.get_data::<ParachainInherentData>(&PARACHAIN_INHERENT_IDENTIFIER)

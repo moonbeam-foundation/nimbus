@@ -40,13 +40,13 @@ use sp_consensus::{
 };
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT, DigestItemFor};
+use sp_runtime::{traits::{Block as BlockT, HashFor, Header as HeaderT}, DigestItem};
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
 use std::convert::TryInto;
-use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NIMBUS_KEY_ID, NimbusId, NimbusApi, CompatibleDigestItem};
+use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId, NimbusApi, CompatibleDigestItem};
 mod import_queue;
 mod manual_seal;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
@@ -255,7 +255,7 @@ where
 	maybe_key
 }
 
-pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItemFor<B>
+pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItem
 where
 	B: BlockT,
 {
@@ -280,7 +280,7 @@ where
 			.try_into()
 			.expect("signature bytes produced by keystore should be right length");
 	
-	<DigestItemFor<B> as CompatibleDigestItem>::nimbus_seal(signature)
+	<DigestItem as CompatibleDigestItem>::nimbus_seal(signature)
 }
 
 #[async_trait::async_trait]
