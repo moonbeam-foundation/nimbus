@@ -32,7 +32,7 @@ use log::{info, warn, debug};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
-use sp_api::{ProvideRuntimeApi, BlockId, ApiExt};
+use sp_api::{ProvideRuntimeApi, BlockId};
 use sp_application_crypto::CryptoTypePublicPair;
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment,
@@ -204,7 +204,7 @@ where
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
-		NimbusApi::can_author(&*client.runtime_api(), at, NimbusId::from_slice(&type_public_pair.1), slot, parent)
+		NimbusApi::can_author(&*client.runtime_api(), &at, NimbusId::from_slice(&type_public_pair.1), slot_number, parent)
 			.expect("NimbusAPI should not return error")
 	});
 
