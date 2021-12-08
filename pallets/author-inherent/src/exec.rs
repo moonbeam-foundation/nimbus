@@ -21,9 +21,9 @@ use frame_support::traits::ExecuteBlock;
 use sp_api::{BlockT, HeaderT};
 // For some reason I can't get these logs to actually print
 use log::debug;
-use sp_runtime::{RuntimeAppPublic, generic::DigestItem};
-use nimbus_primitives::{NIMBUS_ENGINE_ID, NimbusId, digests::CompatibleDigestItem};
+use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NIMBUS_ENGINE_ID};
 use sp_application_crypto::Public as _;
+use sp_runtime::{generic::DigestItem, RuntimeAppPublic};
 
 /// Block executive to be used by relay chain validators when validating parachain blocks built
 /// with the nimubs consensus family.
@@ -57,7 +57,9 @@ where
 		debug!(target: "executive", "In hacked Executive. digests after stripping {:?}", header.digest());
 		debug!(target: "executive", "The seal we got {:?}", seal);
 
-		let signature = seal.as_nimbus_seal().unwrap_or_else(||panic!("HeaderUnsealed"));
+		let signature = seal
+			.as_nimbus_seal()
+			.unwrap_or_else(|| panic!("HeaderUnsealed"));
 
 		debug!(target: "executive", "🪲 Header hash after popping digest {:?}", header.hash());
 
@@ -69,28 +71,25 @@ where
 			.digest()
 			.logs
 			.iter()
-			.find_map(|digest| {
-				match *digest {
-					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
-					_ => None,
+			.find_map(|digest| match *digest {
+				DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => {
+					Some(author_id.clone())
 				}
+				_ => None,
 			})
 			.expect("Expected pre-runtime digest that contains author id bytes");
 
 		debug!(target: "executive", "🪲 Claimed Author according to executive is {:?}", claimed_author);
 
 		// Verify the signature
-		let valid_signature = NimbusId::from_slice(&claimed_author).verify(
-			&header.hash(),
-			&signature
-		);
+		let valid_signature =
+			NimbusId::from_slice(&claimed_author).verify(&header.hash(), &signature);
 
 		debug!(target: "executive", "🪲 Valid signature? {:?}", valid_signature);
 
-		if !valid_signature{
+		if !valid_signature {
 			panic!("Block signature invalid");
 		}
-		
 
 		// Now that we've verified the signature, hand execution off to the inner executor
 		// which is probably the normal frame executive.

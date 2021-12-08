@@ -16,11 +16,11 @@ pub use pallet::*;
 #[pallet]
 pub mod pallet {
 
+	use frame_support::pallet_prelude::*;
 	#[cfg(feature = "std")]
 	use log::warn;
-	use frame_support::pallet_prelude::*;
-	use sp_std::vec::Vec;
 	use nimbus_primitives::{AccountLookup, CanAuthor, NimbusId};
+	use sp_std::vec::Vec;
 
 	/// The Account Set pallet
 	#[pallet::pallet]
@@ -28,7 +28,7 @@ pub mod pallet {
 
 	/// Configuration trait of this pallet.
 	#[pallet::config]
-	pub trait Config: frame_system::Config  {}
+	pub trait Config: frame_system::Config {}
 
 	/// The set of accounts that is stored in this pallet.
 	#[pallet::storage]

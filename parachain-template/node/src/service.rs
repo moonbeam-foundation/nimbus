@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 // Local Runtime Types
 use parachain_template_runtime::{
-	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi, NimbusId
+	opaque::Block, AccountId, Balance, Hash, Index as Nonce, NimbusId, RuntimeApi,
 };
 
 use nimbus_consensus::{
@@ -22,6 +22,7 @@ use cumulus_primitives_core::ParaId;
 use cumulus_primitives_parachain_inherent::MockValidationDataInherentDataProvider;
 
 // Substrate Imports
+use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
 use sc_network::NetworkService;
 use sc_service::{Configuration, PartialComponents, Role, TFullBackend, TFullClient, TaskManager};
@@ -30,7 +31,6 @@ use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
-use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
@@ -116,7 +116,9 @@ where
 	let telemetry_worker_handle = telemetry.as_ref().map(|(worker, _)| worker.handle());
 
 	let telemetry = telemetry.map(|(worker, telemetry)| {
-		task_manager.spawn_handle().spawn("telemetry", worker.run());
+		task_manager
+			.spawn_handle()
+			.spawn("telemetry", None, worker.run());
 		telemetry
 	});
 
@@ -133,17 +135,17 @@ where
 	);
 
 	let import_queue = nimbus_consensus::import_queue(
-			client.clone(),
-			client.clone(),
-			move |_, _| async move {
-				let time = sp_timestamp::InherentDataProvider::from_system_time();
+		client.clone(),
+		client.clone(),
+		move |_, _| async move {
+			let time = sp_timestamp::InherentDataProvider::from_system_time();
 
-				Ok((time,))
-			},
-			&task_manager.spawn_essential_handle(),
-			config.prometheus_registry().clone(),
-			parachain,
-		)?;
+			Ok((time,))
+		},
+		&task_manager.spawn_essential_handle(),
+		config.prometheus_registry().clone(),
+		parachain,
+	)?;
 
 	let params = PartialComponents {
 		backend,
@@ -214,7 +216,7 @@ where
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
 	if matches!(parachain_config.role, Role::Light) {
-		return Err("Light client not supported!".into())
+		return Err("Light client not supported!".into());
 	}
 
 	let parachain_config = prepare_node_config(parachain_config);
@@ -251,7 +253,6 @@ where
 			transaction_pool: transaction_pool.clone(),
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue: import_queue.clone(),
-			on_demand: None,
 			block_announce_validator_builder: Some(Box::new(|_| block_announce_validator)),
 			warp_sync: None,
 		})?;
@@ -272,8 +273,6 @@ where
 	};
 
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		on_demand: None,
-		remote_blockchain: None,
 		rpc_extensions_builder,
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
@@ -369,20 +368,22 @@ pub async fn start_parachain_node(
 
 			let relay_chain_backend = relay_chain_node.backend.clone();
 			let relay_chain_client = relay_chain_node.client.clone();
-			Ok(
-				build_nimbus_consensus(
-					BuildNimbusConsensusParams {
-						para_id: id,
-						proposer_factory,
-						block_import: client.clone(),
-						relay_chain_client: relay_chain_node.client.clone(),
-						relay_chain_backend: relay_chain_node.backend.clone(),
-						parachain_client: client.clone(),
-						keystore,
-						skip_prediction: force_authoring,
-						create_inherent_data_providers:
-							move |_, (relay_parent, validation_data, author_id)| {
-								let parachain_inherent =
+			Ok(build_nimbus_consensus(BuildNimbusConsensusParams {
+				para_id: id,
+				proposer_factory,
+				block_import: client.clone(),
+				relay_chain_client: relay_chain_node.client.clone(),
+				relay_chain_backend: relay_chain_node.backend.clone(),
+				parachain_client: client.clone(),
+				keystore,
+				skip_prediction: force_authoring,
+				create_inherent_data_providers: move |_,
+				                                      (
+					relay_parent,
+					validation_data,
+					author_id,
+				)| {
+					let parachain_inherent =
 								cumulus_primitives_parachain_inherent::ParachainInherentData::create_at_with_client(
 									relay_parent,
 									&relay_chain_client,
@@ -390,23 +391,21 @@ pub async fn start_parachain_node(
 									&validation_data,
 									id,
 								);
-								async move {
-									let time = sp_timestamp::InherentDataProvider::from_system_time();
+					async move {
+						let time = sp_timestamp::InherentDataProvider::from_system_time();
 
-									let parachain_inherent = parachain_inherent.ok_or_else(|| {
-										Box::<dyn std::error::Error + Send + Sync>::from(
-											"Failed to create parachain inherent",
-										)
-									})?;
+						let parachain_inherent = parachain_inherent.ok_or_else(|| {
+							Box::<dyn std::error::Error + Send + Sync>::from(
+								"Failed to create parachain inherent",
+							)
+						})?;
 
-									let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
+						let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
 
-									Ok((time, parachain_inherent, author))
-								}
-							},
-					},
-				),
-			)
+						Ok((time, parachain_inherent, author))
+					}
+				},
+			}))
 		},
 	)
 	.await
@@ -432,7 +431,6 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			transaction_pool: transaction_pool.clone(),
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue,
-			on_demand: None,
 			block_announce_validator_builder: None,
 			warp_sync: None,
 		})?;
@@ -471,8 +469,6 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		task_manager: &mut task_manager,
 		transaction_pool: transaction_pool.clone(),
 		rpc_extensions_builder,
-		on_demand: None,
-		remote_blockchain: None,
 		backend,
 		system_rpc_tx,
 		config,
@@ -494,12 +490,10 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			client: client.clone(),
 			pool: transaction_pool.clone(),
 			select_chain,
-			consensus_data_provider: Some(Box::new(
-				NimbusManualSealConsensusDataProvider{
-					keystore: keystore_container.sync_keystore(),
-					client: client.clone()
-				}
-			)),
+			consensus_data_provider: Some(Box::new(NimbusManualSealConsensusDataProvider {
+				keystore: keystore_container.sync_keystore(),
+				client: client.clone(),
+			})),
 			create_inherent_data_providers: |_block, _extra_args| {
 				async move {
 					let time = sp_timestamp::InherentDataProvider::from_system_time();
@@ -515,12 +509,14 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 
 					Ok((time, mocked_parachain))
 				}
-			}
+			},
 		});
 
-		task_manager
-			.spawn_essential_handle()
-			.spawn_blocking("instant-seal", authorship_future);
+		task_manager.spawn_essential_handle().spawn_blocking(
+			"instant-seal",
+			None,
+			authorship_future,
+		);
 	};
 
 	network_starter.start_network();

@@ -3,7 +3,7 @@ name = "pallet-author-inherent"
 version = "0.1.0"
 description = "Inject the block author via an inherent, and persist it via a Consensus digest"
 authors = ["PureStake"]
-edition = "2018"
+edition = "2021"
 license = 'GPL-3.0-only'
 
 [dependencies]

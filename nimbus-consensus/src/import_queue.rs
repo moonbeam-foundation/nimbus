@@ -16,25 +16,23 @@
 
 use std::{marker::PhantomData, sync::Arc};
 
+use log::debug;
+use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NimbusPair, NIMBUS_ENGINE_ID};
+use sc_consensus::{
+	import_queue::{BasicQueue, Verifier as VerifierT},
+	BlockImport, BlockImportParams,
+};
 use sp_api::ProvideRuntimeApi;
+use sp_application_crypto::{Pair as _, Public as _};
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::Result as ClientResult;
-use sp_consensus::{
-	error::Error as ConsensusError, CacheKeyId,
-};
-use sc_consensus::{
-	BlockImport, BlockImportParams, 
-	import_queue::{BasicQueue, Verifier as VerifierT},
-};
+use sp_consensus::{error::Error as ConsensusError, CacheKeyId};
 use sp_inherents::{CreateInherentDataProviders, InherentDataProvider};
 use sp_runtime::{
 	generic::BlockId,
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem, NIMBUS_ENGINE_ID};
-use sp_application_crypto::{Pair as _, Public as _};
-use log::debug;
 
 /// The Nimbus verifier strips the seal digest, and checks that it is a valid signature by
 /// the same key that was injected into the runtime and noted in the Seal digest.
@@ -53,7 +51,7 @@ where
 	Block: BlockT,
 	Client: ProvideRuntimeApi<Block> + Send + Sync,
 	<Client as ProvideRuntimeApi<Block>>::Api: BlockBuilderApi<Block>,
-	CIDP: CreateInherentDataProviders<Block, ()> ,
+	CIDP: CreateInherentDataProviders<Block, ()>,
 {
 	async fn verify(
 		&mut self,
@@ -65,33 +63,55 @@ where
 		),
 		String,
 	> {
-
-		debug!(target: crate::LOG_TARGET, "🪲 Header hash before popping digest {:?}", block_params.header.hash());
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Header hash before popping digest {:?}",
+			block_params.header.hash()
+		);
 		// Grab the seal digest. Assume it is last (since it is a seal after-all).
-		let seal = block_params.header.digest_mut().pop().expect("Block should have at least one digest on it");
+		let seal = block_params
+			.header
+			.digest_mut()
+			.pop()
+			.expect("Block should have at least one digest on it");
 
-		let signature = seal.as_nimbus_seal().ok_or_else(||String::from("HeaderUnsealed"))?;
+		let signature = seal
+			.as_nimbus_seal()
+			.ok_or_else(|| String::from("HeaderUnsealed"))?;
 
-		debug!(target: crate::LOG_TARGET, "🪲 Header hash after popping digest {:?}", block_params.header.hash());
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Header hash after popping digest {:?}",
+			block_params.header.hash()
+		);
 
-		debug!(target: crate::LOG_TARGET, "🪲 Signature according to verifier is {:?}", signature);
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Signature according to verifier is {:?}", signature
+		);
 
 		// Grab the author information from either the preruntime digest or the consensus digest
 		//TODO use the trait
-		let claimed_author = block_params.header
+		let claimed_author = block_params
+			.header
 			.digest()
 			.logs
 			.iter()
-			.find_map(|digest| {
-				match *digest {
-					DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
-					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
-					_ => None,
+			.find_map(|digest| match *digest {
+				DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => {
+					Some(author_id.clone())
 				}
+				DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => {
+					Some(author_id.clone())
+				}
+				_ => None,
 			})
 			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
 
-		debug!(target: crate::LOG_TARGET, "🪲 Claimed Author according to verifier is {:?}", claimed_author);
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Claimed Author according to verifier is {:?}", claimed_author
+		);
 
 		// Verify the signature
 		let valid_signature = NimbusPair::verify(
@@ -100,9 +120,12 @@ where
 			&NimbusId::from_slice(&claimed_author),
 		);
 
-		debug!(target: crate::LOG_TARGET, "🪲 Valid signature? {:?}", valid_signature);
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Valid signature? {:?}", valid_signature
+		);
 
-		if !valid_signature{
+		if !valid_signature {
 			return Err("Block signature invalid".into());
 		}
 
@@ -151,7 +174,11 @@ where
 		// The standard is to use the longest chain rule. This is overridden by the `NimbusBlockImport` in the parachain context.
 		block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::LongestChain);
 
-		debug!(target: crate::LOG_TARGET, "🪲 Just finished verifier. posthash from params is {:?}", &block_params.post_hash());
+		debug!(
+			target: crate::LOG_TARGET,
+			"🪲 Just finished verifier. posthash from params is {:?}",
+			&block_params.post_hash()
+		);
 
 		Ok((block_params, None))
 	}
@@ -181,10 +208,7 @@ where
 
 	Ok(BasicQueue::new(
 		verifier,
-		Box::new(NimbusBlockImport::new(
-			block_import,
-			parachain,
-		)),
+		Box::new(NimbusBlockImport::new(block_import, parachain)),
 		None,
 		spawner,
 		registry,
@@ -197,10 +221,10 @@ where
 /// context, new blocks should not be imported as best. Cumulus's ParachainBlockImport
 /// handles this correctly, but does not work in non-parachain contexts.
 /// This block import has a field indicating whether we should apply parachain rules or not.
-/// 
+///
 /// There may be additional nimbus-specific logic here in the future, but for now it is
 /// only the conditional parachain logic
-pub struct NimbusBlockImport<I>{
+pub struct NimbusBlockImport<I> {
 	inner: I,
 	parachain_context: bool,
 }
@@ -208,7 +232,7 @@ pub struct NimbusBlockImport<I>{
 impl<I> NimbusBlockImport<I> {
 	/// Create a new instance.
 	pub fn new(inner: I, parachain_context: bool) -> Self {
-		Self{
+		Self {
 			inner,
 			parachain_context,
 		}

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-use sp_inherents::{InherentData, InherentIdentifier};
 use parity_scale_codec::Encode;
+use sp_inherents::{InherentData, InherentIdentifier};
 
 /// The InherentIdentifier for nimbus's author inherent
 pub const INHERENT_IDENTIFIER: InherentIdentifier = *b"author__";
@@ -27,7 +27,9 @@ pub struct InherentDataProvider<AuthorId>(pub AuthorId);
 
 #[cfg(feature = "std")]
 #[async_trait::async_trait]
-impl<AuthorId: Encode + Send + Sync> sp_inherents::InherentDataProvider for InherentDataProvider<AuthorId> {
+impl<AuthorId: Encode + Send + Sync> sp_inherents::InherentDataProvider
+	for InherentDataProvider<AuthorId>
+{
 	fn provide_inherent_data(
 		&self,
 		inherent_data: &mut InherentData,
@@ -42,10 +44,12 @@ impl<AuthorId: Encode + Send + Sync> sp_inherents::InherentDataProvider for Inhe
 	) -> Option<Result<(), sp_inherents::Error>> {
 		// Dont' process modules from other inherents
 		if *identifier != INHERENT_IDENTIFIER {
-			return None
+			return None;
 		}
 
 		// All errors with the author inehrent are fatal
-		Some(Err(sp_inherents::Error::Application(Box::from(String::from("Error processing author inherent")))))
+		Some(Err(sp_inherents::Error::Application(Box::from(
+			String::from("Error processing author inherent"),
+		))))
 	}
 }
