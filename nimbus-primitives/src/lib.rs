@@ -1,18 +1,18 @@
-// Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Cumulus.
+// Copyright 2019-2021 PureStake Inc.
+// This file is part of Nimbus.
 
-// Cumulus is free software: you can redistribute it and/or modify
+// Nimbus is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Cumulus is distributed in the hope that it will be useful,
+// Nimbus is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
+// along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Nimbus Consensus Primitives
 //!
@@ -22,13 +22,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sp_std::vec::Vec;
-use parity_scale_codec::Codec;
 use sp_application_crypto::KeyTypeId;
 use sp_runtime::ConsensusEngineId;
 use sp_runtime::traits::BlockNumberProvider;
 
 pub mod digests;
 mod inherents;
+
+pub use digests::CompatibleDigestItem;
 
 pub use inherents::{INHERENT_IDENTIFIER, InherentDataProvider};
 
@@ -95,13 +96,13 @@ impl<T> CanAuthor<T> for () {
 /// different notions of AccoutId. It is also generic over the AuthorId to
 /// support the usecase where the author inherent is used for beneficiary info
 /// and contains an AccountId directly.
-pub trait AccountLookup<AuthorId, AccountId> {
-	fn lookup_account(author: &AuthorId) -> Option<AccountId>;
+pub trait AccountLookup<AccountId> {
+	fn lookup_account(author: &NimbusId) -> Option<AccountId>;
 }
 
 // A dummy impl used in simple tests
-impl<AuthorId, AccountId> AccountLookup<AuthorId, AccountId> for () {
-	fn lookup_account(_: &AuthorId) -> Option<AccountId> {
+impl<AccountId> AccountLookup<AccountId> for () {
+	fn lookup_account(_: &NimbusId) -> Option<AccountId> {
 		None
 	}
 }
@@ -136,9 +137,21 @@ sp_application_crypto::with_pair! {
 
 
 sp_api::decl_runtime_apis! {
-	/// The runtime api used to predict whether an author will be eligible in the given slot
+	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
+	pub trait NimbusApi {
+		fn can_author(author: NimbusId, relay_parent: u32, parent_header: &Block::Header) -> bool;
+	}
+
+
+	// #[deprecated]
+	// The macro ended up always making the warning print
+	// so I decided to bail on that.
+	
+	/// Deprecated Runtime API from earlier versions of Nimbus.
+	/// It is retained for now so that live chains can temporarily support both
+	/// for a smooth migration. It will be removed soon.
 	#[api_version(2)]
-	pub trait AuthorFilterAPI<AuthorId: Codec> {
+	pub trait AuthorFilterAPI<AuthorId: parity_scale_codec::Codec> {
 		#[changed_in(2)]
 		fn can_author(author: AuthorId, relay_parent: u32) -> bool;
 

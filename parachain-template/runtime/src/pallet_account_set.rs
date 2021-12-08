@@ -1,19 +1,3 @@
-// Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Cumulus.
-
-// Cumulus is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// Cumulus is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
-
 //! Small pallet responsible for storing a set of accounts, and their associated session keys.
 //! This is a minimal solution where staking would be used in practice.
 //! The accounts are set and genesis and never change.
@@ -36,7 +20,7 @@ pub mod pallet {
 	use log::warn;
 	use frame_support::pallet_prelude::*;
 	use sp_std::vec::Vec;
-	use nimbus_primitives::{AccountLookup, CanAuthor};
+	use nimbus_primitives::{AccountLookup, CanAuthor, NimbusId};
 
 	/// The Account Set pallet
 	#[pallet::pallet]
@@ -44,10 +28,7 @@ pub mod pallet {
 
 	/// Configuration trait of this pallet.
 	#[pallet::config]
-	pub trait Config: frame_system::Config  {
-		/// The identifier type for an author.
-		type AuthorId: Member + Parameter + MaybeSerializeDeserialize;
-	}
+	pub trait Config: frame_system::Config  {}
 
 	/// The set of accounts that is stored in this pallet.
 	#[pallet::storage]
@@ -63,13 +44,13 @@ pub mod pallet {
 	#[pallet::getter(fn account_id_of)]
 	/// A mapping from the AuthorIds used in the consensus layer
 	/// to the AccountIds runtime.
-	type Mapping<T: Config> = StorageMap<_, Twox64Concat, T::AuthorId, T::AccountId, OptionQuery>;
+	type Mapping<T: Config> = StorageMap<_, Twox64Concat, NimbusId, T::AccountId, OptionQuery>;
 
 	#[pallet::genesis_config]
 	/// Genesis config for author mapping pallet
 	pub struct GenesisConfig<T: Config> {
 		/// The associations that should exist at chain genesis
-		pub mapping: Vec<(T::AccountId, T::AuthorId)>,
+		pub mapping: Vec<(T::AccountId, NimbusId)>,
 	}
 
 	#[cfg(feature = "std")]
@@ -101,8 +82,8 @@ pub mod pallet {
 		}
 	}
 
-	impl<T: Config> AccountLookup<T::AuthorId, T::AccountId> for Pallet<T> {
-		fn lookup_account(author: &T::AuthorId) -> Option<T::AccountId> {
+	impl<T: Config> AccountLookup<T::AccountId> for Pallet<T> {
+		fn lookup_account(author: &NimbusId) -> Option<T::AccountId> {
 			Mapping::<T>::get(&author)
 		}
 	}

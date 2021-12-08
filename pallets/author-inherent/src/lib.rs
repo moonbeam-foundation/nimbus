@@ -1,18 +1,18 @@
-// Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Cumulus.
+// Copyright 2019-2021 PureStake Inc.
+// This file is part of Nimbus.
 
-// Cumulus is free software: you can redistribute it and/or modify
+// Nimbus is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Cumulus is distributed in the hope that it will be useful,
+// Nimbus is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
+// along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Pallet that allows block authors to include their identity in a block via an inherent.
 //! Currently the author does not _prove_ their identity, just states it. So it should not be used,
@@ -20,16 +20,13 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_support::{
-	traits::FindAuthor,
+use frame_support::traits::FindAuthor;
+use nimbus_primitives::{
+	AccountLookup, CanAuthor, EventHandler, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID, NimbusId,
 };
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
-use sp_runtime::{
-	ConsensusEngineId, DigestItem, RuntimeString, RuntimeAppPublic,
-};
-use log::debug;
-use nimbus_primitives::{AccountLookup, CanAuthor, NIMBUS_ENGINE_ID, SlotBeacon, EventHandler, INHERENT_IDENTIFIER};
+use sp_runtime::{ConsensusEngineId, RuntimeString};
 
 mod exec;
 pub use exec::BlockExecutor;
@@ -48,15 +45,10 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		// This is copied from Aura. I wonder if I really need all those trait bounds. For now I'll leave them.
-		// TODO could I remove this type entirely and just always use NimbusId? Why didn't Aura do that?
-		/// The identifier type for an authority.
-		type AuthorId: Member + Parameter + RuntimeAppPublic + Default + MaybeSerializeDeserialize;
-
 		/// A type to convert between AuthorId and AccountId. This is useful when you want to associate
 		/// Block authoring behavior with an AccoutId for rewards or slashing. If you do not need to
 		/// hold an AccountID responsible for authoring use `()` which acts as an identity mapping.
-		type AccountLookup: AccountLookup<Self::AuthorId, Self::AccountId>;
+		type AccountLookup: AccountLookup<Self::AccountId>;
 
 		/// Other pallets that want to be informed about block authorship
 		type EventHandler: EventHandler<Self::AccountId>;
@@ -72,14 +64,10 @@ pub mod pallet {
 		type SlotBeacon: SlotBeacon;
 	}
 
-	// If the AccountId type supports it, then this pallet can be BoundToRuntimeAppPublic
-	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T>
-	where
-		T: Config,
-		T::AuthorId: RuntimeAppPublic,
-	{
-		type Public = T::AuthorId;
+	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T> {
+		type Public = NimbusId;
 	}
+
 	#[pallet::error]
 	pub enum Error<T> {
 		/// Author already set in block.
@@ -90,7 +78,6 @@ pub mod pallet {
 		CannotBeAuthor,
 	}
 
-
 	/// Author of current block.
 	#[pallet::storage]
 	pub type Author<T: Config> = StorageValue<_, T::AccountId, OptionQuery>;
@@ -98,44 +85,45 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
+			// Start by clearing out the previous block's author
 			<Author<T>>::kill();
-			0
+
+			// Now extract the author from the digest
+			let digest = <frame_system::Pallet<T>>::digest();
+
+			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
+			Self::find_author(pre_runtime_digests).map(|author_account|{
+				// Store the author so we can confirm eligibility after the inherents have executed
+				<Author<T>>::put(&author_account);
+
+				//TODO, should we reuse the same trait that Pallet Authorship uses?
+				// Notify any other pallets that are listening (eg rewards) about the author
+				T::EventHandler::note_author(author_account);
+			});
+
+			T::DbWeight::get().write * 2
 		}
 	}
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Inherent to set the author of a block
-		#[pallet::weight((0, DispatchClass::Mandatory))]
-		pub fn set_author(origin: OriginFor<T>, author: T::AuthorId) -> DispatchResult {
-
+		/// This inherent is a workaround to run code after the "real" inherents have executed,
+		/// but before transactions are executed.
+		/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
+		/// TODO better weight. For now we jsut set a somewhat soncervative fudge factor
+		#[pallet::weight((10 * T::DbWeight::get().write, DispatchClass::Mandatory))]
+		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
 
-			ensure!(<Author<T>>::get().is_none(), Error::<T>::AuthorAlreadySet);
-			debug!(target: "author-inherent", "Author was not already set");
+			let author = <Author<T>>::get()
+				.expect("Block invalid, no authorship information supplied in preruntime digest.");
+			
+			assert!(
+				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
+				"Block invalid, supplied author is not eligible."
+			);
 
-			let slot = T::SlotBeacon::slot();
-			debug!(target: "author-inherent", "Slot is {:?}", slot);
-
-			let account = T::AccountLookup::lookup_account(&author).ok_or(
-				Error::<T>::NoAccountId
-			)?;
-
-			ensure!(T::CanAuthor::can_author(&account, &slot), Error::<T>::CannotBeAuthor);
-
-			// Update storage
-			Author::<T>::put(&account);
-
-			// Add a consensus digest so the client-side worker can verify the block is signed by the right person.
-			frame_system::Pallet::<T>::deposit_log(DigestItem::<T::Hash>::Consensus(
-				NIMBUS_ENGINE_ID,
-				author.encode(),
-			));
-
-			// Notify any other pallets that are listening (eg rewards) about the author
-			T::EventHandler::note_author(account);
-
-			Ok(())
+			Ok(Pays::No.into())
 		}
 	}
 
@@ -149,43 +137,46 @@ pub mod pallet {
 			// Return Ok(Some(_)) unconditionally because this inherent is required in every block
 			// If it is not found, throw an AuthorInherentRequired error.
 			Ok(Some(InherentError::Other(
-				sp_runtime::RuntimeString::Borrowed("AuthorInherentRequired"),
+				sp_runtime::RuntimeString::Borrowed("Inherent required to manually initiate author validation"),
 			)))
 		}
 
-		fn create_inherent(data: &InherentData) -> Option<Self::Call> {
-			let author_raw = data
-				.get_data::<T::AuthorId>(&INHERENT_IDENTIFIER);
-
-			debug!("In create_inherent (runtime side). data is");
-			debug!("{:?}", author_raw);
-
-			let author = author_raw
-				.expect("Gets and decodes authorship inherent data")?;
-
-			Some(Call::set_author{author})
+		// Regardless of whether the client is still supplying the author id,
+		// we will create the new empty-payload inherent extrinsic.
+		fn create_inherent(_data: &InherentData) -> Option<Self::Call> {
+			Some(Call::kick_off_authorship_validation{})
 		}
 
 		fn is_inherent(call: &Self::Call) -> bool {
-			matches!(call, Call::set_author{..})
+			matches!(call, Call::kick_off_authorship_validation{..})
 		}
 	}
 
 	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
-		fn find_author<'a, I>(_digests: I) -> Option<T::AccountId>
+		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
 		where
 			I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
 		{
-			// We don't use the digests at all.
-			// This will only return the correct author _after_ the authorship inherent is processed.
-			<Author<T>>::get()
+			for (id, mut data) in digests.into_iter() {
+				if id == NIMBUS_ENGINE_ID {
+					let author_id = NimbusId::decode(&mut data)
+						.expect("NimbusId encoded in preruntime digest must be valid");
+					
+					let author_account = T::AccountLookup::lookup_account(&author_id)
+						.expect("No Account Mapped to this NimbusId");
+					
+					return Some(author_account);
+				}
+			}
+	
+			None
 		}
 	}
 
-	/// To learn whether a given AuthorId can author, you call the author-inherent directly.
-	/// It will do the mapping lookup.
-	impl<T: Config> CanAuthor<T::AuthorId> for Pallet<T> {
-		fn can_author(author: &T::AuthorId, slot: &u32) -> bool {
+	/// To learn whether a given NimbusId can author, as opposed to an account id, you
+	/// can ask this pallet directly. It will do the mapping for you.
+	impl<T: Config> CanAuthor<NimbusId> for Pallet<T> {
+		fn can_author(author: &NimbusId, slot: &u32) -> bool {
 			let account = match T::AccountLookup::lookup_account(&author) {
 				Some(account) => account,
 				// Authors whose account lookups fail will not be eligible
@@ -225,7 +216,6 @@ impl InherentError {
 	}
 }
 
-
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -235,14 +225,13 @@ mod tests {
 		assert_noop, assert_ok, parameter_types,
 		traits::{OnFinalize, OnInitialize},
 	};
+	use sp_core::Public;
 	use sp_core::H256;
 	use sp_io::TestExternalities;
 	use sp_runtime::{
 		testing::Header,
 		traits::{BlakeTwo256, IdentityLookup},
 	};
-	use nimbus_primitives::NimbusId;
-	use sp_core::Public;
 	const TEST_AUTHOR_ID: [u8; 32] = [0u8; 32];
 	const BOGUS_AUTHOR_ID: [u8; 32] = [1u8; 32];
 
