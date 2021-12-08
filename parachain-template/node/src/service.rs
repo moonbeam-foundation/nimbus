@@ -429,7 +429,6 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			transaction_pool: transaction_pool.clone(),
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue,
-			on_demand: None,
 			block_announce_validator_builder: None,
 			warp_sync: None,
 		})?;
@@ -468,8 +467,6 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		task_manager: &mut task_manager,
 		transaction_pool: transaction_pool.clone(),
 		rpc_extensions_builder,
-		on_demand: None,
-		remote_blockchain: None,
 		backend,
 		system_rpc_tx,
 		config,
@@ -517,7 +514,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 
 		task_manager
 			.spawn_essential_handle()
-			.spawn_blocking("instant-seal", authorship_future);
+			.spawn_blocking("instant-seal", None, authorship_future);
 	};
 
 	network_starter.start_network();
