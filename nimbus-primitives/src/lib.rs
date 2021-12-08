@@ -29,6 +29,8 @@ use sp_runtime::traits::BlockNumberProvider;
 pub mod digests;
 mod inherents;
 
+pub use digests::CompatibleDigestItem;
+
 pub use inherents::{INHERENT_IDENTIFIER, InherentDataProvider};
 
 /// The given account ID is the author of the current block.

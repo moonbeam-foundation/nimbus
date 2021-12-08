@@ -50,6 +50,7 @@ substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate
 ## Substrate Client Dependencies
 sc-basic-authorship = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-chain-spec = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-consensus-manual-seal = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-cli = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }

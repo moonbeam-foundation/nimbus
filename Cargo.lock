@@ -4260,6 +4260,7 @@ dependencies = [
  "polkadot-client",
  "sc-client-api",
  "sc-consensus",
+ "sc-consensus-manual-seal",
  "sp-api",
  "sp-application-crypto",
  "sp-block-builder",
@@ -4269,7 +4270,6 @@ dependencies = [
  "sp-inherents",
  "sp-keystore",
  "sp-runtime",
- "sp-std",
  "substrate-prometheus-endpoint",
  "tracing",
 ]
@@ -5234,6 +5234,7 @@ dependencies = [
  "sc-cli",
  "sc-client-api",
  "sc-consensus",
+ "sc-consensus-manual-seal",
  "sc-executor",
  "sc-keystore",
  "sc-network",
@@ -7881,6 +7882,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "sc-consensus-manual-seal"
+version = "0.10.0-dev"
+source = "git+https://github.com/paritytech/substrate?branch=master#c087bbedbde16711450c186518314903a2949cb3"
+dependencies = [
+ "assert_matches",
+ "async-trait",
+ "derive_more",
+ "futures 0.3.18",
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "log",
+ "parity-scale-codec",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-consensus-babe",
+ "sc-consensus-epochs",
+ "sc-transaction-pool",
+ "sc-transaction-pool-api",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-babe",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-inherents",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-timestamp",
+ "substrate-prometheus-endpoint",
+]
+
+[[package]]
 name = "sc-consensus-slots"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#c087bbedbde16711450c186518314903a2949cb3"
@@ -10138,7 +10173,7 @@ dependencies = [
  "chrono",
  "lazy_static",
  "matchers",
- "parking_lot 0.11.2",
+ "parking_lot 0.9.0",
  "regex",
  "serde",
  "serde_json",
