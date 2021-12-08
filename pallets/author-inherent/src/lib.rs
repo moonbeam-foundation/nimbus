@@ -22,7 +22,8 @@
 
 use frame_support::traits::FindAuthor;
 use nimbus_primitives::{
-	AccountLookup, CanAuthor, EventHandler, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID, NimbusId,
+	AccountLookup, CanAuthor, EventHandler, NimbusId, SlotBeacon, INHERENT_IDENTIFIER,
+	NIMBUS_ENGINE_ID,
 };
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
@@ -35,9 +36,9 @@ pub use pallet::*;
 
 #[frame_support::pallet]
 pub mod pallet {
+	use super::*;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
-	use super::*;
 
 	/// The Author Inherent pallet. The core of the nimbus consensus framework's runtime presence.
 	#[pallet::pallet]
@@ -92,7 +93,7 @@ pub mod pallet {
 			let digest = <frame_system::Pallet<T>>::digest();
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			Self::find_author(pre_runtime_digests).map(|author_account|{
+			Self::find_author(pre_runtime_digests).map(|author_account| {
 				// Store the author so we can confirm eligibility after the inherents have executed
 				<Author<T>>::put(&author_account);
 
@@ -117,7 +118,7 @@ pub mod pallet {
 
 			let author = <Author<T>>::get()
 				.expect("Block invalid, no authorship information supplied in preruntime digest.");
-			
+
 			assert!(
 				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
 				"Block invalid, supplied author is not eligible."
@@ -128,7 +129,7 @@ pub mod pallet {
 	}
 
 	#[pallet::inherent]
-	impl<T:Config> ProvideInherent for Pallet<T> {
+	impl<T: Config> ProvideInherent for Pallet<T> {
 		type Call = Call<T>;
 		type Error = InherentError;
 		const INHERENT_IDENTIFIER: InherentIdentifier = INHERENT_IDENTIFIER;
@@ -137,18 +138,20 @@ pub mod pallet {
 			// Return Ok(Some(_)) unconditionally because this inherent is required in every block
 			// If it is not found, throw an AuthorInherentRequired error.
 			Ok(Some(InherentError::Other(
-				sp_runtime::RuntimeString::Borrowed("Inherent required to manually initiate author validation"),
+				sp_runtime::RuntimeString::Borrowed(
+					"Inherent required to manually initiate author validation",
+				),
 			)))
 		}
 
 		// Regardless of whether the client is still supplying the author id,
 		// we will create the new empty-payload inherent extrinsic.
 		fn create_inherent(_data: &InherentData) -> Option<Self::Call> {
-			Some(Call::kick_off_authorship_validation{})
+			Some(Call::kick_off_authorship_validation {})
 		}
 
 		fn is_inherent(call: &Self::Call) -> bool {
-			matches!(call, Call::kick_off_authorship_validation{..})
+			matches!(call, Call::kick_off_authorship_validation { .. })
 		}
 	}
 
@@ -161,14 +164,14 @@ pub mod pallet {
 				if id == NIMBUS_ENGINE_ID {
 					let author_id = NimbusId::decode(&mut data)
 						.expect("NimbusId encoded in preruntime digest must be valid");
-					
+
 					let author_account = T::AccountLookup::lookup_account(&author_id)
 						.expect("No Account Mapped to this NimbusId");
-					
+
 					return Some(author_account);
 				}
 			}
-	
+
 			None
 		}
 	}
@@ -182,7 +185,7 @@ pub mod pallet {
 				// Authors whose account lookups fail will not be eligible
 				None => {
 					return false;
-				},
+				}
 			};
 
 			T::CanAuthor::can_author(&account, slot)
@@ -316,9 +319,15 @@ mod tests {
 	#[test]
 	fn set_author_works() {
 		new_test_ext().execute_with(|| {
-			assert_ok!(AuthorInherent::set_author(Origin::none(), NimbusId::from_slice(&TEST_AUTHOR_ID)));
+			assert_ok!(AuthorInherent::set_author(
+				Origin::none(),
+				NimbusId::from_slice(&TEST_AUTHOR_ID)
+			));
 			roll_to(1);
-			assert_ok!(AuthorInherent::set_author(Origin::none(), NimbusId::from_slice(&TEST_AUTHOR_ID)));
+			assert_ok!(AuthorInherent::set_author(
+				Origin::none(),
+				NimbusId::from_slice(&TEST_AUTHOR_ID)
+			));
 			roll_to(2);
 		});
 	}
@@ -327,7 +336,10 @@ mod tests {
 	fn must_be_inherent() {
 		new_test_ext().execute_with(|| {
 			assert_noop!(
-				AuthorInherent::set_author(Origin::signed(1), NimbusId::from_slice(&TEST_AUTHOR_ID)),
+				AuthorInherent::set_author(
+					Origin::signed(1),
+					NimbusId::from_slice(&TEST_AUTHOR_ID)
+				),
 				sp_runtime::DispatchError::BadOrigin
 			);
 		});
@@ -336,7 +348,10 @@ mod tests {
 	#[test]
 	fn double_author_fails() {
 		new_test_ext().execute_with(|| {
-			assert_ok!(AuthorInherent::set_author(Origin::none(), NimbusId::from_slice(&TEST_AUTHOR_ID)));
+			assert_ok!(AuthorInherent::set_author(
+				Origin::none(),
+				NimbusId::from_slice(&TEST_AUTHOR_ID)
+			));
 			assert_noop!(
 				AuthorInherent::set_author(Origin::none(), NimbusId::from_slice(&TEST_AUTHOR_ID)),
 				Error::<Test>::AuthorAlreadySet

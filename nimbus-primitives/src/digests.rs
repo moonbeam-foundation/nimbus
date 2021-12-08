@@ -15,7 +15,7 @@
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
 //! A convenient interface over the digests used in nimbus.
-//! 
+//!
 //! Currently Nimbus has two digests;
 //! 1. A consensus digest that contains the block author identity
 //!    This information is copied from the author inehrent.
@@ -23,9 +23,9 @@
 //! 2. A seal digest that contains a signature over the rest of the
 //!    block including the first digest.
 
-use crate::{NIMBUS_ENGINE_ID, NimbusSignature, NimbusId};
-use sp_runtime::generic::DigestItem;
+use crate::{NimbusId, NimbusSignature, NIMBUS_ENGINE_ID};
 use parity_scale_codec::Encode;
+use sp_runtime::generic::DigestItem;
 
 /// A digest item which is usable with aura consensus.
 pub trait CompatibleDigestItem: Sized {

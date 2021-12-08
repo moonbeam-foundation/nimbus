@@ -67,12 +67,10 @@ pub fn development_config() -> ChainSpec {
 		move || {
 			testnet_genesis(
 				// initial collators.
-				vec![
-					(
-						get_account_id_from_seed::<sr25519::Public>("Alice"),
-						get_collator_keys_from_seed("Alice"),
-					),
-				],
+				vec![(
+					get_account_id_from_seed::<sr25519::Public>("Alice"),
+					get_collator_keys_from_seed("Alice"),
+				)],
 				vec![
 					get_account_id_from_seed::<sr25519::Public>("Alice"),
 					get_account_id_from_seed::<sr25519::Public>("Bob"),
@@ -172,14 +170,18 @@ fn testnet_genesis(
 				.to_vec(),
 		},
 		balances: parachain_template_runtime::BalancesConfig {
-			balances: endowed_accounts.iter().cloned().map(|k| (k, 1 << 60)).collect(),
+			balances: endowed_accounts
+				.iter()
+				.cloned()
+				.map(|k| (k, 1 << 60))
+				.collect(),
 		},
 		parachain_info: parachain_template_runtime::ParachainInfoConfig { parachain_id: id },
 		author_filter: parachain_template_runtime::AuthorFilterConfig {
 			eligible_ratio: sp_runtime::Percent::from_percent(50),
 		},
 		potential_author_set: parachain_template_runtime::PotentialAuthorSetConfig {
-			mapping: authorities
+			mapping: authorities,
 		},
 		parachain_system: Default::default(),
 	}

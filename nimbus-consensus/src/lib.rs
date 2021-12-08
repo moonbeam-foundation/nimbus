@@ -28,25 +28,29 @@ use cumulus_primitives_core::{
 	ParaId, PersistedValidationData,
 };
 pub use import_queue::import_queue;
-use log::{info, warn, debug};
+use log::{debug, info, warn};
+use nimbus_primitives::{
+	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
+};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
-use sp_api::{ProvideRuntimeApi, BlockId, ApiExt};
+use sc_consensus::{BlockImport, BlockImportParams};
+use sp_api::{ApiExt, BlockId, ProvideRuntimeApi};
 use sp_application_crypto::CryptoTypePublicPair;
 use sp_consensus::{
-	BlockOrigin, EnableProofRecording, Environment,
-	ProofRecording, Proposal, Proposer,
+	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
-use sc_consensus::{BlockImport, BlockImportParams};
+use sp_core::crypto::Public;
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_runtime::{traits::{Block as BlockT, HashFor, Header as HeaderT}, DigestItem};
+use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
+use sp_runtime::{
+	traits::{Block as BlockT, HashFor, Header as HeaderT},
+	DigestItem,
+};
+use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
-use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
-use sp_core::crypto::Public;
-use std::convert::TryInto;
-use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId, NimbusApi, CompatibleDigestItem};
 mod import_queue;
 mod manual_seal;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
@@ -67,7 +71,9 @@ pub struct NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP> {
 	skip_prediction: bool,
 }
 
-impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP> {
+impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> Clone
+	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
+{
 	fn clone(&self) -> Self {
 		Self {
 			para_id: self.para_id,
@@ -84,7 +90,8 @@ impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> Clone for NimbusConsensus<B
 	}
 }
 
-impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
+impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
+	NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
 where
 	B: BlockT,
 	RClient: ProvideRuntimeApi<PBlock>,
@@ -132,7 +139,10 @@ where
 	) -> Option<InherentData> {
 		let inherent_data_providers = self
 			.create_inherent_data_providers
-			.create_inherent_data_providers(parent, (relay_parent, validation_data.clone(), author_id))
+			.create_inherent_data_providers(
+				parent,
+				(relay_parent, validation_data.clone(), author_id),
+			)
 			.await
 			.map_err(|e| {
 				tracing::error!(
@@ -142,7 +152,7 @@ where
 				)
 			})
 			.ok()?;
-		
+
 		inherent_data_providers
 			.create_inherent_data()
 			.map_err(|e| {
@@ -163,13 +173,15 @@ where
 /// to implement the `skip_prediction` feature.
 pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<CryptoTypePublicPair> {
 	// Get all the available keys
-	let available_keys =
-		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+	let available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
 		.expect("keystore should return the keys it has");
 
 	// Print a more helpful message than "not eligible" when there are no keys at all.
 	if available_keys.is_empty() {
-		warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
+		warn!(
+			target: LOG_TARGET,
+			"🔏 No Nimbus keys available. We will not be able to author."
+		);
 		return None;
 	}
 
@@ -180,37 +192,45 @@ pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<Cryp
 /// If multiple keys are eligible this function still only returns one
 /// and makes no guarantees which one as that depends on the keystore's iterator behavior.
 /// This is the standard way of determining which key to author with.
-pub(crate) fn first_eligible_key<B: BlockT, C>(client: Arc<C>, keystore: &dyn SyncCryptoStore, parent: &B::Header, slot_number: u32) -> Option<CryptoTypePublicPair>
+pub(crate) fn first_eligible_key<B: BlockT, C>(
+	client: Arc<C>,
+	keystore: &dyn SyncCryptoStore,
+	parent: &B::Header,
+	slot_number: u32,
+) -> Option<CryptoTypePublicPair>
 where
 	C: ProvideRuntimeApi<B>,
 	C::Api: NimbusApi<B>,
 	C::Api: AuthorFilterAPI<B, NimbusId>,
 {
 	// Get all the available keys
-	let available_keys =
-		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+	let available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
 		.expect("keystore should return the keys it has");
 
 	// Print a more helpful message than "not eligible" when there are no keys at all.
 	if available_keys.is_empty() {
-		warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
+		warn!(
+			target: LOG_TARGET,
+			"🔏 No Nimbus keys available. We will not be able to author."
+		);
 		return None;
-	}let at = BlockId::Hash(parent.hash());
+	}
+	let at = BlockId::Hash(parent.hash());
 
 	// helper function for calling the various runtime apis and versions
 	let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
-
 		let has_nimbus_api = client
 			.runtime_api()
 			.has_api::<dyn NimbusApi<B>>(at)
 			.expect("should be able to dynamically detect the api");
-		
+
 		if has_nimbus_api {
 			NimbusApi::can_author(&*client.runtime_api(), at, nimbus_id, slot, parent)
 				.expect("NimbusAPI should not return error")
 		} else {
 			// There are two versions of the author filter, so we do that dynamically also.
-			let api_version = client.runtime_api()
+			let api_version = client
+				.runtime_api()
 				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
 				.expect("Runtime api access to not error.")
 				.expect("Should be able to detect author filter version");
@@ -220,12 +240,10 @@ where
 					.expect("Author API should not return error")
 			} else {
 				#[allow(deprecated)]
-				client.runtime_api().can_author_before_version_2(
-					&at,
-					nimbus_id,
-					slot_number,
-				)
-				.expect("Author API version 2 should not return error")
+				client
+					.runtime_api()
+					.can_author_before_version_2(&at, nimbus_id, slot_number)
+					.expect("Author API version 2 should not return error")
 			}
 		}
 	};
@@ -255,7 +273,11 @@ where
 	maybe_key
 }
 
-pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItem
+pub(crate) fn seal_header<B>(
+	header: &B::Header,
+	keystore: &dyn SyncCryptoStore,
+	type_public_pair: &CryptoTypePublicPair,
+) -> DigestItem
 where
 	B: BlockT,
 {
@@ -269,17 +291,14 @@ where
 	)
 	.expect("Keystore should be able to sign")
 	.expect("We already checked that the key was present");
-	
-	debug!(
-		target: LOG_TARGET,
-		"The signature is \n{:?}", raw_sig
-	);
+
+	debug!(target: LOG_TARGET, "The signature is \n{:?}", raw_sig);
 
 	let signature = raw_sig
-			.clone()
-			.try_into()
-			.expect("signature bytes produced by keystore should be right length");
-	
+		.clone()
+		.try_into()
+		.expect("signature bytes produced by keystore should be right length");
+
 	<DigestItem as CompatibleDigestItem>::nimbus_seal(signature)
 }
 
@@ -311,35 +330,45 @@ where
 		relay_parent: PHash,
 		validation_data: &PersistedValidationData,
 	) -> Option<ParachainCandidate<B>> {
-
 		let maybe_key = if self.skip_prediction {
 			first_available_key(&*self.keystore)
-		}
-		else {
-			first_eligible_key::<B, ParaClient>(self.parachain_client.clone(), &*self.keystore, parent, validation_data.relay_parent_number)
+		} else {
+			first_eligible_key::<B, ParaClient>(
+				self.parachain_client.clone(),
+				&*self.keystore,
+				parent,
+				validation_data.relay_parent_number,
+			)
 		};
 
 		// If there are no eligible keys, print the log, and exit early.
 		let type_public_pair = match maybe_key {
 			Some(p) => p,
-			None => { return None; }
+			None => {
+				return None;
+			}
 		};
 
 		let proposer_future = self.proposer_factory.lock().init(&parent);
 
 		let proposer = proposer_future
 			.await
-			.map_err(
-				|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."),
-			)
+			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
 			.ok()?;
 
-		let inherent_data = self.inherent_data(parent.hash(),&validation_data, relay_parent, NimbusId::from_slice(&type_public_pair.1)).await?;
+		let inherent_data = self
+			.inherent_data(
+				parent.hash(),
+				&validation_data,
+				relay_parent,
+				NimbusId::from_slice(&type_public_pair.1),
+			)
+			.await?;
 
 		let inherent_digests = sp_runtime::generic::Digest {
-			logs: vec![
-				CompatibleDigestItem::nimbus_pre_digest(NimbusId::from_slice(&type_public_pair.1)),
-			]
+			logs: vec![CompatibleDigestItem::nimbus_pre_digest(
+				NimbusId::from_slice(&type_public_pair.1),
+			)],
 		};
 
 		let Proposal {
@@ -370,7 +399,7 @@ where
 		block_import_params.post_digests.push(sig_digest.clone());
 		block_import_params.body = Some(extrinsics.clone());
 		block_import_params.state_action = sc_consensus::StateAction::ApplyChanges(
-			sc_consensus::StorageChanges::Changes(storage_changes)
+			sc_consensus::StorageChanges::Changes(storage_changes),
 		);
 
 		// Print the same log line as slots (aura and babe)
@@ -404,7 +433,10 @@ where
 		let post_block = B::new(post_header, extrinsics);
 
 		// Returning the block WITH the seal for distribution around the network.
-		Some(ParachainCandidate { block: post_block, proof })
+		Some(ParachainCandidate {
+			block: post_block,
+			proof,
+		})
 	}
 }
 
@@ -422,7 +454,6 @@ pub struct BuildNimbusConsensusParams<PF, BI, RBackend, ParaClient, CIDP> {
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
-
 }
 
 /// Build the [`NimbusConsensus`].
@@ -479,7 +510,7 @@ where
 /// a concrete relay chain client instance, the builder takes a [`polkadot_client::Client`]
 /// that wraps this concrete instanace. By using [`polkadot_client::ExecuteWithClient`]
 /// the builder gets access to this concrete instance.
-struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient,CIDP> {
+struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP> {
 	para_id: ParaId,
 	_phantom: PhantomData<Block>,
 	proposer_factory: PF,
@@ -492,7 +523,8 @@ struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient,CIDP> {
 	skip_prediction: bool,
 }
 
-impl<Block, PF, BI, RBackend, ParaClient, CIDP> NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP>
+impl<Block, PF, BI, RBackend, ParaClient, CIDP>
+	NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP>
 where
 	Block: BlockT,
 	// Rust bug: https://github.com/rust-lang/rust/issues/24159
