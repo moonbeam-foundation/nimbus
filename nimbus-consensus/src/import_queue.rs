@@ -32,7 +32,7 @@ use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem};
+use nimbus_primitives::{NimbusId, NimbusPair, digests::CompatibleDigestItem, NIMBUS_ENGINE_ID};
 use sp_application_crypto::{Pair as _, Public as _};
 use log::debug;
 
@@ -76,24 +76,20 @@ where
 
 		debug!(target: crate::LOG_TARGET, "🪲 Signature according to verifier is {:?}", signature);
 
-		// Grab the digest from the runtime
-		//TODO use the trait. Maybe this code should move to the trait.
-		let consensus_digest = block_params.header
+		// Grab the author information from either the preruntime digest or the consensus digest
+		//TODO use the trait
+		let claimed_author = block_params.header
 			.digest()
 			.logs
 			.iter()
-			.find(|digest| {
+			.find_map(|digest| {
 				match *digest {
-					DigestItem::Consensus(id, _) if id == b"nmbs" => true,
-					_ => false,
+					DigestItem::Consensus(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
+					DigestItem::PreRuntime(id, ref author_id) if id == NIMBUS_ENGINE_ID => Some(author_id.clone()),
+					_ => None,
 				}
 			})
-			.expect("A single consensus digest should be added by the runtime when executing the author inherent.");
-		
-		let claimed_author = match *consensus_digest {
-			DigestItem::Consensus(id, ref author_id) if id == *b"nmbs" => author_id.clone(),
-			_ => panic!("Expected consensus digest to contains author id bytes"),
-		};
+			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
 
 		debug!(target: crate::LOG_TARGET, "🪲 Claimed Author according to verifier is {:?}", claimed_author);
 
@@ -152,6 +148,9 @@ where
 
 		block_params.post_digests.push(seal);
 
+		// The standard is to use the longest chain rule. This is overridden by the `NimbusBlockImport` in the parachain context.
+		block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::LongestChain);
+
 		debug!(target: crate::LOG_TARGET, "🪲 Just finished verifier. posthash from params is {:?}", &block_params.post_hash());
 
 		Ok((block_params, None))
@@ -165,6 +164,7 @@ pub fn import_queue<Client, Block: BlockT, I, CIDP>(
 	create_inherent_data_providers: CIDP,
 	spawner: &impl sp_core::traits::SpawnEssentialNamed,
 	registry: Option<&substrate_prometheus_endpoint::Registry>,
+	parachain: bool,
 ) -> ClientResult<BasicQueue<Block, I::Transaction>>
 where
 	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
@@ -181,11 +181,70 @@ where
 
 	Ok(BasicQueue::new(
 		verifier,
-		Box::new(cumulus_client_consensus_common::ParachainBlockImport::new(
+		Box::new(NimbusBlockImport::new(
 			block_import,
+			parachain,
 		)),
 		None,
 		spawner,
 		registry,
 	))
+}
+
+/// Nimbus specific block import.
+///
+/// Nimbus supports both parachain and non-parachain contexts. In the parachain
+/// context, new blocks should not be imported as best. Cumulus's ParachainBlockImport
+/// handles this correctly, but does not work in non-parachain contexts.
+/// This block import has a field indicating whether we should apply parachain rules or not.
+/// 
+/// There may be additional nimbus-specific logic here in the future, but for now it is
+/// only the conditional parachain logic
+pub struct NimbusBlockImport<I>{
+	inner: I,
+	parachain_context: bool,
+}
+
+impl<I> NimbusBlockImport<I> {
+	/// Create a new instance.
+	pub fn new(inner: I, parachain_context: bool) -> Self {
+		Self{
+			inner,
+			parachain_context,
+		}
+	}
+}
+
+#[async_trait::async_trait]
+impl<Block, I> BlockImport<Block> for NimbusBlockImport<I>
+where
+	Block: BlockT,
+	I: BlockImport<Block> + Send,
+{
+	type Error = I::Error;
+	type Transaction = I::Transaction;
+
+	async fn check_block(
+		&mut self,
+		block: sc_consensus::BlockCheckParams<Block>,
+	) -> Result<sc_consensus::ImportResult, Self::Error> {
+		self.inner.check_block(block).await
+	}
+
+	async fn import_block(
+		&mut self,
+		mut block_import_params: sc_consensus::BlockImportParams<Block, Self::Transaction>,
+		cache: std::collections::HashMap<sp_consensus::CacheKeyId, Vec<u8>>,
+	) -> Result<sc_consensus::ImportResult, Self::Error> {
+		// If we are in the parachain context, best block is determined by the relay chain
+		// except during initial sync
+		if self.parachain_context {
+			block_import_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::Custom(
+				block_import_params.origin == sp_consensus::BlockOrigin::NetworkInitialSync,
+			));
+		}
+
+		// Now continue on to the rest of the import pipeline.
+		self.inner.import_block(block_import_params, cache).await
+	}
 }

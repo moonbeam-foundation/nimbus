@@ -32,21 +32,24 @@ use log::{info, warn, debug};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
-use sp_api::{ProvideRuntimeApi, BlockId, ApiExt as _};
+use sp_api::{ProvideRuntimeApi, BlockId, ApiExt};
+use sp_application_crypto::CryptoTypePublicPair;
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment,
 	ProofRecording, Proposal, Proposer,
 };
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT};
+use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT, DigestItemFor};
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
 use sp_core::crypto::Public;
-use sp_std::convert::TryInto;
-use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NIMBUS_KEY_ID, NimbusId};
+use std::convert::TryInto;
+use nimbus_primitives::{AuthorFilterAPI, NIMBUS_KEY_ID, NimbusId, NimbusApi, CompatibleDigestItem};
 mod import_queue;
+mod manual_seal;
+pub use manual_seal::NimbusManualSealConsensusDataProvider;
 
 const LOG_TARGET: &str = "filtering-consensus";
 
@@ -153,6 +156,133 @@ where
 	}
 }
 
+/// Grabs any available nimbus key from the keystore.
+/// This may be useful in situations where you expect exactly one key
+/// and intend to perform an operation with it regardless of whether it is
+/// expected to be eligible. Concretely, this is used in the consensus worker
+/// to implement the `skip_prediction` feature.
+pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<CryptoTypePublicPair> {
+	// Get all the available keys
+	let available_keys =
+		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+		.expect("keystore should return the keys it has");
+
+	// Print a more helpful message than "not eligible" when there are no keys at all.
+	if available_keys.is_empty() {
+		warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
+		return None;
+	}
+
+	Some(available_keys[0].clone())
+}
+
+/// Grab the first eligible nimbus key from the keystore
+/// If multiple keys are eligible this function still only returns one
+/// and makes no guarantees which one as that depends on the keystore's iterator behavior.
+/// This is the standard way of determining which key to author with.
+pub(crate) fn first_eligible_key<B: BlockT, C>(client: Arc<C>, keystore: &dyn SyncCryptoStore, parent: &B::Header, slot_number: u32) -> Option<CryptoTypePublicPair>
+where
+	C: ProvideRuntimeApi<B>,
+	C::Api: NimbusApi<B>,
+	C::Api: AuthorFilterAPI<B, NimbusId>,
+{
+	// Get all the available keys
+	let available_keys =
+		SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+		.expect("keystore should return the keys it has");
+
+	// Print a more helpful message than "not eligible" when there are no keys at all.
+	if available_keys.is_empty() {
+		warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
+		return None;
+	}let at = BlockId::Hash(parent.hash());
+
+	// helper function for calling the various runtime apis and versions
+	let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
+
+		let has_nimbus_api = client
+			.runtime_api()
+			.has_api::<dyn NimbusApi<B>>(at)
+			.expect("should be able to dynamically detect the api");
+		
+		if has_nimbus_api {
+			NimbusApi::can_author(&*client.runtime_api(), at, nimbus_id, slot, parent)
+				.expect("NimbusAPI should not return error")
+		} else {
+			// There are two versions of the author filter, so we do that dynamically also.
+			let api_version = client.runtime_api()
+				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
+				.expect("Runtime api access to not error.")
+				.expect("Should be able to detect author filter version");
+
+			if api_version >= 2 {
+				AuthorFilterAPI::can_author(&*client.runtime_api(), at, nimbus_id, slot, parent)
+					.expect("Author API should not return error")
+			} else {
+				#[allow(deprecated)]
+				client.runtime_api().can_author_before_version_2(
+					&at,
+					nimbus_id,
+					slot_number,
+				)
+				.expect("Author API version 2 should not return error")
+			}
+		}
+	};
+
+	// Iterate keys until we find an eligible one, or run out of candidates.
+	// If we are skipping prediction, then we author with the first key we find.
+	// prediction skipping only really makes sense when there is a single key in the keystore.
+	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
+		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
+		// That I should be passing Vec<u8> across the wasm boundary?
+		prediction_helper(
+			&at,
+			NimbusId::from_slice(&type_public_pair.1),
+			slot_number,
+			parent,
+		)
+	});
+
+	// If there are no eligible keys, print the log, and exit early.
+	if maybe_key.is_none() {
+		info!(
+			target: LOG_TARGET,
+			"🔮 Skipping candidate production because we are not eligible"
+		);
+	}
+
+	maybe_key
+}
+
+pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItemFor<B>
+where
+	B: BlockT,
+{
+	let pre_hash = header.hash();
+
+	let raw_sig = SyncCryptoStore::sign_with(
+		&*keystore,
+		NIMBUS_KEY_ID,
+		type_public_pair,
+		pre_hash.as_ref(),
+	)
+	.expect("Keystore should be able to sign")
+	.expect("We already checked that the key was present");
+	
+	debug!(
+		target: LOG_TARGET,
+		"The signature is \n{:?}", raw_sig
+	);
+
+	let signature = raw_sig
+			.clone()
+			.try_into()
+			.expect("signature bytes produced by keystore should be right length");
+	
+	<DigestItemFor<B> as CompatibleDigestItem>::nimbus_seal(signature)
+}
+
 #[async_trait::async_trait]
 impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> ParachainConsensus<B>
 	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
@@ -181,85 +311,18 @@ where
 		relay_parent: PHash,
 		validation_data: &PersistedValidationData,
 	) -> Option<ParachainCandidate<B>> {
-		// Design decision: We will check the keystore for any available keys. Then we will iterate
-		// those keys until we find one that is eligible. If none are eligible, we skip this slot.
-		// If multiple are eligible, we only author with the first one.
 
-		// Get all the available keys
-		let available_keys =
-			SyncCryptoStore::keys(&*self.keystore, NIMBUS_KEY_ID)
-			.expect("keystore should return the keys it has");
-
-		// Print a more helpful message than "not eligible" when there are no keys at all.
-		if available_keys.is_empty() {
-			warn!(target: LOG_TARGET, "🔏 No Nimbus keys available. We will not be able to author.");
-			return None;
+		let maybe_key = if self.skip_prediction {
+			first_available_key(&*self.keystore)
 		}
-
-		let at = BlockId::Hash(parent.hash());
-
-		// helper function for calling the various runtime apis and versions
-		let prediction_helper = |at, nimbus_id: NimbusId, slot: u32, parent| -> bool {
-
-			let has_nimbus_api = self
-				.parachain_client
-				.runtime_api()
-				.has_api::<dyn NimbusApi<B>>(at)
-				.expect("should be able to dynamically detect the api");
-			
-			if has_nimbus_api {
-				NimbusApi::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
-					.expect("NimbusAPI should not return error")
-			} else {
-				// There are two versions of the author filter, so we do that dynamically also.
-				let api_version = self.parachain_client.runtime_api()
-					.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
-					.expect("Runtime api access to not error.")
-					.expect("Should be able to detect author filter version");
-
-				if api_version >= 2 {
-					AuthorFilterAPI::can_author(&*self.parachain_client.runtime_api(), at, nimbus_id, slot, parent)
-						.expect("Author API should not return error")
-				} else {
-					#[allow(deprecated)]
-					self.parachain_client.runtime_api().can_author_before_version_2(
-						&at,
-						nimbus_id,
-						slot,
-					)
-					.expect("Author API version 2 should not return error")
-				}
-			}
+		else {
+			first_eligible_key::<B, ParaClient>(self.parachain_client.clone(), &*self.keystore, parent, validation_data.relay_parent_number)
 		};
-
-		// Iterate keys until we find an eligible one, or run out of candidates.
-		// If we are skipping prediction, then we author withthe first key we find.
-		// prediction skipping only really amkes sense when there is a single key in the keystore.
-		let maybe_key = available_keys.into_iter().find(|type_public_pair| {
-
-			// If we are not predicting, just return the first one we find.
-			self.skip_prediction ||
-
-			// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
-			// That I should be passing Vec<u8> across the wasm boundary?
-			prediction_helper(
-				&at,
-				NimbusId::from_slice(&type_public_pair.1),
-				validation_data.relay_parent_number,
-				parent,
-			)
-		});
 
 		// If there are no eligible keys, print the log, and exit early.
 		let type_public_pair = match maybe_key {
 			Some(p) => p,
-			None => {
-				info!(
-					target: LOG_TARGET,
-					"🔮 Skipping candidate production because we are not eligible"
-				);
-				return None;
-			}
+			None => { return None; }
 		};
 
 		let proposer_future = self.proposer_factory.lock().init(&parent);
@@ -273,6 +336,12 @@ where
 
 		let inherent_data = self.inherent_data(parent.hash(),&validation_data, relay_parent, NimbusId::from_slice(&type_public_pair.1)).await?;
 
+		let inherent_digests = sp_runtime::generic::Digest {
+			logs: vec![
+				CompatibleDigestItem::nimbus_pre_digest(NimbusId::from_slice(&type_public_pair.1)),
+			]
+		};
+
 		let Proposal {
 			block,
 			storage_changes,
@@ -280,7 +349,7 @@ where
 		} = proposer
 			.propose(
 				inherent_data,
-				Default::default(),
+				inherent_digests,
 				//TODO: Fix this.
 				Duration::from_millis(500),
 				// Set the block limit to 50% of the maximum PoV size.
@@ -295,27 +364,7 @@ where
 
 		let (header, extrinsics) = block.clone().deconstruct();
 
-		let pre_hash = header.hash();
-
-		let raw_sig = SyncCryptoStore::sign_with(
-			&*self.keystore,
-			NIMBUS_KEY_ID,
-			&type_public_pair,
-			pre_hash.as_ref(),
-		)
-		.expect("Keystore should be able to sign")
-		.expect("We already checked that the key was present");
-		
-		debug!(
-			target: LOG_TARGET,
-			"The signature is \n{:?}", raw_sig
-		);
-
-		let signature = raw_sig
-				.clone()
-				.try_into().ok()?;
-		
-		let sig_digest = <sp_runtime::traits::DigestItemFor<B> as nimbus_primitives::digests::CompatibleDigestItem>::nimbus_seal(signature);
+		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
@@ -329,7 +378,7 @@ where
 			"🔖 Sealed block for proposal at {}. Hash now {:?}, previously {:?}.",
 			*header.number(),
 			block_import_params.post_hash(),
-			pre_hash,
+			header.hash(),
 		);
 
 		if let Err(err) = self
