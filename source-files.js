@@ -1,5 +1,5 @@
 var N = null;var sourcesIndex = {};
-sourcesIndex["nimbus_consensus"] = {"name":"","files":["import_queue.rs","lib.rs"]};
+sourcesIndex["nimbus_consensus"] = {"name":"","files":["import_queue.rs","lib.rs","manual_seal.rs"]};
 sourcesIndex["nimbus_primitives"] = {"name":"","files":["digests.rs","inherents.rs","lib.rs"]};
 sourcesIndex["pallet_aura_style_filter"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["pallet_author_inherent"] = {"name":"","files":["exec.rs","lib.rs"]};

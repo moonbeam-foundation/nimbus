@@ -541,6 +541,55 @@
 <span id="541">541</span>
 <span id="542">542</span>
 <span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -575,21 +624,24 @@
 <span class="kw">use</span> <span class="ident">parking_lot::Mutex</span>;
 <span class="kw">use</span> <span class="ident">polkadot_client::ClientHandle</span>;
 <span class="kw">use</span> <span class="ident">sc_client_api::Backend</span>;
-<span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ProvideRuntimeApi</span>, <span class="ident">BlockId</span>, <span class="ident">ApiExt</span> <span class="kw">as</span> <span class="kw">_</span>};
+<span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ProvideRuntimeApi</span>, <span class="ident">BlockId</span>, <span class="ident">ApiExt</span>};
+<span class="kw">use</span> <span class="ident">sp_application_crypto::CryptoTypePublicPair</span>;
 <span class="kw">use</span> <span class="ident">sp_consensus</span>::{
 	<span class="ident">BlockOrigin</span>, <span class="ident">EnableProofRecording</span>, <span class="ident">Environment</span>,
 	<span class="ident">ProofRecording</span>, <span class="ident">Proposal</span>, <span class="ident">Proposer</span>,
 };
 <span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>};
 <span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">CreateInherentDataProviders</span>, <span class="ident">InherentData</span>, <span class="ident">InherentDataProvider</span>};
-<span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">HashFor</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>};
+<span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">HashFor</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>, <span class="ident">DigestItemFor</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">sync::Arc</span>, <span class="ident">time::Duration</span>};
 <span class="kw">use</span> <span class="ident">tracing::error</span>;
 <span class="kw">use</span> <span class="ident">sp_keystore</span>::{<span class="ident">SyncCryptoStorePtr</span>, <span class="ident">SyncCryptoStore</span>};
 <span class="kw">use</span> <span class="ident">sp_core::crypto::Public</span>;
-<span class="kw">use</span> <span class="ident">sp_std::convert::TryInto</span>;
-<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AuthorFilterAPI</span>, <span class="ident">NimbusApi</span>, <span class="ident">NIMBUS_KEY_ID</span>, <span class="ident">NimbusId</span>};
+<span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
+<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AuthorFilterAPI</span>, <span class="ident">NIMBUS_KEY_ID</span>, <span class="ident">NimbusId</span>, <span class="ident">NimbusApi</span>, <span class="ident">CompatibleDigestItem</span>};
 <span class="kw">mod</span> <span class="ident">import_queue</span>;
+<span class="kw">mod</span> <span class="ident">manual_seal</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">manual_seal::NimbusManualSealConsensusDataProvider</span>;
 
 <span class="kw">const</span> <span class="ident">LOG_TARGET</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;filtering-consensus&quot;</span>;
 
@@ -696,6 +748,133 @@
 	}
 }
 
+<span class="doccomment">/// Grabs any available nimbus key from the keystore.</span>
+<span class="doccomment">/// This may be useful in situations where you expect exactly one key</span>
+<span class="doccomment">/// and intend to perform an operation with it regardless of whether it is</span>
+<span class="doccomment">/// expected to be eligible. Concretely, this is used in the consensus worker</span>
+<span class="doccomment">/// to implement the `skip_prediction` feature.</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_available_key</span>(<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span> {
+	<span class="comment">// Get all the available keys</span>
+	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span>
+		<span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
+		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
+
+	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
+	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
+		<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>);
+		<span class="kw">return</span> <span class="prelude-val">None</span>;
+	}
+
+	<span class="prelude-val">Some</span>(<span class="ident">available_keys</span>[<span class="number">0</span>].<span class="ident">clone</span>())
+}
+
+<span class="doccomment">/// Grab the first eligible nimbus key from the keystore</span>
+<span class="doccomment">/// If multiple keys are eligible this function still only returns one</span>
+<span class="doccomment">/// and makes no guarantees which one as that depends on the keystore&#39;s iterator behavior.</span>
+<span class="doccomment">/// This is the standard way of determining which key to author with.</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_eligible_key</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span>, <span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>, <span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>, <span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>, <span class="ident">slot_number</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+	<span class="ident">C</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
+	<span class="ident">C::Api</span>: <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
+	<span class="ident">C::Api</span>: <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span>,
+{
+	<span class="comment">// Get all the available keys</span>
+	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span>
+		<span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
+		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
+
+	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
+	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
+		<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>);
+		<span class="kw">return</span> <span class="prelude-val">None</span>;
+	}<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
+
+	<span class="comment">// helper function for calling the various runtime apis and versions</span>
+	<span class="kw">let</span> <span class="ident">prediction_helper</span> <span class="op">=</span> <span class="op">|</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>: <span class="ident">NimbusId</span>, <span class="ident">slot</span>: <span class="ident">u32</span>, <span class="ident">parent</span><span class="op">|</span> -&gt; <span class="ident">bool</span> {
+
+		<span class="kw">let</span> <span class="ident">has_nimbus_api</span> <span class="op">=</span> <span class="ident">client</span>
+			.<span class="ident">runtime_api</span>()
+			.<span class="ident">has_api</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">at</span>)
+			.<span class="ident">expect</span>(<span class="string">&quot;should be able to dynamically detect the api&quot;</span>);
+		
+		<span class="kw">if</span> <span class="ident">has_nimbus_api</span> {
+			<span class="ident">NimbusApi::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
+				.<span class="ident">expect</span>(<span class="string">&quot;NimbusAPI should not return error&quot;</span>)
+		} <span class="kw">else</span> {
+			<span class="comment">// There are two versions of the author filter, so we do that dynamically also.</span>
+			<span class="kw">let</span> <span class="ident">api_version</span> <span class="op">=</span> <span class="ident">client</span>.<span class="ident">runtime_api</span>()
+				.<span class="ident">api_version</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>)
+				.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>)
+				.<span class="ident">expect</span>(<span class="string">&quot;Should be able to detect author filter version&quot;</span>);
+
+			<span class="kw">if</span> <span class="ident">api_version</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span> {
+				<span class="ident">AuthorFilterAPI::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
+					.<span class="ident">expect</span>(<span class="string">&quot;Author API should not return error&quot;</span>)
+			} <span class="kw">else</span> {
+				<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
+				<span class="ident">client</span>.<span class="ident">runtime_api</span>().<span class="ident">can_author_before_version_2</span>(
+					<span class="kw-2">&amp;</span><span class="ident">at</span>,
+					<span class="ident">nimbus_id</span>,
+					<span class="ident">slot_number</span>,
+				)
+				.<span class="ident">expect</span>(<span class="string">&quot;Author API version 2 should not return error&quot;</span>)
+			}
+		}
+	};
+
+	<span class="comment">// Iterate keys until we find an eligible one, or run out of candidates.</span>
+	<span class="comment">// If we are skipping prediction, then we author with the first key we find.</span>
+	<span class="comment">// prediction skipping only really makes sense when there is a single key in the keystore.</span>
+	<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="ident">available_keys</span>.<span class="ident">into_iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">type_public_pair</span><span class="op">|</span> {
+		<span class="comment">// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue</span>
+		<span class="comment">// That I should be passing Vec&lt;u8&gt; across the wasm boundary?</span>
+		<span class="ident">prediction_helper</span>(
+			<span class="kw-2">&amp;</span><span class="ident">at</span>,
+			<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>),
+			<span class="ident">slot_number</span>,
+			<span class="ident">parent</span>,
+		)
+	});
+
+	<span class="comment">// If there are no eligible keys, print the log, and exit early.</span>
+	<span class="kw">if</span> <span class="ident">maybe_key</span>.<span class="ident">is_none</span>() {
+		<span class="macro">info!</span>(
+			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
+			<span class="string">&quot;🔮 Skipping candidate production because we are not eligible&quot;</span>
+		);
+	}
+
+	<span class="ident">maybe_key</span>
+}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">seal_header</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>, <span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>, <span class="ident">type_public_pair</span>: <span class="kw-2">&amp;</span><span class="ident">CryptoTypePublicPair</span>) -&gt; <span class="ident">DigestItemFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+	<span class="ident">B</span>: <span class="ident">BlockT</span>,
+{
+	<span class="kw">let</span> <span class="ident">pre_hash</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">hash</span>();
+
+	<span class="kw">let</span> <span class="ident">raw_sig</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::sign_with</span>(
+		<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">keystore</span>,
+		<span class="ident">NIMBUS_KEY_ID</span>,
+		<span class="ident">type_public_pair</span>,
+		<span class="ident">pre_hash</span>.<span class="ident">as_ref</span>(),
+	)
+	.<span class="ident">expect</span>(<span class="string">&quot;Keystore should be able to sign&quot;</span>)
+	.<span class="ident">expect</span>(<span class="string">&quot;We already checked that the key was present&quot;</span>);
+	
+	<span class="macro">debug!</span>(
+		<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
+		<span class="string">&quot;The signature is \n{:?}&quot;</span>, <span class="ident">raw_sig</span>
+	);
+
+	<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">raw_sig</span>
+			.<span class="ident">clone</span>()
+			.<span class="ident">try_into</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;signature bytes produced by keystore should be right length&quot;</span>);
+	
+	<span class="op">&lt;</span><span class="ident">DigestItemFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">CompatibleDigestItem</span><span class="op">&gt;</span><span class="ident">::nimbus_seal</span>(<span class="ident">signature</span>)
+}
+
 <span class="attribute">#[<span class="ident">async_trait::async_trait</span>]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">ParachainConsensus</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
 	<span class="kw">for</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
@@ -724,85 +903,18 @@
 		<span class="ident">relay_parent</span>: <span class="ident">PHash</span>,
 		<span class="ident">validation_data</span>: <span class="kw-2">&amp;</span><span class="ident">PersistedValidationData</span>,
 	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ParachainCandidate</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-		<span class="comment">// Design decision: We will check the keystore for any available keys. Then we will iterate</span>
-		<span class="comment">// those keys until we find one that is eligible. If none are eligible, we skip this slot.</span>
-		<span class="comment">// If multiple are eligible, we only author with the first one.</span>
 
-		<span class="comment">// Get all the available keys</span>
-		<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span>
-			<span class="ident">SyncCryptoStore::keys</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
-			.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
-
-		<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
-		<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
-			<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>);
-			<span class="kw">return</span> <span class="prelude-val">None</span>;
+		<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">skip_prediction</span> {
+			<span class="ident">first_available_key</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>)
 		}
-
-		<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
-
-		<span class="comment">// helper function for calling the various runtime apis and versions</span>
-		<span class="kw">let</span> <span class="ident">prediction_helper</span> <span class="op">=</span> <span class="op">|</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>: <span class="ident">NimbusId</span>, <span class="ident">slot</span>: <span class="ident">u32</span>, <span class="ident">parent</span><span class="op">|</span> -&gt; <span class="ident">bool</span> {
-
-			<span class="kw">let</span> <span class="ident">has_nimbus_api</span> <span class="op">=</span> <span class="self">self</span>
-				.<span class="ident">parachain_client</span>
-				.<span class="ident">runtime_api</span>()
-				.<span class="ident">has_api</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">at</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;should be able to dynamically detect the api&quot;</span>);
-			
-			<span class="kw">if</span> <span class="ident">has_nimbus_api</span> {
-				<span class="ident">NimbusApi::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
-					.<span class="ident">expect</span>(<span class="string">&quot;NimbusAPI should not return error&quot;</span>)
-			} <span class="kw">else</span> {
-				<span class="comment">// There are two versions of the author filter, so we do that dynamically also.</span>
-				<span class="kw">let</span> <span class="ident">api_version</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">runtime_api</span>()
-					.<span class="ident">api_version</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>)
-					.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>)
-					.<span class="ident">expect</span>(<span class="string">&quot;Should be able to detect author filter version&quot;</span>);
-
-				<span class="kw">if</span> <span class="ident">api_version</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span> {
-					<span class="ident">AuthorFilterAPI::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
-						.<span class="ident">expect</span>(<span class="string">&quot;Author API should not return error&quot;</span>)
-				} <span class="kw">else</span> {
-					<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
-					<span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">runtime_api</span>().<span class="ident">can_author_before_version_2</span>(
-						<span class="kw-2">&amp;</span><span class="ident">at</span>,
-						<span class="ident">nimbus_id</span>,
-						<span class="ident">slot</span>,
-					)
-					.<span class="ident">expect</span>(<span class="string">&quot;Author API version 2 should not return error&quot;</span>)
-				}
-			}
+		<span class="kw">else</span> {
+			<span class="ident">first_eligible_key</span>::<span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">ParaClient</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>, <span class="ident">parent</span>, <span class="ident">validation_data</span>.<span class="ident">relay_parent_number</span>)
 		};
-
-		<span class="comment">// Iterate keys until we find an eligible one, or run out of candidates.</span>
-		<span class="comment">// If we are skipping prediction, then we author withthe first key we find.</span>
-		<span class="comment">// prediction skipping only really amkes sense when there is a single key in the keystore.</span>
-		<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="ident">available_keys</span>.<span class="ident">into_iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">type_public_pair</span><span class="op">|</span> {
-
-			<span class="comment">// If we are not predicting, just return the first one we find.</span>
-			<span class="self">self</span>.<span class="ident">skip_prediction</span> <span class="op">|</span><span class="op">|</span>
-
-			<span class="comment">// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue</span>
-			<span class="comment">// That I should be passing Vec&lt;u8&gt; across the wasm boundary?</span>
-			<span class="ident">prediction_helper</span>(
-				<span class="kw-2">&amp;</span><span class="ident">at</span>,
-				<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>),
-				<span class="ident">validation_data</span>.<span class="ident">relay_parent_number</span>,
-				<span class="ident">parent</span>,
-			)
-		});
 
 		<span class="comment">// If there are no eligible keys, print the log, and exit early.</span>
 		<span class="kw">let</span> <span class="ident">type_public_pair</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">maybe_key</span> {
 			<span class="prelude-val">Some</span>(<span class="ident">p</span>) =&gt; <span class="ident">p</span>,
-			<span class="prelude-val">None</span> =&gt; {
-				<span class="macro">info!</span>(
-					<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-					<span class="string">&quot;🔮 Skipping candidate production because we are not eligible&quot;</span>
-				);
-				<span class="kw">return</span> <span class="prelude-val">None</span>;
-			}
+			<span class="prelude-val">None</span> =&gt; { <span class="kw">return</span> <span class="prelude-val">None</span>; }
 		};
 
 		<span class="kw">let</span> <span class="ident">proposer_future</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">proposer_factory</span>.<span class="ident">lock</span>().<span class="ident">init</span>(<span class="kw-2">&amp;</span><span class="ident">parent</span>);
@@ -816,6 +928,12 @@
 
 		<span class="kw">let</span> <span class="ident">inherent_data</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inherent_data</span>(<span class="ident">parent</span>.<span class="ident">hash</span>(),<span class="kw-2">&amp;</span><span class="ident">validation_data</span>, <span class="ident">relay_parent</span>, <span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>)).<span class="kw">await</span><span class="question-mark">?</span>;
 
+		<span class="kw">let</span> <span class="ident">inherent_digests</span> <span class="op">=</span> <span class="ident">sp_runtime::generic::Digest</span> {
+			<span class="ident">logs</span>: <span class="macro">vec!</span>[
+				<span class="ident">CompatibleDigestItem::nimbus_pre_digest</span>(<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>)),
+			]
+		};
+
 		<span class="kw">let</span> <span class="ident">Proposal</span> {
 			<span class="ident">block</span>,
 			<span class="ident">storage_changes</span>,
@@ -823,7 +941,7 @@
 		} <span class="op">=</span> <span class="ident">proposer</span>
 			.<span class="ident">propose</span>(
 				<span class="ident">inherent_data</span>,
-				<span class="ident">Default::default</span>(),
+				<span class="ident">inherent_digests</span>,
 				<span class="comment">//TODO: Fix this.</span>
 				<span class="ident">Duration::from_millis</span>(<span class="number">500</span>),
 				<span class="comment">// Set the block limit to 50% of the maximum PoV size.</span>
@@ -838,27 +956,7 @@
 
 		<span class="kw">let</span> (<span class="ident">header</span>, <span class="ident">extrinsics</span>) <span class="op">=</span> <span class="ident">block</span>.<span class="ident">clone</span>().<span class="ident">deconstruct</span>();
 
-		<span class="kw">let</span> <span class="ident">pre_hash</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">hash</span>();
-
-		<span class="kw">let</span> <span class="ident">raw_sig</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::sign_with</span>(
-			<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>,
-			<span class="ident">NIMBUS_KEY_ID</span>,
-			<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>,
-			<span class="ident">pre_hash</span>.<span class="ident">as_ref</span>(),
-		)
-		.<span class="ident">expect</span>(<span class="string">&quot;Keystore should be able to sign&quot;</span>)
-		.<span class="ident">expect</span>(<span class="string">&quot;We already checked that the key was present&quot;</span>);
-		
-		<span class="macro">debug!</span>(
-			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-			<span class="string">&quot;The signature is \n{:?}&quot;</span>, <span class="ident">raw_sig</span>
-		);
-
-		<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">raw_sig</span>
-				.<span class="ident">clone</span>()
-				.<span class="ident">try_into</span>().<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		
-		<span class="kw">let</span> <span class="ident">sig_digest</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">sp_runtime::traits::DigestItemFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">nimbus_primitives::digests::CompatibleDigestItem</span><span class="op">&gt;</span><span class="ident">::nimbus_seal</span>(<span class="ident">signature</span>);
+		<span class="kw">let</span> <span class="ident">sig_digest</span> <span class="op">=</span> <span class="ident">seal_header</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>, <span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>);
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">block_import_params</span> <span class="op">=</span> <span class="ident">BlockImportParams::new</span>(<span class="ident">BlockOrigin::Own</span>, <span class="ident">header</span>.<span class="ident">clone</span>());
 		<span class="ident">block_import_params</span>.<span class="ident">post_digests</span>.<span class="ident">push</span>(<span class="ident">sig_digest</span>.<span class="ident">clone</span>());
@@ -872,7 +970,7 @@
 			<span class="string">&quot;🔖 Sealed block for proposal at {}. Hash now {:?}, previously {:?}.&quot;</span>,
 			<span class="kw-2">*</span><span class="ident">header</span>.<span class="ident">number</span>(),
 			<span class="ident">block_import_params</span>.<span class="ident">post_hash</span>(),
-			<span class="ident">pre_hash</span>,
+			<span class="ident">header</span>.<span class="ident">hash</span>(),
 		);
 
 		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="self">self</span>
