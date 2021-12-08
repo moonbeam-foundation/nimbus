@@ -21,17 +21,17 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use sp_std::vec::Vec;
 use sp_application_crypto::KeyTypeId;
-use sp_runtime::ConsensusEngineId;
 use sp_runtime::traits::BlockNumberProvider;
+use sp_runtime::ConsensusEngineId;
+use sp_std::vec::Vec;
 
 pub mod digests;
 mod inherents;
 
 pub use digests::CompatibleDigestItem;
 
-pub use inherents::{INHERENT_IDENTIFIER, InherentDataProvider};
+pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
 
 /// The given account ID is the author of the current block.
 pub trait EventHandler<Author> {
@@ -117,10 +117,7 @@ pub const NIMBUS_KEY_ID: KeyTypeId = KeyTypeId(*b"nmbs");
 
 // The strongly-typed crypto wrappers to be used by Nimbus in the keystore
 mod nimbus_crypto {
-	use sp_application_crypto::{
-		app_crypto,
-		sr25519,
-	};
+	use sp_application_crypto::{app_crypto, sr25519};
 	app_crypto!(sr25519, crate::NIMBUS_KEY_ID);
 }
 
@@ -135,7 +132,6 @@ sp_application_crypto::with_pair! {
 	pub type NimbusPair = nimbus_crypto::Pair;
 }
 
-
 sp_api::decl_runtime_apis! {
 	/// The runtime api used to predict whether a Nimbus author will be eligible in the given slot
 	pub trait NimbusApi {
@@ -146,7 +142,7 @@ sp_api::decl_runtime_apis! {
 	// #[deprecated]
 	// The macro ended up always making the warning print
 	// so I decided to bail on that.
-	
+
 	/// Deprecated Runtime API from earlier versions of Nimbus.
 	/// It is retained for now so that live chains can temporarily support both
 	/// for a smooth migration. It will be removed soon.

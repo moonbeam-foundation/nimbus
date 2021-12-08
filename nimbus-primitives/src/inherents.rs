@@ -41,10 +41,12 @@ impl sp_inherents::InherentDataProvider for InherentDataProvider {
 	) -> Option<Result<(), sp_inherents::Error>> {
 		// Dont' process modules from other inherents
 		if *identifier != INHERENT_IDENTIFIER {
-			return None
+			return None;
 		}
 
 		// All errors with the author inehrent are fatal
-		Some(Err(sp_inherents::Error::Application(Box::from(String::from("Error processing dummy nimbus inherent")))))
+		Some(Err(sp_inherents::Error::Application(Box::from(
+			String::from("Error processing dummy nimbus inherent"),
+		))))
 	}
 }
