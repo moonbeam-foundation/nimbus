@@ -49,6 +49,10 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -65,8 +69,8 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">InherentData</span>, <span class="ident">InherentIdentifier</span>};
 <span class="kw">use</span> <span class="ident">parity_scale_codec::Encode</span>;
+<span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">InherentData</span>, <span class="ident">InherentIdentifier</span>};
 
 <span class="doccomment">/// The InherentIdentifier for nimbus&#39;s author inherent</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INHERENT_IDENTIFIER</span>: <span class="ident">InherentIdentifier</span> <span class="op">=</span> <span class="kw-2">*</span><span class="string">b&quot;author__&quot;</span>;
@@ -78,7 +82,9 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">async_trait::async_trait</span>]</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">AuthorId</span>: <span class="ident">Encode</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">sp_inherents::InherentDataProvider</span> <span class="kw">for</span> <span class="ident">InherentDataProvider</span><span class="op">&lt;</span><span class="ident">AuthorId</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">AuthorId</span>: <span class="ident">Encode</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">sp_inherents::InherentDataProvider</span>
+	<span class="kw">for</span> <span class="ident">InherentDataProvider</span><span class="op">&lt;</span><span class="ident">AuthorId</span><span class="op">&gt;</span>
+{
 	<span class="kw">fn</span> <span class="ident">provide_inherent_data</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">inherent_data</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InherentData</span>,
@@ -93,13 +99,16 @@
 	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">sp_inherents::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
 		<span class="comment">// Dont&#39; process modules from other inherents</span>
 		<span class="kw">if</span> <span class="kw-2">*</span><span class="ident">identifier</span> <span class="op">!</span><span class="op">=</span> <span class="ident">INHERENT_IDENTIFIER</span> {
-			<span class="kw">return</span> <span class="prelude-val">None</span>
+			<span class="kw">return</span> <span class="prelude-val">None</span>;
 		}
 
 		<span class="comment">// All errors with the author inehrent are fatal</span>
-		<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">sp_inherents::Error::Application</span>(<span class="ident">Box::from</span>(<span class="ident">String::from</span>(<span class="string">&quot;Error processing author inherent&quot;</span>)))))
+		<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">sp_inherents::Error::Application</span>(<span class="ident">Box::from</span>(
+			<span class="ident">String::from</span>(<span class="string">&quot;Error processing author inherent&quot;</span>),
+		))))
 	}
-}</code></pre></div>
+}
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_primitives" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>

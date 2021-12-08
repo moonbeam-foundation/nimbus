@@ -106,11 +106,11 @@
 <span class="attribute">#[<span class="ident">pallet</span>]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pallet</span> {
 
+	<span class="kw">use</span> <span class="ident">frame_support::pallet_prelude</span>::<span class="kw-2">*</span>;
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 	<span class="kw">use</span> <span class="ident">log::warn</span>;
-	<span class="kw">use</span> <span class="ident">frame_support::pallet_prelude</span>::<span class="kw-2">*</span>;
-	<span class="kw">use</span> <span class="ident">sp_std::vec::Vec</span>;
 	<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AccountLookup</span>, <span class="ident">CanAuthor</span>, <span class="ident">NimbusId</span>};
+	<span class="kw">use</span> <span class="ident">sp_std::vec::Vec</span>;
 
 	<span class="doccomment">/// The Account Set pallet</span>
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
@@ -118,7 +118,7 @@
 
 	<span class="doccomment">/// Configuration trait of this pallet.</span>
 	<span class="attribute">#[<span class="ident">pallet::config</span>]</span>
-	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Config</span>: <span class="ident">frame_system::Config</span>  {}
+	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Config</span>: <span class="ident">frame_system::Config</span> {}
 
 	<span class="doccomment">/// The set of accounts that is stored in this pallet.</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>

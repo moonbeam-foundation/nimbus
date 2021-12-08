@@ -590,6 +590,38 @@
 <span id="590">590</span>
 <span id="591">591</span>
 <span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -620,25 +652,29 @@
 	<span class="ident">ParaId</span>, <span class="ident">PersistedValidationData</span>,
 };
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">import_queue::import_queue</span>;
-<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">info</span>, <span class="ident">warn</span>, <span class="ident">debug</span>};
+<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">debug</span>, <span class="ident">info</span>, <span class="ident">warn</span>};
+<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{
+	<span class="ident">AuthorFilterAPI</span>, <span class="ident">CompatibleDigestItem</span>, <span class="ident">NimbusApi</span>, <span class="ident">NimbusId</span>, <span class="ident">NIMBUS_KEY_ID</span>,
+};
 <span class="kw">use</span> <span class="ident">parking_lot::Mutex</span>;
 <span class="kw">use</span> <span class="ident">polkadot_client::ClientHandle</span>;
 <span class="kw">use</span> <span class="ident">sc_client_api::Backend</span>;
-<span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ProvideRuntimeApi</span>, <span class="ident">BlockId</span>, <span class="ident">ApiExt</span>};
+<span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>};
+<span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ApiExt</span>, <span class="ident">BlockId</span>, <span class="ident">ProvideRuntimeApi</span>};
 <span class="kw">use</span> <span class="ident">sp_application_crypto::CryptoTypePublicPair</span>;
 <span class="kw">use</span> <span class="ident">sp_consensus</span>::{
-	<span class="ident">BlockOrigin</span>, <span class="ident">EnableProofRecording</span>, <span class="ident">Environment</span>,
-	<span class="ident">ProofRecording</span>, <span class="ident">Proposal</span>, <span class="ident">Proposer</span>,
+	<span class="ident">BlockOrigin</span>, <span class="ident">EnableProofRecording</span>, <span class="ident">Environment</span>, <span class="ident">ProofRecording</span>, <span class="ident">Proposal</span>, <span class="ident">Proposer</span>,
 };
-<span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>};
+<span class="kw">use</span> <span class="ident">sp_core::crypto::Public</span>;
 <span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">CreateInherentDataProviders</span>, <span class="ident">InherentData</span>, <span class="ident">InherentDataProvider</span>};
-<span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">HashFor</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>, <span class="ident">DigestItemFor</span>};
+<span class="kw">use</span> <span class="ident">sp_keystore</span>::{<span class="ident">SyncCryptoStore</span>, <span class="ident">SyncCryptoStorePtr</span>};
+<span class="kw">use</span> <span class="ident">sp_runtime</span>::{
+	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">HashFor</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>},
+	<span class="ident">DigestItem</span>,
+};
+<span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">sync::Arc</span>, <span class="ident">time::Duration</span>};
 <span class="kw">use</span> <span class="ident">tracing::error</span>;
-<span class="kw">use</span> <span class="ident">sp_keystore</span>::{<span class="ident">SyncCryptoStorePtr</span>, <span class="ident">SyncCryptoStore</span>};
-<span class="kw">use</span> <span class="ident">sp_core::crypto::Public</span>;
-<span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
-<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AuthorFilterAPI</span>, <span class="ident">NIMBUS_KEY_ID</span>, <span class="ident">NimbusId</span>, <span class="ident">NimbusApi</span>, <span class="ident">CompatibleDigestItem</span>};
 <span class="kw">mod</span> <span class="ident">import_queue</span>;
 <span class="kw">mod</span> <span class="ident">manual_seal</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">manual_seal::NimbusManualSealConsensusDataProvider</span>;
@@ -659,7 +695,9 @@
 	<span class="ident">skip_prediction</span>: <span class="ident">bool</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">Clone</span>
+	<span class="kw">for</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
+{
 	<span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span> {
 		<span class="self">Self</span> {
 			<span class="ident">para_id</span>: <span class="self">self</span>.<span class="ident">para_id</span>,
@@ -676,7 +714,8 @@
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
+	<span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RClient</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span>,
 	<span class="ident">RClient</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">PBlock</span><span class="op">&gt;</span>,
@@ -724,7 +763,10 @@
 	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InherentData</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">inherent_data_providers</span> <span class="op">=</span> <span class="self">self</span>
 			.<span class="ident">create_inherent_data_providers</span>
-			.<span class="ident">create_inherent_data_providers</span>(<span class="ident">parent</span>, (<span class="ident">relay_parent</span>, <span class="ident">validation_data</span>.<span class="ident">clone</span>(), <span class="ident">author_id</span>))
+			.<span class="ident">create_inherent_data_providers</span>(
+				<span class="ident">parent</span>,
+				(<span class="ident">relay_parent</span>, <span class="ident">validation_data</span>.<span class="ident">clone</span>(), <span class="ident">author_id</span>),
+			)
 			.<span class="kw">await</span>
 			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
 				<span class="macro">tracing::error!</span>(
@@ -734,7 +776,7 @@
 				)
 			})
 			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		
+
 		<span class="ident">inherent_data_providers</span>
 			.<span class="ident">create_inherent_data</span>()
 			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
@@ -755,13 +797,15 @@
 <span class="doccomment">/// to implement the `skip_prediction` feature.</span>
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_available_key</span>(<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span> {
 	<span class="comment">// Get all the available keys</span>
-	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span>
-		<span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
+	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
 		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
 
 	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
 	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
-		<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>);
+		<span class="macro">warn!</span>(
+			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
+			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>
+		);
 		<span class="kw">return</span> <span class="prelude-val">None</span>;
 	}
 
@@ -772,37 +816,45 @@
 <span class="doccomment">/// If multiple keys are eligible this function still only returns one</span>
 <span class="doccomment">/// and makes no guarantees which one as that depends on the keystore&#39;s iterator behavior.</span>
 <span class="doccomment">/// This is the standard way of determining which key to author with.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_eligible_key</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span>, <span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>, <span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>, <span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>, <span class="ident">slot_number</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_eligible_key</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span>, <span class="ident">C</span><span class="op">&gt;</span>(
+	<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
+	<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>,
+	<span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>,
+	<span class="ident">slot_number</span>: <span class="ident">u32</span>,
+) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">C</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
 	<span class="ident">C::Api</span>: <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
 	<span class="ident">C::Api</span>: <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span>,
 {
 	<span class="comment">// Get all the available keys</span>
-	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span>
-		<span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
+	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
 		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
 
 	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
 	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
-		<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>);
+		<span class="macro">warn!</span>(
+			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
+			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>
+		);
 		<span class="kw">return</span> <span class="prelude-val">None</span>;
-	}<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
+	}
+	<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
 
 	<span class="comment">// helper function for calling the various runtime apis and versions</span>
 	<span class="kw">let</span> <span class="ident">prediction_helper</span> <span class="op">=</span> <span class="op">|</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>: <span class="ident">NimbusId</span>, <span class="ident">slot</span>: <span class="ident">u32</span>, <span class="ident">parent</span><span class="op">|</span> -&gt; <span class="ident">bool</span> {
-
 		<span class="kw">let</span> <span class="ident">has_nimbus_api</span> <span class="op">=</span> <span class="ident">client</span>
 			.<span class="ident">runtime_api</span>()
 			.<span class="ident">has_api</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">at</span>)
 			.<span class="ident">expect</span>(<span class="string">&quot;should be able to dynamically detect the api&quot;</span>);
-		
+
 		<span class="kw">if</span> <span class="ident">has_nimbus_api</span> {
 			<span class="ident">NimbusApi::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
 				.<span class="ident">expect</span>(<span class="string">&quot;NimbusAPI should not return error&quot;</span>)
 		} <span class="kw">else</span> {
 			<span class="comment">// There are two versions of the author filter, so we do that dynamically also.</span>
-			<span class="kw">let</span> <span class="ident">api_version</span> <span class="op">=</span> <span class="ident">client</span>.<span class="ident">runtime_api</span>()
+			<span class="kw">let</span> <span class="ident">api_version</span> <span class="op">=</span> <span class="ident">client</span>
+				.<span class="ident">runtime_api</span>()
 				.<span class="ident">api_version</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>)
 				.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>)
 				.<span class="ident">expect</span>(<span class="string">&quot;Should be able to detect author filter version&quot;</span>);
@@ -812,12 +864,10 @@
 					.<span class="ident">expect</span>(<span class="string">&quot;Author API should not return error&quot;</span>)
 			} <span class="kw">else</span> {
 				<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
-				<span class="ident">client</span>.<span class="ident">runtime_api</span>().<span class="ident">can_author_before_version_2</span>(
-					<span class="kw-2">&amp;</span><span class="ident">at</span>,
-					<span class="ident">nimbus_id</span>,
-					<span class="ident">slot_number</span>,
-				)
-				.<span class="ident">expect</span>(<span class="string">&quot;Author API version 2 should not return error&quot;</span>)
+				<span class="ident">client</span>
+					.<span class="ident">runtime_api</span>()
+					.<span class="ident">can_author_before_version_2</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot_number</span>)
+					.<span class="ident">expect</span>(<span class="string">&quot;Author API version 2 should not return error&quot;</span>)
 			}
 		}
 	};
@@ -847,7 +897,11 @@
 	<span class="ident">maybe_key</span>
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">seal_header</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>, <span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>, <span class="ident">type_public_pair</span>: <span class="kw-2">&amp;</span><span class="ident">CryptoTypePublicPair</span>) -&gt; <span class="ident">DigestItemFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">seal_header</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(
+	<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>,
+	<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>,
+	<span class="ident">type_public_pair</span>: <span class="kw-2">&amp;</span><span class="ident">CryptoTypePublicPair</span>,
+) -&gt; <span class="ident">DigestItem</span>
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span>,
 {
@@ -861,18 +915,15 @@
 	)
 	.<span class="ident">expect</span>(<span class="string">&quot;Keystore should be able to sign&quot;</span>)
 	.<span class="ident">expect</span>(<span class="string">&quot;We already checked that the key was present&quot;</span>);
-	
-	<span class="macro">debug!</span>(
-		<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-		<span class="string">&quot;The signature is \n{:?}&quot;</span>, <span class="ident">raw_sig</span>
-	);
+
+	<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;The signature is \n{:?}&quot;</span>, <span class="ident">raw_sig</span>);
 
 	<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">raw_sig</span>
-			.<span class="ident">clone</span>()
-			.<span class="ident">try_into</span>()
-			.<span class="ident">expect</span>(<span class="string">&quot;signature bytes produced by keystore should be right length&quot;</span>);
-	
-	<span class="op">&lt;</span><span class="ident">DigestItemFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">CompatibleDigestItem</span><span class="op">&gt;</span><span class="ident">::nimbus_seal</span>(<span class="ident">signature</span>)
+		.<span class="ident">clone</span>()
+		.<span class="ident">try_into</span>()
+		.<span class="ident">expect</span>(<span class="string">&quot;signature bytes produced by keystore should be right length&quot;</span>);
+
+	<span class="op">&lt;</span><span class="ident">DigestItem</span> <span class="kw">as</span> <span class="ident">CompatibleDigestItem</span><span class="op">&gt;</span><span class="ident">::nimbus_seal</span>(<span class="ident">signature</span>)
 }
 
 <span class="attribute">#[<span class="ident">async_trait::async_trait</span>]</span>
@@ -903,35 +954,45 @@
 		<span class="ident">relay_parent</span>: <span class="ident">PHash</span>,
 		<span class="ident">validation_data</span>: <span class="kw-2">&amp;</span><span class="ident">PersistedValidationData</span>,
 	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ParachainCandidate</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-
 		<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">skip_prediction</span> {
 			<span class="ident">first_available_key</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>)
-		}
-		<span class="kw">else</span> {
-			<span class="ident">first_eligible_key</span>::<span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">ParaClient</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>, <span class="ident">parent</span>, <span class="ident">validation_data</span>.<span class="ident">relay_parent_number</span>)
+		} <span class="kw">else</span> {
+			<span class="ident">first_eligible_key</span>::<span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">ParaClient</span><span class="op">&gt;</span>(
+				<span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">clone</span>(),
+				<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>,
+				<span class="ident">parent</span>,
+				<span class="ident">validation_data</span>.<span class="ident">relay_parent_number</span>,
+			)
 		};
 
 		<span class="comment">// If there are no eligible keys, print the log, and exit early.</span>
 		<span class="kw">let</span> <span class="ident">type_public_pair</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">maybe_key</span> {
 			<span class="prelude-val">Some</span>(<span class="ident">p</span>) =&gt; <span class="ident">p</span>,
-			<span class="prelude-val">None</span> =&gt; { <span class="kw">return</span> <span class="prelude-val">None</span>; }
+			<span class="prelude-val">None</span> =&gt; {
+				<span class="kw">return</span> <span class="prelude-val">None</span>;
+			}
 		};
 
 		<span class="kw">let</span> <span class="ident">proposer_future</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">proposer_factory</span>.<span class="ident">lock</span>().<span class="ident">init</span>(<span class="kw-2">&amp;</span><span class="ident">parent</span>);
 
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">proposer_future</span>
 			.<span class="kw">await</span>
-			.<span class="ident">map_err</span>(
-				<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>, <span class="string">&quot;Could not create proposer.&quot;</span>),
-			)
+			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>, <span class="string">&quot;Could not create proposer.&quot;</span>))
 			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
 
-		<span class="kw">let</span> <span class="ident">inherent_data</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inherent_data</span>(<span class="ident">parent</span>.<span class="ident">hash</span>(),<span class="kw-2">&amp;</span><span class="ident">validation_data</span>, <span class="ident">relay_parent</span>, <span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>)).<span class="kw">await</span><span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">inherent_data</span> <span class="op">=</span> <span class="self">self</span>
+			.<span class="ident">inherent_data</span>(
+				<span class="ident">parent</span>.<span class="ident">hash</span>(),
+				<span class="kw-2">&amp;</span><span class="ident">validation_data</span>,
+				<span class="ident">relay_parent</span>,
+				<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>),
+			)
+			.<span class="kw">await</span><span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">inherent_digests</span> <span class="op">=</span> <span class="ident">sp_runtime::generic::Digest</span> {
-			<span class="ident">logs</span>: <span class="macro">vec!</span>[
-				<span class="ident">CompatibleDigestItem::nimbus_pre_digest</span>(<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>)),
-			]
+			<span class="ident">logs</span>: <span class="macro">vec!</span>[<span class="ident">CompatibleDigestItem::nimbus_pre_digest</span>(
+				<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>),
+			)],
 		};
 
 		<span class="kw">let</span> <span class="ident">Proposal</span> {
@@ -962,7 +1023,7 @@
 		<span class="ident">block_import_params</span>.<span class="ident">post_digests</span>.<span class="ident">push</span>(<span class="ident">sig_digest</span>.<span class="ident">clone</span>());
 		<span class="ident">block_import_params</span>.<span class="ident">body</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">extrinsics</span>.<span class="ident">clone</span>());
 		<span class="ident">block_import_params</span>.<span class="ident">state_action</span> <span class="op">=</span> <span class="ident">sc_consensus::StateAction::ApplyChanges</span>(
-			<span class="ident">sc_consensus::StorageChanges::Changes</span>(<span class="ident">storage_changes</span>)
+			<span class="ident">sc_consensus::StorageChanges::Changes</span>(<span class="ident">storage_changes</span>),
 		);
 
 		<span class="comment">// Print the same log line as slots (aura and babe)</span>
@@ -996,7 +1057,10 @@
 		<span class="kw">let</span> <span class="ident">post_block</span> <span class="op">=</span> <span class="ident">B::new</span>(<span class="ident">post_header</span>, <span class="ident">extrinsics</span>);
 
 		<span class="comment">// Returning the block WITH the seal for distribution around the network.</span>
-		<span class="prelude-val">Some</span>(<span class="ident">ParachainCandidate</span> { <span class="ident">block</span>: <span class="ident">post_block</span>, <span class="ident">proof</span> })
+		<span class="prelude-val">Some</span>(<span class="ident">ParachainCandidate</span> {
+			<span class="ident">block</span>: <span class="ident">post_block</span>,
+			<span class="ident">proof</span>,
+		})
 	}
 }
 
@@ -1014,7 +1078,6 @@
 	<span class="kw">pub</span> <span class="ident">parachain_client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ParaClient</span><span class="op">&gt;</span>,
 	<span class="kw">pub</span> <span class="ident">keystore</span>: <span class="ident">SyncCryptoStorePtr</span>,
 	<span class="kw">pub</span> <span class="ident">skip_prediction</span>: <span class="ident">bool</span>,
-
 }
 
 <span class="doccomment">/// Build the [`NimbusConsensus`].</span>
@@ -1071,7 +1134,7 @@
 <span class="doccomment">/// a concrete relay chain client instance, the builder takes a [`polkadot_client::Client`]</span>
 <span class="doccomment">/// that wraps this concrete instanace. By using [`polkadot_client::ExecuteWithClient`]</span>
 <span class="doccomment">/// the builder gets access to this concrete instance.</span>
-<span class="kw">struct</span> <span class="ident">NimbusConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>,<span class="ident">CIDP</span><span class="op">&gt;</span> {
+<span class="kw">struct</span> <span class="ident">NimbusConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> {
 	<span class="ident">para_id</span>: <span class="ident">ParaId</span>,
 	<span class="ident">_phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">proposer_factory</span>: <span class="ident">PF</span>,
@@ -1084,7 +1147,8 @@
 	<span class="ident">skip_prediction</span>: <span class="ident">bool</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span> <span class="ident">NimbusConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
+	<span class="ident">NimbusConsensusBuilder</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">RBackend</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span>,
 	<span class="comment">// Rust bug: https://github.com/rust-lang/rust/issues/24159</span>
