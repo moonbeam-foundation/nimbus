@@ -1,18 +1,18 @@
-// Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Cumulus.
+// Copyright 2019-2021 PureStake Inc.
+// This file is part of Nimbus.
 
-// Cumulus is free software: you can redistribute it and/or modify
+// Nimbus is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Cumulus is distributed in the hope that it will be useful,
+// Nimbus is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Cumulus.  If not, see <http://www.gnu.org/licenses/>.
+// along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The nimbus consensus client-side worker
 //!
@@ -40,7 +40,7 @@ use sp_consensus::{
 };
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_runtime::traits::{Block as BlockT, HashFor, Header as HeaderT, DigestItemFor};
+use sp_runtime::{ DigestItem, traits::{Block as BlockT, HashFor, Header as HeaderT} };
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
@@ -255,7 +255,7 @@ where
 	maybe_key
 }
 
-pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItemFor<B>
+pub(crate) fn seal_header<B>(header: &B::Header, keystore: &dyn SyncCryptoStore, type_public_pair: &CryptoTypePublicPair) -> DigestItem
 where
 	B: BlockT,
 {
@@ -280,7 +280,7 @@ where
 			.try_into()
 			.expect("signature bytes produced by keystore should be right length");
 	
-	<DigestItemFor<B> as CompatibleDigestItem>::nimbus_seal(signature)
+	<DigestItem as CompatibleDigestItem>::nimbus_seal(signature)
 }
 
 #[async_trait::async_trait]
@@ -300,7 +300,9 @@ where
 		Proof = <EnableProofRecording as ProofRecording>::Proof,
 	>,
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
+	// We require the client to provide both runtime apis, but only one will be called
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
+	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
 {
 	async fn produce_candidate(
@@ -453,6 +455,7 @@ where
 	// Rust bug: https://github.com/rust-lang/rust/issues/24159
 	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
+	ParaClient::Api: NimbusApi<Block>,
 	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
@@ -535,6 +538,7 @@ where
 	/// Build the nimbus consensus.
 	fn build(self) -> Box<dyn ParachainConsensus<Block>>
 	where
+		ParaClient::Api: NimbusApi<Block>,
 		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		self.relay_chain_client.clone().execute_with(self)
@@ -557,6 +561,7 @@ where
 	BI: BlockImport<Block> + Send + Sync + 'static,
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
+	ParaClient::Api: NimbusApi<Block>,
 	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
@@ -569,6 +574,7 @@ where
 		PBackend::State: sp_api::StateBackend<sp_runtime::traits::BlakeTwo256>,
 		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
 		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
+		ParaClient::Api: NimbusApi<Block>,
 		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
 	{
 		Box::new(NimbusConsensus::new(
