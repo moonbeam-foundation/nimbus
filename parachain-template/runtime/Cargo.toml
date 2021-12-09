@@ -56,15 +56,15 @@ pallet-transaction-payment = { git = "https://github.com/purestake/substrate", d
 pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
 
 # Cumulus dependencies
-cumulus-pallet-dmp-queue = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-parachain-system = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-xcm = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-pallet-xcmp-queue = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-timestamp = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-cumulus-primitives-utility = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-pallet-collator-selection = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
-parachain-info = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+cumulus-pallet-dmp-queue = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-pallet-parachain-system = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-pallet-xcm = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-pallet-xcmp-queue = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-primitives-timestamp = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+cumulus-primitives-utility = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+pallet-collator-selection = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
+parachain-info = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor", default-features = false }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
@@ -73,12 +73,12 @@ pallet-author-inherent = { path = "../../pallets/author-inherent", default-featu
 
 
 # Polkadot Dependencies
-pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "moonbeam-polkadot-v0.9.12" }
-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+pallet-xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "gorka-try-new-reanchor" }
+polkadot-parachain = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "gorka-try-new-reanchor" }
+polkadot-runtime-common = { git = "https://github.com/purestake/polkadot", default-features = false, branch = "gorka-try-new-reanchor" }
+xcm = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "gorka-try-new-reanchor" }
+xcm-builder = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "gorka-try-new-reanchor" }
+xcm-executor = { git = "https://github.com/purestake/polkadot", default-features = false , branch = "gorka-try-new-reanchor" }
 
 [features]
 default = [

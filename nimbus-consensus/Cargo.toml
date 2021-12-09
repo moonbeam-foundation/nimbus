@@ -21,12 +21,12 @@ sp-application-crypto = { git = "https://github.com/purestake/substrate", branch
 sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
 
 # Polkadot dependencies
-polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.12", default-features = false }
+polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "gorka-try-new-reanchor", default-features = false }
 
 # Cumulus dependencies
-cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
-cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.12" }
+cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor" }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor" }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "gorka-try-new-reanchor" }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../nimbus-primitives" }
