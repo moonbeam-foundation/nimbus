@@ -31,7 +31,7 @@ serde = { version = "1.0.119", features = ["derive"] }
 hex-literal = "0.3.1"
 
 # RPC related Dependencies
-jsonrpc-core = "18.0.0"
+jsonrpsee = { git = "https://github.com/PureStake/jsonrpsee", branch = "moonbeam-polkadot-jsonrpsee-v0.9.13", features = ["server", "macros"] }
 
 # Local Dependencies
 parachain-template-runtime = { path = "../runtime" }
@@ -92,4 +92,3 @@ polkadot-cli = { git = "https://github.com/purestake/polkadot", branch = "moonbe
 polkadot-parachain = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-jsonrpsee-v0.9.13" }
 polkadot-primitives = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-jsonrpsee-v0.9.13" }
 polkadot-service = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-jsonrpsee-v0.9.13" }
-polkadot-test-service = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-jsonrpsee-v0.9.13" }

@@ -5,12 +5,10 @@ use std::sync::Arc;
 
 // Local Runtime Types
 use parachain_template_runtime::{
-	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi, NimbusId
+	opaque::Block, AccountId, Balance, Hash, Index as Nonce, NimbusId, RuntimeApi,
 };
 
-use nimbus_consensus::{
-	build_nimbus_consensus, BuildNimbusConsensusParams,
-};
+use nimbus_consensus::{build_nimbus_consensus, BuildNimbusConsensusParams};
 
 // Cumulus Imports
 use cumulus_client_consensus_common::ParachainConsensus;
@@ -113,7 +111,9 @@ where
 	let telemetry_worker_handle = telemetry.as_ref().map(|(worker, _)| worker.handle());
 
 	let telemetry = telemetry.map(|(worker, telemetry)| {
-		task_manager.spawn_handle().spawn("telemetry", None, worker.run());
+		task_manager
+			.spawn_handle()
+			.spawn("telemetry", None, worker.run());
 		telemetry
 	});
 
@@ -126,16 +126,16 @@ where
 	);
 
 	let import_queue = nimbus_consensus::import_queue(
-			client.clone(),
-			client.clone(),
-			move |_, _| async move {
-				let time = sp_timestamp::InherentDataProvider::from_system_time();
+		client.clone(),
+		client.clone(),
+		move |_, _| async move {
+			let time = sp_timestamp::InherentDataProvider::from_system_time();
 
-				Ok((time,))
-			},
-			&task_manager.spawn_essential_handle(),
-			config.prometheus_registry().clone(),
-		)?;
+			Ok((time,))
+		},
+		&task_manager.spawn_essential_handle(),
+		config.prometheus_registry().clone(),
+	)?;
 
 	let params = PartialComponents {
 		backend,
@@ -155,11 +155,10 @@ where
 ///
 /// This is the actual implementation that is abstract over the executor and the runtime api.
 #[sc_tracing::logging::prefix_logs_with("Parachain")]
-async fn start_node_impl<RuntimeApi, Executor, RB, BIC>(
+async fn start_node_impl<RuntimeApi, Executor, BIC>(
 	parachain_config: Configuration,
 	polkadot_config: Configuration,
 	id: ParaId,
-	_rpc_ext_builder: RB,
 	build_consensus: BIC,
 ) -> sc_service::error::Result<(
 	TaskManager,
@@ -183,11 +182,6 @@ where
 		+ substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	sc_client_api::StateBackendFor<TFullBackend<Block>, Block>: sp_api::StateBackend<BlakeTwo256>,
 	Executor: sc_executor::NativeExecutionDispatch + 'static,
-	RB: Fn(
-			Arc<TFullClient<Block, RuntimeApi, Executor>>,
-		) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
-		+ Send
-		+ 'static,
 	BIC: FnOnce(
 		Arc<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>>,
 		Option<&Registry>,
@@ -206,7 +200,7 @@ where
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
 	if matches!(parachain_config.role, Role::Light) {
-		return Err("Light client not supported!".into())
+		return Err("Light client not supported!".into());
 	}
 
 	let parachain_config = prepare_node_config(parachain_config);
@@ -258,12 +252,12 @@ where
 				deny_unsafe,
 			};
 
-			Ok(crate::rpc::create_full(deps))
+			crate::rpc::create_full(deps).map_err(Into::into)
 		})
 	};
 
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		rpc_extensions_builder,
+		rpc_builder: rpc_extensions_builder,
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
@@ -334,11 +328,10 @@ pub async fn start_parachain_node(
 	TaskManager,
 	Arc<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<TemplateRuntimeExecutor>>>,
 )> {
-	start_node_impl::<RuntimeApi, TemplateRuntimeExecutor, _, _>(
+	start_node_impl::<RuntimeApi, TemplateRuntimeExecutor, _>(
 		parachain_config,
 		polkadot_config,
 		id,
-		|_| Ok(Default::default()),
 		|client,
 		 prometheus_registry,
 		 telemetry,
@@ -358,20 +351,22 @@ pub async fn start_parachain_node(
 
 			let relay_chain_backend = relay_chain_node.backend.clone();
 			let relay_chain_client = relay_chain_node.client.clone();
-			Ok(
-				build_nimbus_consensus(
-					BuildNimbusConsensusParams {
-						para_id: id,
-						proposer_factory,
-						block_import: client.clone(),
-						relay_chain_client: relay_chain_node.client.clone(),
-						relay_chain_backend: relay_chain_node.backend.clone(),
-						parachain_client: client.clone(),
-						keystore,
-						skip_prediction: force_authoring,
-						create_inherent_data_providers:
-							move |_, (relay_parent, validation_data, author_id)| {
-								let parachain_inherent =
+			Ok(build_nimbus_consensus(BuildNimbusConsensusParams {
+				para_id: id,
+				proposer_factory,
+				block_import: client.clone(),
+				relay_chain_client: relay_chain_node.client.clone(),
+				relay_chain_backend: relay_chain_node.backend.clone(),
+				parachain_client: client.clone(),
+				keystore,
+				skip_prediction: force_authoring,
+				create_inherent_data_providers: move |_,
+				                                      (
+					relay_parent,
+					validation_data,
+					author_id,
+				)| {
+					let parachain_inherent =
 								cumulus_primitives_parachain_inherent::ParachainInherentData::create_at_with_client(
 									relay_parent,
 									&relay_chain_client,
@@ -379,23 +374,21 @@ pub async fn start_parachain_node(
 									&validation_data,
 									id,
 								);
-								async move {
-									let time = sp_timestamp::InherentDataProvider::from_system_time();
+					async move {
+						let time = sp_timestamp::InherentDataProvider::from_system_time();
 
-									let parachain_inherent = parachain_inherent.ok_or_else(|| {
-										Box::<dyn std::error::Error + Send + Sync>::from(
-											"Failed to create parachain inherent",
-										)
-									})?;
+						let parachain_inherent = parachain_inherent.ok_or_else(|| {
+							Box::<dyn std::error::Error + Send + Sync>::from(
+								"Failed to create parachain inherent",
+							)
+						})?;
 
-									let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
+						let author = nimbus_primitives::InherentDataProvider::<NimbusId>(author_id);
 
-									Ok((time, parachain_inherent, author))
-								}
-							},
-					},
-				),
-			)
+						Ok((time, parachain_inherent, author))
+					}
+				},
+			}))
 		},
 	)
 	.await

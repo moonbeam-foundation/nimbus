@@ -26,7 +26,9 @@ fn load_spec(
 		"dev" => Box::new(chain_spec::development_config(para_id)),
 		"template-rococo" => Box::new(chain_spec::local_testnet_config(para_id)),
 		"" | "local" => Box::new(chain_spec::local_testnet_config(para_id)),
-		path => Box::new(chain_spec::ChainSpec::from_json_file(std::path::PathBuf::from(path))?),
+		path => Box::new(chain_spec::ChainSpec::from_json_file(
+			std::path::PathBuf::from(path),
+		)?),
 	})
 }
 
@@ -142,34 +144,36 @@ pub fn run() -> Result<()> {
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
-		},
+		}
 		Some(Subcommand::CheckBlock(cmd)) => {
 			construct_async_run!(|components, cli, cmd, config| {
 				Ok(cmd.run(components.client, components.import_queue))
 			})
-		},
+		}
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			construct_async_run!(|components, cli, cmd, config| {
 				Ok(cmd.run(components.client, config.database))
 			})
-		},
+		}
 		Some(Subcommand::ExportState(cmd)) => {
 			construct_async_run!(|components, cli, cmd, config| {
 				Ok(cmd.run(components.client, config.chain_spec))
 			})
-		},
+		}
 		Some(Subcommand::ImportBlocks(cmd)) => {
 			construct_async_run!(|components, cli, cmd, config| {
 				Ok(cmd.run(components.client, components.import_queue))
 			})
-		},
+		}
 		Some(Subcommand::PurgeChain(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 
 			runner.sync_run(|config| {
 				let polkadot_cli = RelayChainCli::new(
 					&config,
-					[RelayChainCli::executable_name()].iter().chain(cli.relaychain_args.iter()),
+					[RelayChainCli::executable_name()]
+						.iter()
+						.chain(cli.relaychain_args.iter()),
 				);
 
 				let polkadot_config = SubstrateCli::create_configuration(
@@ -181,12 +185,12 @@ pub fn run() -> Result<()> {
 
 				cmd.run(config, polkadot_config)
 			})
-		},
+		}
 		Some(Subcommand::Revert(cmd)) => {
 			construct_async_run!(|components, cli, cmd, config| {
 				Ok(cmd.run(components.client, components.backend))
 			})
-		},
+		}
 		Some(Subcommand::ExportGenesisState(params)) => {
 			let mut builder = sc_cli::LoggerBuilder::new("");
 			builder.with_profiling(sc_tracing::TracingReceiver::Log, "");
@@ -210,7 +214,7 @@ pub fn run() -> Result<()> {
 			}
 
 			Ok(())
-		},
+		}
 		Some(Subcommand::ExportGenesisWasm(params)) => {
 			let mut builder = sc_cli::LoggerBuilder::new("");
 			builder.with_profiling(sc_tracing::TracingReceiver::Log, "");
@@ -231,8 +235,8 @@ pub fn run() -> Result<()> {
 			}
 
 			Ok(())
-		},
-		Some(Subcommand::Benchmark(cmd)) =>
+		}
+		Some(Subcommand::Benchmark(cmd)) => {
 			if cfg!(feature = "runtime-benchmarks") {
 				let runner = cli.create_runner(cmd)?;
 
@@ -241,7 +245,8 @@ pub fn run() -> Result<()> {
 				Err("Benchmarking wasn't enabled when building the node. \
 				You can enable it with `--features runtime-benchmarks`."
 					.into())
-			},
+			}
+		}
 		None => {
 			let runner = cli.create_runner(&cli.run.normalize())?;
 
@@ -251,7 +256,9 @@ pub fn run() -> Result<()> {
 
 				let polkadot_cli = RelayChainCli::new(
 					&config,
-					[RelayChainCli::executable_name()].iter().chain(cli.relaychain_args.iter()),
+					[RelayChainCli::executable_name()]
+						.iter()
+						.chain(cli.relaychain_args.iter()),
 				);
 
 				let id = ParaId::from(para_id.unwrap_or(2000));
@@ -271,14 +278,21 @@ pub fn run() -> Result<()> {
 				info!("Parachain id: {:?}", id);
 				info!("Parachain Account: {}", parachain_account);
 				info!("Parachain genesis state: {}", genesis_state);
-				info!("Is collating: {}", if config.role.is_authority() { "yes" } else { "no" });
+				info!(
+					"Is collating: {}",
+					if config.role.is_authority() {
+						"yes"
+					} else {
+						"no"
+					}
+				);
 
 				crate::service::start_parachain_node(config, polkadot_config, id)
 					.await
 					.map(|r| r.0)
 					.map_err(Into::into)
 			})
-		},
+		}
 	}
 }
 
@@ -347,7 +361,11 @@ impl CliConfiguration<Self> for RelayChainCli {
 	fn chain_id(&self, is_dev: bool) -> Result<String> {
 		let chain_id = self.base.base.chain_id(is_dev)?;
 
-		Ok(if chain_id.is_empty() { self.chain_id.clone().unwrap_or_default() } else { chain_id })
+		Ok(if chain_id.is_empty() {
+			self.chain_id.clone().unwrap_or_default()
+		} else {
+			chain_id
+		})
 	}
 
 	fn role(&self, is_dev: bool) -> Result<sc_service::Role> {
