@@ -47,6 +47,7 @@ use sp_runtime::{
 	traits::{Block as BlockT, HashFor, Header as HeaderT},
 	DigestItem,
 };
+use sc_consensus::{BlockImportParams, BlockImport};
 use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;

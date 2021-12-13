@@ -20,10 +20,12 @@ use cumulus_primitives_parachain_inherent::{
 use nimbus_primitives::{CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_ENGINE_ID};
 use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
-use sp_api::{HeaderT, ProvideRuntimeApi, TransactionFor};
+use sp_api::{BlockT, HeaderT, ProvideRuntimeApi, TransactionFor};
 use sp_core::crypto::Public;
 use sp_inherents::InherentData;
 use sp_keystore::SyncCryptoStorePtr;
+use std::sync::Arc;
+use sp_runtime::{DigestItem, Digest};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider<C> {
