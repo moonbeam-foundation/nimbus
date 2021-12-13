@@ -395,7 +395,7 @@ pub async fn start_parachain_node(
 							)
 						})?;
 
-let nimbus_inherent = nimbus_primitives::InherentDataProvider;
+						let nimbus_inherent = nimbus_primitives::InherentDataProvider;
 
 						Ok((time, parachain_inherent, nimbus_inherent))
 					}
