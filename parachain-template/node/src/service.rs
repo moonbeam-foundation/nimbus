@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 // Local Runtime Types
 use parachain_template_runtime::{
-	opaque::Block, AccountId, Balance, Hash, Index as Nonce, NimbusId, RuntimeApi,
+	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi,
 };
 
 use nimbus_consensus::{
