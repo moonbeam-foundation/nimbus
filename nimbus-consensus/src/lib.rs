@@ -30,9 +30,8 @@ use cumulus_primitives_core::{
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
 use nimbus_primitives::{
-	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
+	CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
 };
-use nimbus_primitives::{CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
@@ -42,15 +41,12 @@ use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
 use sp_core::crypto::Public;
-use sp_core::crypto::Public;
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
 use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
 use sp_runtime::{
 	traits::{Block as BlockT, HashFor, Header as HeaderT},
 	DigestItem,
 };
-use std::convert::TryInto;
 use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
