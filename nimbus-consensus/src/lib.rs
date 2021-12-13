@@ -29,12 +29,11 @@ use cumulus_primitives_core::{
 };
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
-use nimbus_primitives::{
-	CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
-};
+use nimbus_primitives::{CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID};
 use parking_lot::Mutex;
 use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
+use sc_consensus::{BlockImport, BlockImportParams};
 use sp_api::{BlockId, ProvideRuntimeApi};
 use sp_application_crypto::CryptoTypePublicPair;
 use sp_consensus::{
@@ -47,7 +46,6 @@ use sp_runtime::{
 	traits::{Block as BlockT, HashFor, Header as HeaderT},
 	DigestItem,
 };
-use sc_consensus::{BlockImportParams, BlockImport};
 use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;

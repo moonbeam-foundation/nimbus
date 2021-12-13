@@ -24,8 +24,8 @@ use sp_api::{BlockT, HeaderT, ProvideRuntimeApi, TransactionFor};
 use sp_core::crypto::Public;
 use sp_inherents::InherentData;
 use sp_keystore::SyncCryptoStorePtr;
+use sp_runtime::{Digest, DigestItem};
 use std::sync::Arc;
-use sp_runtime::{DigestItem, Digest};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider<C> {
