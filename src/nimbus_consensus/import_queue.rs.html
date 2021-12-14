@@ -248,6 +248,30 @@
 <span id="248">248</span>
 <span id="249">249</span>
 <span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -266,25 +290,23 @@
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">sync::Arc</span>};
 
+<span class="kw">use</span> <span class="ident">log::debug</span>;
+<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">digests::CompatibleDigestItem</span>, <span class="ident">NimbusId</span>, <span class="ident">NimbusPair</span>, <span class="ident">NIMBUS_ENGINE_ID</span>};
+<span class="kw">use</span> <span class="ident">sc_consensus</span>::{
+	<span class="ident">import_queue</span>::{<span class="ident">BasicQueue</span>, <span class="ident">Verifier</span> <span class="kw">as</span> <span class="ident">VerifierT</span>},
+	<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>,
+};
 <span class="kw">use</span> <span class="ident">sp_api::ProvideRuntimeApi</span>;
+<span class="kw">use</span> <span class="ident">sp_application_crypto</span>::{<span class="ident">Pair</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">Public</span> <span class="kw">as</span> <span class="kw">_</span>};
 <span class="kw">use</span> <span class="ident">sp_block_builder::BlockBuilder</span> <span class="kw">as</span> <span class="ident">BlockBuilderApi</span>;
 <span class="kw">use</span> <span class="ident">sp_blockchain::Result</span> <span class="kw">as</span> <span class="ident">ClientResult</span>;
-<span class="kw">use</span> <span class="ident">sp_consensus</span>::{
-	<span class="ident">error::Error</span> <span class="kw">as</span> <span class="ident">ConsensusError</span>, <span class="ident">CacheKeyId</span>,
-};
-<span class="kw">use</span> <span class="ident">sc_consensus</span>::{
-	<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>, 
-	<span class="ident">import_queue</span>::{<span class="ident">BasicQueue</span>, <span class="ident">Verifier</span> <span class="kw">as</span> <span class="ident">VerifierT</span>},
-};
+<span class="kw">use</span> <span class="ident">sp_consensus</span>::{<span class="ident">error::Error</span> <span class="kw">as</span> <span class="ident">ConsensusError</span>, <span class="ident">CacheKeyId</span>};
 <span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">CreateInherentDataProviders</span>, <span class="ident">InherentDataProvider</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">generic::BlockId</span>,
 	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>},
 	<span class="ident">DigestItem</span>,
 };
-<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">NimbusId</span>, <span class="ident">NimbusPair</span>, <span class="ident">digests::CompatibleDigestItem</span>, <span class="ident">NIMBUS_ENGINE_ID</span>};
-<span class="kw">use</span> <span class="ident">sp_application_crypto</span>::{<span class="ident">Pair</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">Public</span> <span class="kw">as</span> <span class="kw">_</span>};
-<span class="kw">use</span> <span class="ident">log::debug</span>;
 
 <span class="doccomment">/// The Nimbus verifier strips the seal digest, and checks that it is a valid signature by</span>
 <span class="doccomment">/// the same key that was injected into the runtime and noted in the Seal digest.</span>
@@ -303,7 +325,7 @@
 	<span class="ident">Block</span>: <span class="ident">BlockT</span>,
 	<span class="ident">Client</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
 	<span class="op">&lt;</span><span class="ident">Client</span> <span class="kw">as</span> <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Api</span>: <span class="ident">BlockBuilderApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
-	<span class="ident">CIDP</span>: <span class="ident">CreateInherentDataProviders</span><span class="op">&lt;</span><span class="ident">Block</span>, ()<span class="op">&gt;</span> ,
+	<span class="ident">CIDP</span>: <span class="ident">CreateInherentDataProviders</span><span class="op">&lt;</span><span class="ident">Block</span>, ()<span class="op">&gt;</span>,
 {
 	<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">verify</span>(
 		<span class="kw-2">&amp;mut</span> <span class="self">self</span>,
@@ -315,33 +337,55 @@
 		),
 		<span class="ident">String</span>,
 	<span class="op">&gt;</span> {
-
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Header hash before popping digest {:?}&quot;</span>, <span class="ident">block_params</span>.<span class="ident">header</span>.<span class="ident">hash</span>());
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Header hash before popping digest {:?}&quot;</span>,
+			<span class="ident">block_params</span>.<span class="ident">header</span>.<span class="ident">hash</span>()
+		);
 		<span class="comment">// Grab the seal digest. Assume it is last (since it is a seal after-all).</span>
-		<span class="kw">let</span> <span class="ident">seal</span> <span class="op">=</span> <span class="ident">block_params</span>.<span class="ident">header</span>.<span class="ident">digest_mut</span>().<span class="ident">pop</span>().<span class="ident">expect</span>(<span class="string">&quot;Block should have at least one digest on it&quot;</span>);
+		<span class="kw">let</span> <span class="ident">seal</span> <span class="op">=</span> <span class="ident">block_params</span>
+			.<span class="ident">header</span>
+			.<span class="ident">digest_mut</span>()
+			.<span class="ident">pop</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;Block should have at least one digest on it&quot;</span>);
 
-		<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">seal</span>.<span class="ident">as_nimbus_seal</span>().<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span><span class="ident">String::from</span>(<span class="string">&quot;HeaderUnsealed&quot;</span>))<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">seal</span>
+			.<span class="ident">as_nimbus_seal</span>()
+			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">String::from</span>(<span class="string">&quot;HeaderUnsealed&quot;</span>))<span class="question-mark">?</span>;
 
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Header hash after popping digest {:?}&quot;</span>, <span class="ident">block_params</span>.<span class="ident">header</span>.<span class="ident">hash</span>());
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Header hash after popping digest {:?}&quot;</span>,
+			<span class="ident">block_params</span>.<span class="ident">header</span>.<span class="ident">hash</span>()
+		);
 
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Signature according to verifier is {:?}&quot;</span>, <span class="ident">signature</span>);
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Signature according to verifier is {:?}&quot;</span>, <span class="ident">signature</span>
+		);
 
 		<span class="comment">// Grab the author information from either the preruntime digest or the consensus digest</span>
 		<span class="comment">//TODO use the trait</span>
-		<span class="kw">let</span> <span class="ident">claimed_author</span> <span class="op">=</span> <span class="ident">block_params</span>.<span class="ident">header</span>
+		<span class="kw">let</span> <span class="ident">claimed_author</span> <span class="op">=</span> <span class="ident">block_params</span>
+			.<span class="ident">header</span>
 			.<span class="ident">digest</span>()
 			.<span class="ident">logs</span>
 			.<span class="ident">iter</span>()
-			.<span class="ident">find_map</span>(<span class="op">|</span><span class="ident">digest</span><span class="op">|</span> {
-				<span class="kw">match</span> <span class="kw-2">*</span><span class="ident">digest</span> {
-					<span class="ident">DigestItem::Consensus</span>(<span class="ident">id</span>, <span class="kw-2">ref</span> <span class="ident">author_id</span>) <span class="kw">if</span> <span class="ident">id</span> <span class="op">==</span> <span class="ident">NIMBUS_ENGINE_ID</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">author_id</span>.<span class="ident">clone</span>()),
-					<span class="ident">DigestItem::PreRuntime</span>(<span class="ident">id</span>, <span class="kw-2">ref</span> <span class="ident">author_id</span>) <span class="kw">if</span> <span class="ident">id</span> <span class="op">==</span> <span class="ident">NIMBUS_ENGINE_ID</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">author_id</span>.<span class="ident">clone</span>()),
-					<span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+			.<span class="ident">find_map</span>(<span class="op">|</span><span class="ident">digest</span><span class="op">|</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">digest</span> {
+				<span class="ident">DigestItem::Consensus</span>(<span class="ident">id</span>, <span class="kw-2">ref</span> <span class="ident">author_id</span>) <span class="kw">if</span> <span class="ident">id</span> <span class="op">==</span> <span class="ident">NIMBUS_ENGINE_ID</span> =&gt; {
+					<span class="prelude-val">Some</span>(<span class="ident">author_id</span>.<span class="ident">clone</span>())
 				}
+				<span class="ident">DigestItem::PreRuntime</span>(<span class="ident">id</span>, <span class="kw-2">ref</span> <span class="ident">author_id</span>) <span class="kw">if</span> <span class="ident">id</span> <span class="op">==</span> <span class="ident">NIMBUS_ENGINE_ID</span> =&gt; {
+					<span class="prelude-val">Some</span>(<span class="ident">author_id</span>.<span class="ident">clone</span>())
+				}
+				<span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
 			})
 			.<span class="ident">expect</span>(<span class="string">&quot;Expected one consensus or pre-runtime digest that contains author id bytes&quot;</span>);
 
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Claimed Author according to verifier is {:?}&quot;</span>, <span class="ident">claimed_author</span>);
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Claimed Author according to verifier is {:?}&quot;</span>, <span class="ident">claimed_author</span>
+		);
 
 		<span class="comment">// Verify the signature</span>
 		<span class="kw">let</span> <span class="ident">valid_signature</span> <span class="op">=</span> <span class="ident">NimbusPair::verify</span>(
@@ -350,9 +394,12 @@
 			<span class="kw-2">&amp;</span><span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">claimed_author</span>),
 		);
 
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Valid signature? {:?}&quot;</span>, <span class="ident">valid_signature</span>);
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Valid signature? {:?}&quot;</span>, <span class="ident">valid_signature</span>
+		);
 
-		<span class="kw">if</span> <span class="op">!</span><span class="ident">valid_signature</span>{
+		<span class="kw">if</span> <span class="op">!</span><span class="ident">valid_signature</span> {
 			<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;Block signature invalid&quot;</span>.<span class="ident">into</span>());
 		}
 
@@ -401,7 +448,11 @@
 		<span class="comment">// The standard is to use the longest chain rule. This is overridden by the `NimbusBlockImport` in the parachain context.</span>
 		<span class="ident">block_params</span>.<span class="ident">fork_choice</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">sc_consensus::ForkChoiceStrategy::LongestChain</span>);
 
-		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>, <span class="string">&quot;🪲 Just finished verifier. posthash from params is {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">block_params</span>.<span class="ident">post_hash</span>());
+		<span class="macro">debug!</span>(
+			<span class="ident">target</span>: <span class="ident"><span class="kw">crate</span>::LOG_TARGET</span>,
+			<span class="string">&quot;🪲 Just finished verifier. posthash from params is {:?}&quot;</span>,
+			<span class="kw-2">&amp;</span><span class="ident">block_params</span>.<span class="ident">post_hash</span>()
+		);
 
 		<span class="prelude-val">Ok</span>((<span class="ident">block_params</span>, <span class="prelude-val">None</span>))
 	}
@@ -431,10 +482,7 @@
 
 	<span class="prelude-val">Ok</span>(<span class="ident">BasicQueue::new</span>(
 		<span class="ident">verifier</span>,
-		<span class="ident">Box::new</span>(<span class="ident">NimbusBlockImport::new</span>(
-			<span class="ident">block_import</span>,
-			<span class="ident">parachain</span>,
-		)),
+		<span class="ident">Box::new</span>(<span class="ident">NimbusBlockImport::new</span>(<span class="ident">block_import</span>, <span class="ident">parachain</span>)),
 		<span class="prelude-val">None</span>,
 		<span class="ident">spawner</span>,
 		<span class="ident">registry</span>,
@@ -447,10 +495,10 @@
 <span class="doccomment">/// context, new blocks should not be imported as best. Cumulus&#39;s ParachainBlockImport</span>
 <span class="doccomment">/// handles this correctly, but does not work in non-parachain contexts.</span>
 <span class="doccomment">/// This block import has a field indicating whether we should apply parachain rules or not.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// There may be additional nimbus-specific logic here in the future, but for now it is</span>
 <span class="doccomment">/// only the conditional parachain logic</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NimbusBlockImport</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>{
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NimbusBlockImport</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span> {
 	<span class="ident">inner</span>: <span class="ident">I</span>,
 	<span class="ident">parachain_context</span>: <span class="ident">bool</span>,
 }
@@ -458,7 +506,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span> <span class="ident">NimbusBlockImport</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span> {
 	<span class="doccomment">/// Create a new instance.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">inner</span>: <span class="ident">I</span>, <span class="ident">parachain_context</span>: <span class="ident">bool</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span>{
+		<span class="self">Self</span> {
 			<span class="ident">inner</span>,
 			<span class="ident">parachain_context</span>,
 		}
@@ -497,7 +545,8 @@
 		<span class="comment">// Now continue on to the rest of the import pipeline.</span>
 		<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">import_block</span>(<span class="ident">block_import_params</span>, <span class="ident">cache</span>).<span class="kw">await</span>
 	}
-}</code></pre></div>
+}
+</code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_consensus" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
 </body></html>

@@ -184,6 +184,8 @@
 <span id="184">184</span>
 <span id="185">185</span>
 <span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">cumulus_primitives_core::ParaId</span>;
 <span class="kw">use</span> <span class="ident">parachain_template_runtime</span>::{<span class="ident">AccountId</span>, <span class="ident">NimbusId</span>, <span class="ident">Signature</span>};
 <span class="kw">use</span> <span class="ident">sc_chain_spec</span>::{<span class="ident">ChainSpecExtension</span>, <span class="ident">ChainSpecGroup</span>};
@@ -253,12 +255,10 @@
 		<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
 			<span class="ident">testnet_genesis</span>(
 				<span class="comment">// initial collators.</span>
-				<span class="macro">vec!</span>[
-					(
-						<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Alice&quot;</span>),
-						<span class="ident">get_collator_keys_from_seed</span>(<span class="string">&quot;Alice&quot;</span>),
-					),
-				],
+				<span class="macro">vec!</span>[(
+					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Alice&quot;</span>),
+					<span class="ident">get_collator_keys_from_seed</span>(<span class="string">&quot;Alice&quot;</span>),
+				)],
 				<span class="macro">vec!</span>[
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Alice&quot;</span>),
 					<span class="ident">get_account_id_from_seed</span>::<span class="op">&lt;</span><span class="ident">sr25519::Public</span><span class="op">&gt;</span>(<span class="string">&quot;Bob&quot;</span>),
@@ -358,14 +358,18 @@
 				.<span class="ident">to_vec</span>(),
 		},
 		<span class="ident">balances</span>: <span class="ident">parachain_template_runtime::BalancesConfig</span> {
-			<span class="ident">balances</span>: <span class="ident">endowed_accounts</span>.<span class="ident">iter</span>().<span class="ident">cloned</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">k</span><span class="op">|</span> (<span class="ident">k</span>, <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">60</span>)).<span class="ident">collect</span>(),
+			<span class="ident">balances</span>: <span class="ident">endowed_accounts</span>
+				.<span class="ident">iter</span>()
+				.<span class="ident">cloned</span>()
+				.<span class="ident">map</span>(<span class="op">|</span><span class="ident">k</span><span class="op">|</span> (<span class="ident">k</span>, <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">60</span>))
+				.<span class="ident">collect</span>(),
 		},
 		<span class="ident">parachain_info</span>: <span class="ident">parachain_template_runtime::ParachainInfoConfig</span> { <span class="ident">parachain_id</span>: <span class="ident">id</span> },
 		<span class="ident">author_filter</span>: <span class="ident">parachain_template_runtime::AuthorFilterConfig</span> {
 			<span class="ident">eligible_ratio</span>: <span class="ident">sp_runtime::Percent::from_percent</span>(<span class="number">50</span>),
 		},
 		<span class="ident">potential_author_set</span>: <span class="ident">parachain_template_runtime::PotentialAuthorSetConfig</span> {
-			<span class="ident">mapping</span>: <span class="ident">authorities</span>
+			<span class="ident">mapping</span>: <span class="ident">authorities</span>,
 		},
 		<span class="ident">parachain_system</span>: <span class="ident">Default::default</span>(),
 	}
