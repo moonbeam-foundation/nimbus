@@ -2,8 +2,8 @@
 authors = ["PureStake"]
 edition = "2021"
 name = "nimbus-primitives"
-version = "0.1.0"
-description = "Primitive types and traites used in the nimbus consensus framework"
+version = "0.9.0"
+description = "Primitive types and traits used in the Nimbus consensus framework"
 
 [dependencies]
 parity-scale-codec = { version = "2.0.0", default-features = false, features = ["derive"] }

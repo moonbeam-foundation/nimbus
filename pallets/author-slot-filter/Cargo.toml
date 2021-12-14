@@ -2,7 +2,8 @@
 authors = ["PureStake"]
 edition = "2021"
 name = "pallet-author-slot-filter"
-version = "0.1.0"
+description = "Selects a pseudorandom Subset of eligible (probably staked) authors at each slot"
+version = "0.9.0"
 
 [dependencies]
 log = { version = "0.4", default-features = false }

@@ -1,7 +1,7 @@
 [package]
 name = "pallet-author-inherent"
-version = "0.1.0"
-description = "Inject the block author via an inherent, and persist it via a Consensus digest"
+version = "0.9.0"
+description = "This pallet is the core of the in-runtime portion of Nimbus."
 authors = ["PureStake"]
 edition = "2021"
 license = 'GPL-3.0-only'
