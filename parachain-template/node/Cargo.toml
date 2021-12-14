@@ -1,8 +1,8 @@
 [package]
 name = "parachain-template-node"
-version = "0.1.0"
+version = "0.9.0"
 authors = ["Anonymous"]
-description = "A new Cumulus FRAME-based Substrate Node, ready for hacking together a parachain."
+description = "A Substrate node that demonstrates using the Nimbus consensus framework with instant seal and as a parachain."
 license = "Unlicense"
 homepage = "https://substrate.dev"
 repository = "https://github.com/paritytech/cumulus/"
