@@ -84,6 +84,7 @@ pub mod pallet {
 
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
+		#[inline(never)]
 		fn on_initialize(_: T::BlockNumber) -> Weight {
 			// Start by clearing out the previous block's author
 			<Author<T>>::kill();
@@ -111,6 +112,7 @@ pub mod pallet {
 		/// but before transactions are executed.
 		/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
 		/// TODO better weight. For now we jsut set a somewhat soncervative fudge factor
+		#[inline(never)]
 		#[pallet::weight((10 * T::DbWeight::get().write, DispatchClass::Mandatory))]
 		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
@@ -133,6 +135,7 @@ pub mod pallet {
 		type Error = InherentError;
 		const INHERENT_IDENTIFIER: InherentIdentifier = INHERENT_IDENTIFIER;
 
+		#[inline(never)]
 		fn is_inherent_required(_: &InherentData) -> Result<Option<Self::Error>, Self::Error> {
 			// Return Ok(Some(_)) unconditionally because this inherent is required in every block
 			// If it is not found, throw an AuthorInherentRequired error.
@@ -143,16 +146,19 @@ pub mod pallet {
 
 		// Regardless of whether the client is still supplying the author id,
 		// we will create the new empty-payload inherent extrinsic.
+		#[inline(never)]
 		fn create_inherent(_data: &InherentData) -> Option<Self::Call> {
 			Some(Call::kick_off_authorship_validation{})
 		}
 
+		#[inline(never)]
 		fn is_inherent(call: &Self::Call) -> bool {
 			matches!(call, Call::kick_off_authorship_validation{..})
 		}
 	}
 
 	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
+		#[inline(never)]
 		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
 		where
 			I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
@@ -176,6 +182,7 @@ pub mod pallet {
 	/// To learn whether a given NimbusId can author, as opposed to an account id, you
 	/// can ask this pallet directly. It will do the mapping for you.
 	impl<T: Config> CanAuthor<NimbusId> for Pallet<T> {
+		#[inline(never)]
 		fn can_author(author: &NimbusId, slot: &u32) -> bool {
 			let account = match T::AccountLookup::lookup_account(&author) {
 				Some(account) => account,
@@ -197,6 +204,7 @@ pub enum InherentError {
 }
 
 impl IsFatalError for InherentError {
+	#[inline(never)]
 	fn is_fatal_error(&self) -> bool {
 		match *self {
 			InherentError::Other(_) => true,
@@ -207,6 +215,7 @@ impl IsFatalError for InherentError {
 impl InherentError {
 	/// Try to create an instance ouf of the given identifier and data.
 	#[cfg(feature = "std")]
+	#[inline(never)]
 	pub fn try_from(id: &InherentIdentifier, data: &[u8]) -> Option<Self> {
 		if id == &INHERENT_IDENTIFIER {
 			<InherentError as parity_scale_codec::Decode>::decode(&mut &data[..]).ok()

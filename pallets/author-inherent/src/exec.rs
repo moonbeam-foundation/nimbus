@@ -43,6 +43,7 @@ where
 	Block: BlockT,
 	I: ExecuteBlock<Block>,
 {
+	#[inline(never)]
 	fn execute_block(block: Block) {
 		let (mut header, extrinsics) = block.deconstruct();
 
