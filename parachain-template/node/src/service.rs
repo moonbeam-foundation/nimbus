@@ -505,6 +505,9 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 						current_para_block: 0,
 						relay_offset: 0,
 						relay_blocks_per_para_block: 0,
+						raw_downward_messages: Default::default(),
+						raw_horizontal_messages: Default::default(),
+						xcm_config: Default::default(),
 					};
 
 					Ok((time, mocked_parachain))
