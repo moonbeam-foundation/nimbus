@@ -1,42 +1,36 @@
 [package]
 name = "parachain-template-node"
-version = "0.9.0"
-authors = ["Anonymous"]
-description = "A Substrate node that demonstrates using the Nimbus consensus framework with instant seal and as a parachain."
-license = "Unlicense"
-homepage = "https://substrate.dev"
-repository = "https://github.com/paritytech/cumulus/"
-edition = "2021"
+authors = [ "Anonymous" ]
 build = "build.rs"
+description = "A Substrate node that demonstrates using the Nimbus consensus framework with instant seal and as a parachain."
+edition = "2021"
+homepage = "https://substrate.dev"
+license = "Unlicense"
+repository = "https://github.com/paritytech/cumulus/"
+version = "0.9.0"
 
 [package.metadata.docs.rs]
-targets = ["x86_64-unknown-linux-gnu"]
-
-[build-dependencies]
-substrate-build-script-utils = { git = "https://github.com/paritytech/substrate", branch = "master" }
+targets = [ "x86_64-unknown-linux-gnu" ]
 
 [[bin]]
 name = "parachain-collator"
 path = "src/main.rs"
 
-[features]
-runtime-benchmarks = ["parachain-template-runtime/runtime-benchmarks"]
-
 [dependencies]
-derive_more = "0.99.2"
-log = "0.4.14"
 codec = { package = "parity-scale-codec", version = "2.0.0" }
-structopt = "0.3.8"
-serde = { version = "1.0.119", features = ["derive"] }
+derive_more = "0.99.2"
 hex-literal = "0.3.1"
+log = "0.4.14"
+serde = { version = "1.0.119", features = [ "derive" ] }
+structopt = "0.3.8"
 
 # RPC related Dependencies
 jsonrpc-core = "18.0.0"
 
 # Local Dependencies
+nimbus-consensus = { path = "../../nimbus-consensus" }
+nimbus-primitives = { path = "../../nimbus-primitives" }
 parachain-template-runtime = { path = "../runtime" }
-nimbus-primitives = { path = "../../nimbus-primitives"}
-nimbus-consensus = { path = "../../nimbus-consensus"}
 
 # Substrate Dependencies
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "master" }
@@ -50,20 +44,20 @@ substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate
 ## Substrate Client Dependencies
 sc-basic-authorship = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-chain-spec = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sc-consensus-manual-seal = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-cli = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-consensus-manual-seal = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-executor = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sc-network = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-keystore = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-network = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-rpc = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-rpc-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sc-service = { git = "https://github.com/paritytech/substrate", features = ["wasmtime"] , branch = "master" }
+sc-service = { git = "https://github.com/paritytech/substrate", branch = "master", features = [ "wasmtime" ] }
 sc-telemetry = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-tracing = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-transaction-pool = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sc-transaction-pool-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
-sc-tracing = { git = "https://github.com/paritytech/substrate", branch = "master" }
 
 ## Substrate Primitive Dependencies
 sp-api = { git = "https://github.com/paritytech/substrate", branch = "master" }
@@ -94,3 +88,9 @@ polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = 
 polkadot-primitives = { git = "https://github.com/paritytech/polkadot", branch = "master" }
 polkadot-service = { git = "https://github.com/paritytech/polkadot", branch = "master" }
 polkadot-test-service = { git = "https://github.com/paritytech/polkadot", branch = "master" }
+
+[build-dependencies]
+substrate-build-script-utils = { git = "https://github.com/paritytech/substrate", branch = "master" }
+
+[features]
+runtime-benchmarks = [ "parachain-template-runtime/runtime-benchmarks" ]

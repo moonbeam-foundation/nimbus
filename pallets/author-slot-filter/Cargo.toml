@@ -1,33 +1,33 @@
 [package]
-authors = ["PureStake"]
-edition = "2021"
 name = "pallet-author-slot-filter"
+authors = [ "PureStake" ]
 description = "Selects a pseudorandom Subset of eligible (probably staked) authors at each slot"
+edition = "2021"
 version = "0.9.0"
 
 [dependencies]
+frame-support = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+frame-system = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 log = { version = "0.4", default-features = false }
-parity-scale-codec = { version = "2.0.0", default-features = false, features = ["derive"] }
-serde = { version = "1.0.101", optional = true, features = ["derive"] }
-frame-support = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
-frame-system = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
-sp-core = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
-sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
-sp-std = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"] }
+parity-scale-codec = { version = "2.0.0", default-features = false, features = [ "derive" ] }
+scale-info = { version = "1.0.0", default-features = false, features = [ "derive" ] }
+serde = { version = "1.0.101", optional = true, features = [ "derive" ] }
+sp-core = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+sp-std = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 
 [features]
-default = ["std"]
+default = [ "std" ]
 std = [
+	"frame-support/std",
+	"frame-system/std",
 	"log/std",
-  "serde",
-  "parity-scale-codec/std",
-  "frame-support/std",
-  "frame-system/std",
-  "sp-core/std",
-  "sp-runtime/std",
-  "sp-std/std",
-  "nimbus-primitives/std",
-  "scale-info/std",
+	"nimbus-primitives/std",
+	"parity-scale-codec/std",
+	"scale-info/std",
+	"serde",
+	"sp-core/std",
+	"sp-runtime/std",
+	"sp-std/std",
 ]
