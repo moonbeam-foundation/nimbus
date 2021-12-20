@@ -481,8 +481,8 @@
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="doccomment">/// This inherent is a workaround to run code after the &quot;real&quot; inherents have executed,</span>
 		<span class="doccomment">/// but before transactions are executed.</span>
-		<span class="doccomment">/// This this should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128</span>
-		<span class="doccomment">/// TODO better weight. For now we jsut set a somewhat soncervative fudge factor</span>
+		<span class="comment">// This should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128</span>
+		<span class="comment">// TODO better weight. For now we just set a somewhat conservative fudge factor</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>((<span class="number">10</span> <span class="op">*</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">write</span>, <span class="ident">DispatchClass::Mandatory</span>))]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">kick_off_authorship_validation</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="ident">ensure_none</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
