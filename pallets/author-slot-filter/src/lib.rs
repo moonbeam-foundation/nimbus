@@ -82,14 +82,17 @@ pub mod pallet {
 			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
 
 			// Cast to u32 first so we get consistent results on 32- and 64-bit platforms.
-			let index = (randomness.to_fixed_bytes()[0] as u32) as usize;
+			let bytes: [u8; 4] = randomness.to_fixed_bytes()[0..4]
+				.try_into()
+				.expect("H256 has at least 4 bytes; qed");
+			let randomness = u32::from_le_bytes(bytes) as usize;
 
 			// Move the selected author from the original vector into the eligible vector
 			// TODO we could short-circuit this check by returning early when the claimed
 			// author is selected. For now I'll leave it like this because:
 			// 1. it is easier to understand what our core filtering logic is
 			// 2. we currently show the entire filtered set in the debug event
-			eligible.push(active.remove(index % active.len()));
+			eligible.push(active.remove(randomness % active.len()));
 		}
 		(eligible, active)
 	}
