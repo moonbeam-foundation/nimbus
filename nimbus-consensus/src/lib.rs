@@ -90,6 +90,10 @@ impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> Clone
 	}
 }
 
+//impl BlockT for sp_runtime::generic::block::Block<T, Self::Extrinsic>{
+//	uniplemented!();
+//}
+
 impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
 	NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
 where
@@ -306,7 +310,7 @@ where
 impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> ParachainConsensus<B>
 	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
 where
-	B: BlockT,
+	B: BlockT + sp_runtime::traits::Block,
 	RClient: ProvideRuntimeApi<PBlock> + Send + Sync,
 	RClient::Api: ParachainHost<PBlock>,
 	RBackend: Backend<PBlock>,
