@@ -493,6 +493,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			consensus_data_provider: Some(Box::new(NimbusManualSealConsensusDataProvider {
 				keystore: keystore_container.sync_keystore(),
 				client: client.clone(),
+				skip_prediction: false,
 			})),
 			create_inherent_data_providers: |_block, _extra_args| {
 				async move {

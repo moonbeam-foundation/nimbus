@@ -39,7 +39,9 @@ pub struct NimbusManualSealConsensusDataProvider<C> {
 
 	/// Shared reference to the client
 	pub client: Arc<C>,
-	// Could have a skip_prediction field here if it becomes desireable
+
+	/// skip_prediction field, should be true for substrate-simnode compatibility
+	pub skip_prediction: bool,
 }
 
 impl<B, C> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider<C>
@@ -61,15 +63,21 @@ where
 			.relay_parent_number;
 
 		// Fetch first eligible key from keystore
-		let maybe_key = crate::first_eligible_key::<B, C>(
-			self.client.clone(),
-			&*self.keystore,
-			parent,
-			// For now we author all blocks in slot zero, which is consistent with  how we are
-			// mocking the relay chain height which the runtime uses for slot beacon.
-			// This should improve. See https://github.com/PureStake/nimbus/issues/3
-			slot_number,
-		);
+		let maybe_key = if self.skip_prediction {
+			// Fetch first available key from keystore
+			crate::first_available_key(&*self.keystore)
+		} else {
+			// Fetch first eligible key from keystore
+			crate::first_eligible_key::<B, C>(
+				self.client.clone(),
+				&*self.keystore,
+				parent,
+				// For now we author all blocks in slot zero, which is consistent with  how we are
+				// mocking the relay chain height which the runtime uses for slot beacon.
+				// This should improve. See https://github.com/PureStake/nimbus/issues/3
+				slot_number,
+			)
+		};
 
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
