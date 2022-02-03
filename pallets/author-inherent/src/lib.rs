@@ -118,10 +118,10 @@ pub mod pallet {
 			let author = <Author<T>>::get()
 				.expect("Block invalid, no authorship information supplied in preruntime digest.");
 			
-			assert!(
+			/*assert!(
 				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
 				"Block invalid, supplied author is not eligible."
-			);
+			);*/
 
 			Ok(Pays::No.into())
 		}
