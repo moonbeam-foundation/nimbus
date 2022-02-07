@@ -23,29 +23,23 @@
 use cumulus_client_consensus_common::{
 	ParachainBlockImport, ParachainCandidate, ParachainConsensus,
 };
-use cumulus_primitives_core::{
-	relay_chain::v1::{Block as PBlock, Hash as PHash, ParachainHost},
-	ParaId, PersistedValidationData,
-};
+use cumulus_primitives_core::{relay_chain::v1::Hash as PHash, ParaId, PersistedValidationData};
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
 use nimbus_primitives::{
 	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
 };
 use parking_lot::Mutex;
-use polkadot_client::ClientHandle;
-use sc_client_api::Backend;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_api::{ApiExt, BlockId, ProvideRuntimeApi};
-use sp_application_crypto::CryptoTypePublicPair;
+use sp_application_crypto::{ByteArray, CryptoTypePublicPair};
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
-use sp_core::crypto::Public;
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
 use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
 use sp_runtime::{
-	traits::{Block as BlockT, HashFor, Header as HeaderT},
+	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
 use std::convert::TryInto;
@@ -58,74 +52,67 @@ pub use manual_seal::NimbusManualSealConsensusDataProvider;
 const LOG_TARGET: &str = "filtering-consensus";
 
 /// The implementation of the relay-chain provided consensus for parachains.
-pub struct NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP> {
+pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
 	para_id: ParaId,
-	_phantom: PhantomData<B>,
 	proposer_factory: Arc<Mutex<PF>>,
 	create_inherent_data_providers: Arc<CIDP>,
 	block_import: Arc<futures::lock::Mutex<ParachainBlockImport<BI>>>,
-	relay_chain_client: Arc<RClient>,
-	relay_chain_backend: Arc<RBackend>,
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
+	_phantom: PhantomData<B>,
 }
 
-impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> Clone
-	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
-{
+impl<B, PF, BI, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
 	fn clone(&self) -> Self {
 		Self {
 			para_id: self.para_id,
-			_phantom: PhantomData,
 			proposer_factory: self.proposer_factory.clone(),
 			create_inherent_data_providers: self.create_inherent_data_providers.clone(),
 			block_import: self.block_import.clone(),
-			relay_chain_backend: self.relay_chain_backend.clone(),
-			relay_chain_client: self.relay_chain_client.clone(),
 			parachain_client: self.parachain_client.clone(),
 			keystore: self.keystore.clone(),
 			skip_prediction: self.skip_prediction,
+			_phantom: PhantomData,
 		}
 	}
 }
 
-impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
-	NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP> NimbusConsensus<B, PF, BI, ParaClient, CIDP>
 where
 	B: BlockT,
-	RClient: ProvideRuntimeApi<PBlock>,
-	RClient::Api: ParachainHost<PBlock>,
-	RBackend: Backend<PBlock>,
-	ParaClient: ProvideRuntimeApi<B>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	PF: 'static,
+	BI: 'static,
+	ParaClient: ProvideRuntimeApi<B> + 'static,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	/// Create a new instance of nimbus consensus.
-	pub fn new(
-		para_id: ParaId,
-		proposer_factory: PF,
-		create_inherent_data_providers: CIDP,
-		block_import: BI,
-		polkadot_client: Arc<RClient>,
-		polkadot_backend: Arc<RBackend>,
-		parachain_client: Arc<ParaClient>,
-		keystore: SyncCryptoStorePtr,
-		skip_prediction: bool,
-	) -> Self {
-		Self {
+	pub fn build(
+		BuildNimbusConsensusParams {
+			para_id,
+			proposer_factory,
+			create_inherent_data_providers,
+			block_import,
+			parachain_client,
+			keystore,
+			skip_prediction,
+		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP>,
+	) -> Box<dyn ParachainConsensus<B>>
+	where
+		Self: ParachainConsensus<B>,
+	{
+		Box::new(Self {
 			para_id,
 			proposer_factory: Arc::new(Mutex::new(proposer_factory)),
 			create_inherent_data_providers: Arc::new(create_inherent_data_providers),
 			block_import: Arc::new(futures::lock::Mutex::new(ParachainBlockImport::new(
 				block_import,
 			))),
-			relay_chain_backend: polkadot_backend,
-			relay_chain_client: polkadot_client,
 			parachain_client,
 			keystore,
 			skip_prediction,
 			_phantom: PhantomData,
-		}
+		})
 	}
 
 	//TODO Could this be a provided implementation now that we have this async inherent stuff?
@@ -256,7 +243,7 @@ where
 		// That I should be passing Vec<u8> across the wasm boundary?
 		prediction_helper(
 			&at,
-			NimbusId::from_slice(&type_public_pair.1),
+			NimbusId::from_slice(&type_public_pair.1).expect("Nimbus ID is invalid (wrong length)"),
 			slot_number,
 			parent,
 		)
@@ -303,26 +290,23 @@ where
 }
 
 #[async_trait::async_trait]
-impl<B, PF, BI, RClient, RBackend, ParaClient, CIDP> ParachainConsensus<B>
-	for NimbusConsensus<B, PF, BI, RClient, RBackend, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP> ParachainConsensus<B>
+	for NimbusConsensus<B, PF, BI, ParaClient, CIDP>
 where
 	B: BlockT,
-	RClient: ProvideRuntimeApi<PBlock> + Send + Sync,
-	RClient::Api: ParachainHost<PBlock>,
-	RBackend: Backend<PBlock>,
-	BI: BlockImport<B> + Send + Sync,
-	PF: Environment<B> + Send + Sync,
+	BI: BlockImport<B> + Send + Sync + 'static,
+	PF: Environment<B> + Send + Sync + 'static,
 	PF::Proposer: Proposer<
 		B,
 		Transaction = BI::Transaction,
 		ProofRecording = EnableProofRecording,
 		Proof = <EnableProofRecording as ProofRecording>::Proof,
 	>,
-	ParaClient: ProvideRuntimeApi<B> + Send + Sync,
+	ParaClient: ProvideRuntimeApi<B> + Send + Sync + 'static,
 	// We require the client to provide both runtime apis, but only one will be called
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -356,19 +340,23 @@ where
 			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
 			.ok()?;
 
+		let nimbus_id = NimbusId::from_slice(&type_public_pair.1)
+			.map_err(
+				|e| error!(target: LOG_TARGET, error = ?e, "Invalid Nimbus ID (wrong length)."),
+			)
+			.ok()?;
+
 		let inherent_data = self
 			.inherent_data(
 				parent.hash(),
 				&validation_data,
 				relay_parent,
-				NimbusId::from_slice(&type_public_pair.1),
+				nimbus_id.clone(),
 			)
 			.await?;
 
 		let inherent_digests = sp_runtime::generic::Digest {
-			logs: vec![CompatibleDigestItem::nimbus_pre_digest(
-				NimbusId::from_slice(&type_public_pair.1),
-			)],
+			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
 		};
 
 		let Proposal {
@@ -444,181 +432,12 @@ where
 ///
 /// I briefly tried the async keystore approach, but decided to go sync so I can copy
 /// code from Aura. Maybe after it is working, Jeremy can help me go async.
-pub struct BuildNimbusConsensusParams<PF, BI, RBackend, ParaClient, CIDP> {
+pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP> {
 	pub para_id: ParaId,
 	pub proposer_factory: PF,
 	pub create_inherent_data_providers: CIDP,
 	pub block_import: BI,
-	pub relay_chain_client: polkadot_client::Client,
-	pub relay_chain_backend: Arc<RBackend>,
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
-}
-
-/// Build the [`NimbusConsensus`].
-///
-/// Returns a boxed [`ParachainConsensus`].
-pub fn build_nimbus_consensus<Block, PF, BI, RBackend, ParaClient, CIDP>(
-	BuildNimbusConsensusParams {
-		para_id,
-		proposer_factory,
-		create_inherent_data_providers,
-		block_import,
-		relay_chain_client,
-		relay_chain_backend,
-		parachain_client,
-		keystore,
-		skip_prediction,
-	}: BuildNimbusConsensusParams<PF, BI, RBackend, ParaClient, CIDP>,
-) -> Box<dyn ParachainConsensus<Block>>
-where
-	Block: BlockT,
-	PF: Environment<Block> + Send + Sync + 'static,
-	PF::Proposer: Proposer<
-		Block,
-		Transaction = BI::Transaction,
-		ProofRecording = EnableProofRecording,
-		Proof = <EnableProofRecording as ProofRecording>::Proof,
-	>,
-	BI: BlockImport<Block> + Send + Sync + 'static,
-	RBackend: Backend<PBlock> + 'static,
-	// Rust bug: https://github.com/rust-lang/rust/issues/24159
-	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
-	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block>,
-	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
-{
-	NimbusConsensusBuilder::new(
-		para_id,
-		proposer_factory,
-		block_import,
-		create_inherent_data_providers,
-		relay_chain_client,
-		relay_chain_backend,
-		parachain_client,
-		keystore,
-		skip_prediction,
-	)
-	.build()
-}
-
-/// Nimbus consensus builder.
-///
-/// Builds a [`NimbusConsensus`] for a parachain. As this requires
-/// a concrete relay chain client instance, the builder takes a [`polkadot_client::Client`]
-/// that wraps this concrete instanace. By using [`polkadot_client::ExecuteWithClient`]
-/// the builder gets access to this concrete instance.
-struct NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP> {
-	para_id: ParaId,
-	_phantom: PhantomData<Block>,
-	proposer_factory: PF,
-	create_inherent_data_providers: CIDP,
-	block_import: BI,
-	relay_chain_backend: Arc<RBackend>,
-	relay_chain_client: polkadot_client::Client,
-	parachain_client: Arc<ParaClient>,
-	keystore: SyncCryptoStorePtr,
-	skip_prediction: bool,
-}
-
-impl<Block, PF, BI, RBackend, ParaClient, CIDP>
-	NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP>
-where
-	Block: BlockT,
-	// Rust bug: https://github.com/rust-lang/rust/issues/24159
-	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
-	PF: Environment<Block> + Send + Sync + 'static,
-	PF::Proposer: Proposer<
-		Block,
-		Transaction = BI::Transaction,
-		ProofRecording = EnableProofRecording,
-		Proof = <EnableProofRecording as ProofRecording>::Proof,
-	>,
-	BI: BlockImport<Block> + Send + Sync + 'static,
-	RBackend: Backend<PBlock> + 'static,
-	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
-{
-	/// Create a new instance of the builder.
-	fn new(
-		para_id: ParaId,
-		proposer_factory: PF,
-		block_import: BI,
-		create_inherent_data_providers: CIDP,
-		relay_chain_client: polkadot_client::Client,
-		relay_chain_backend: Arc<RBackend>,
-		parachain_client: Arc<ParaClient>,
-		keystore: SyncCryptoStorePtr,
-		skip_prediction: bool,
-	) -> Self {
-		Self {
-			para_id,
-			_phantom: PhantomData,
-			proposer_factory,
-			block_import,
-			create_inherent_data_providers,
-			relay_chain_backend,
-			relay_chain_client,
-			parachain_client,
-			keystore,
-			skip_prediction,
-		}
-	}
-
-	/// Build the nimbus consensus.
-	fn build(self) -> Box<dyn ParachainConsensus<Block>>
-	where
-		ParaClient::Api: NimbusApi<Block>,
-		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	{
-		self.relay_chain_client.clone().execute_with(self)
-	}
-}
-
-impl<Block, PF, BI, RBackend, ParaClient, CIDP> polkadot_client::ExecuteWithClient
-	for NimbusConsensusBuilder<Block, PF, BI, RBackend, ParaClient, CIDP>
-where
-	Block: BlockT,
-	// Rust bug: https://github.com/rust-lang/rust/issues/24159
-	sc_client_api::StateBackendFor<RBackend, PBlock>: sc_client_api::StateBackend<HashFor<PBlock>>,
-	PF: Environment<Block> + Send + Sync + 'static,
-	PF::Proposer: Proposer<
-		Block,
-		Transaction = BI::Transaction,
-		ProofRecording = EnableProofRecording,
-		Proof = <EnableProofRecording as ProofRecording>::Proof,
-	>,
-	BI: BlockImport<Block> + Send + Sync + 'static,
-	RBackend: Backend<PBlock> + 'static,
-	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	ParaClient::Api: NimbusApi<Block>,
-	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
-{
-	type Output = Box<dyn ParachainConsensus<Block>>;
-
-	fn execute_with_client<PClient, Api, PBackend>(self, client: Arc<PClient>) -> Self::Output
-	where
-		<Api as sp_api::ApiExt<PBlock>>::StateBackend: sp_api::StateBackend<HashFor<PBlock>>,
-		PBackend: Backend<PBlock>,
-		PBackend::State: sp_api::StateBackend<sp_runtime::traits::BlakeTwo256>,
-		Api: polkadot_client::RuntimeApiCollection<StateBackend = PBackend::State>,
-		PClient: polkadot_client::AbstractClient<PBlock, PBackend, Api = Api> + 'static,
-		ParaClient::Api: NimbusApi<Block>,
-		ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	{
-		Box::new(NimbusConsensus::new(
-			self.para_id,
-			self.proposer_factory,
-			self.create_inherent_data_providers,
-			self.block_import,
-			client.clone(),
-			self.relay_chain_backend,
-			self.parachain_client,
-			self.keystore,
-			self.skip_prediction,
-		))
-	}
 }
