@@ -22,7 +22,7 @@ use sp_api::{BlockT, HeaderT};
 // For some reason I can't get these logs to actually print
 use log::debug;
 use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NIMBUS_ENGINE_ID};
-use sp_application_crypto::Public as _;
+use sp_application_crypto::ByteArray;
 use sp_runtime::{generic::DigestItem, RuntimeAppPublic};
 use sp_application_crypto::ByteArray;
 
@@ -84,7 +84,7 @@ where
 
 		// Verify the signature
 		let valid_signature = NimbusId::from_slice(&claimed_author)
-			.expect("Expected pre-runtime digest with valid author id")
+			.expect("Expected claimed author to be a valid NimbusId.")
 			.verify(&header.hash(), &signature);
 
 		debug!(target: "executive", "🪲 Valid signature? {:?}", valid_signature);

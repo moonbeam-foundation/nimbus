@@ -23,7 +23,7 @@ use sc_consensus::{
 	BlockImport, BlockImportParams,
 };
 use sp_api::ProvideRuntimeApi;
-use sp_application_crypto::{ByteArray, Pair as _, Public as _};
+use sp_application_crypto::{ByteArray, Pair as _};
 use sp_block_builder::BlockBuilder as BlockBuilderApi;
 use sp_blockchain::Result as ClientResult;
 use sp_consensus::{error::Error as ConsensusError, CacheKeyId};
@@ -117,7 +117,8 @@ where
 		let valid_signature = NimbusPair::verify(
 			&signature,
 			block_params.header.hash(),
-			&NimbusId::from_slice(&claimed_author).expect("Expected valid author id in header"),
+			&NimbusId::from_slice(&claimed_author)
+				.map_err(|_| "Invalid Nimbus ID (wrong length)")?,
 		);
 
 		debug!(
