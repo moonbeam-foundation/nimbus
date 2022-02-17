@@ -26,7 +26,7 @@ structopt = "0.3.8"
 flume = "0.10.9"
 
 # RPC related Dependencies
-jsonrpc-core = "18.0.0"
+jsonrpsee = { version = "0.9", default-features = false, features = ["server"] }
 
 # Local Dependencies
 nimbus-consensus = { path = "../../nimbus-consensus" }
