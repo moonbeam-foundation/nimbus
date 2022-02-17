@@ -200,7 +200,7 @@ where
 	Executor: sc_executor::NativeExecutionDispatch + 'static,
 	RB: Fn(
 			Arc<TFullClient<Block, RuntimeApi, Executor>>,
-		) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
+		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
 		+ Send
 		+ 'static,
 	BIC: FnOnce(
@@ -260,7 +260,7 @@ where
 			warp_sync: None,
 		})?;
 
-	let rpc_extensions_builder = {
+	let rpc_builder = {
 		let client = client.clone();
 		let transaction_pool = transaction_pool.clone();
 
@@ -271,12 +271,12 @@ where
 				deny_unsafe,
 			};
 
-			Ok(crate::rpc::create_full(deps))
+			crate::rpc::create_full(deps).map_err(Into::into)
 		})
 	};
 
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		rpc_extensions_builder,
+		rpc_builder,
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
@@ -357,7 +357,7 @@ pub async fn start_parachain_node(
 		parachain_config,
 		polkadot_config,
 		id,
-		|_| Ok(Default::default()),
+		|_| Ok(jsonrpsee::RpcModule::new(())),
 		|client,
 		 prometheus_registry,
 		 telemetry,
@@ -453,7 +453,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 	let is_authority = config.role.is_authority();
 	let prometheus_registry = config.prometheus_registry().cloned();
 
-	let rpc_extensions_builder = {
+	let rpc_builder = {
 		let client = client.clone();
 		let transaction_pool = transaction_pool.clone();
 
@@ -464,7 +464,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 				deny_unsafe,
 			};
 
-			Ok(crate::rpc::create_full(deps))
+			crate::rpc::create_full(deps).map_err(Into::into)
 		})
 	};
 
@@ -474,7 +474,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		keystore: keystore_container.sync_keystore(),
 		task_manager: &mut task_manager,
 		transaction_pool: transaction_pool.clone(),
-		rpc_extensions_builder,
+		rpc_builder,
 		backend,
 		system_rpc_tx,
 		config,
