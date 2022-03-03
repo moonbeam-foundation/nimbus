@@ -32,9 +32,12 @@ pub use pallet::*;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
+pub mod weights;
+
 #[pallet]
 pub mod pallet {
 
+	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
 	use log::debug;
@@ -61,6 +64,7 @@ pub mod pallet {
 		/// A source for the complete set of potential authors.
 		/// The starting point of the filtering.
 		type PotentialAuthors: Get<Vec<Self::AccountId>>;
+		type WeightInfo: WeightInfo;
 	}
 
 	/// Compute a pseudo-random subset of the input accounts by using Pallet's
@@ -125,7 +129,7 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		/// Update the eligible ratio. Intended to be called by governance.
-		#[pallet::weight(0)]
+		#[pallet::weight(T::WeightInfo::set_eligible())]
 		pub fn set_eligible(origin: OriginFor<T>, new: Percent) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			EligibleRatio::<T>::put(&new);
@@ -249,6 +253,7 @@ pub mod tests {
 		type Event = Event;
 		type RandomnessSource = TestRandomness<Self>;
 		type PotentialAuthors = Authors;
+		type WeightInfo = ();
 	}
 
 	#[test]
