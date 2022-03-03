@@ -2178,7 +2178,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test"
 version = "3.0.0"
-source = "git+https://github.com/paritytech/substrate?branch=master#c087bbedbde16711450c186518314903a2949cb3"
+source = "git+https://github.com/purestake/substrate?branch=moonbeam-polkadot-v0.9.17#c84f20046004e0c5f158d36bf9c8b2ecfdc41281"
 dependencies = [
  "frame-support",
  "frame-support-test-pallet",
@@ -2201,7 +2201,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test-pallet"
 version = "4.0.0-dev"
-source = "git+https://github.com/paritytech/substrate?branch=master#c087bbedbde16711450c186518314903a2949cb3"
+source = "git+https://github.com/purestake/substrate?branch=moonbeam-polkadot-v0.9.17#c84f20046004e0c5f158d36bf9c8b2ecfdc41281"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4734,6 +4734,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e22443d1643a904602595ba1cd8f7d896afe56d26712531c5ff73a15b2fbf64"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "output_vt100"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "628223faebab4e3e40667ee0b2336d34a5b960ff60ea743ddfdbcf7770bcfb66"
+dependencies = [
+ "winapi 0.3.9",
 ]
 
 [[package]]

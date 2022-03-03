@@ -18,11 +18,11 @@ sp-runtime = { git = "https://github.com/purestake/substrate", branch = "moonbea
 sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17", default-features = false }
 
 # Benchmarks
-frame-benchmarking = { git = "https://github.com/purestake/substrate", branch = "master", optional = true, default-features = false }
+frame-benchmarking = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17", optional = true, default-features = false }
 
 [dev-dependencies]
-frame-support-test = { version = "3.0.0", git = "https://github.com/purestake/substrate", branch = "master" }
-sp-io = { git = "https://github.com/purestake/substrate", branch = "master"}
+frame-support-test = { version = "3.0.0", git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17" }
+sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17"}
 
 
 [features]
