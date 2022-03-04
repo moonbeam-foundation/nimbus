@@ -551,6 +551,7 @@ impl pallet_author_slot_filter::Config for Runtime {
 	type Event = Event;
 	type RandomnessSource = RandomnessCollectiveFlip;
 	type PotentialAuthors = PotentialAuthorSet;
+	type WeightInfo = ()
 }
 
 impl pallet_account_set::Config for Runtime {}
