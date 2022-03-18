@@ -42,7 +42,7 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 	use log::debug;
 	use nimbus_primitives::CanAuthor;
-	use num::Integer;
+	use num_integer::div_ceil;
 	use sp_core::H256;
 	use sp_std::vec::Vec;
 
@@ -157,7 +157,7 @@ pub mod pallet {
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
 	pub fn Half<T: Config>() -> EligibilityValue {
-		TOTAL_ELIGIBLE_AUTHORS.div_ceil(&2)
+		div_ceil(TOTAL_ELIGIBLE_AUTHORS, 2)
 	}
 
 	#[pallet::genesis_config]
@@ -169,7 +169,7 @@ pub mod pallet {
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_count: TOTAL_ELIGIBLE_AUTHORS.div_ceil(&2),
+				eligible_count: div_ceil(TOTAL_ELIGIBLE_AUTHORS, 2),
 			}
 		}
 	}
@@ -271,7 +271,7 @@ pub mod tests {
 			let value = 34;
 
 			assert_ok!(AuthorSlotFilter::set_eligible(Origin::root(), value));
-			assert_eq!(AuthorSlotFilter::eligible_ratio(), value)
+			assert_eq!(AuthorSlotFilter::eligible_count(), value)
 		});
 	}
 }
