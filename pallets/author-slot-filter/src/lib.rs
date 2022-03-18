@@ -42,8 +42,8 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 	use log::debug;
 	use nimbus_primitives::CanAuthor;
+	use num::Integer;
 	use sp_core::H256;
-	use sp_runtime::Percent;
 	use sp_std::vec::Vec;
 
 	/// The Author Filter pallet
@@ -74,7 +74,11 @@ pub mod pallet {
 		mut active: Vec<T::AccountId>,
 		seed: &u32,
 	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
-		let num_eligible = EligibleRatio::<T>::get().mul_ceil(active.len());
+		let mut num_eligible = EligibleCount::<T>::get() as usize;
+		if num_eligible > active.len() {
+			num_eligible = active.len();
+		}
+
 		let mut eligible = Vec::with_capacity(num_eligible);
 
 		for i in 0..num_eligible {
@@ -130,36 +134,42 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Update the eligible ratio. Intended to be called by governance.
 		#[pallet::weight(T::WeightInfo::set_eligible())]
-		pub fn set_eligible(origin: OriginFor<T>, new: Percent) -> DispatchResultWithPostInfo {
+		pub fn set_eligible(origin: OriginFor<T>, new: EligibilityType) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
-			EligibleRatio::<T>::put(&new);
+			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
 
 			Ok(Default::default())
 		}
 	}
 
+	/// The type of eligibility to use
+	pub type EligibilityType = u32;
+
 	/// The percentage of active authors that will be eligible at each height.
 	#[pallet::storage]
-	#[pallet::getter(fn eligible_ratio)]
-	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
+	#[pallet::getter(fn eligible_count)]
+	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityType, ValueQuery, Half<T>>;
 
-	// Default value for the `EligibleRatio` is one half.
+	/// Total number of eligible authors
+	const TOTAL_ELIGIBLE_AUTHORS: EligibilityType = 100;
+
+	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
-	pub fn Half<T: Config>() -> Percent {
-		Percent::from_percent(50)
+	pub fn Half<T: Config>() -> EligibilityType {
+		TOTAL_ELIGIBLE_AUTHORS.div_ceil(&2)
 	}
 
 	#[pallet::genesis_config]
 	pub struct GenesisConfig {
-		pub eligible_ratio: Percent,
+		pub eligible_count: EligibilityType,
 	}
 
 	#[cfg(feature = "std")]
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_ratio: Percent::from_percent(50),
+				eligible_count: TOTAL_ELIGIBLE_AUTHORS.div_ceil(&2),
 			}
 		}
 	}
@@ -167,7 +177,7 @@ pub mod pallet {
 	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig {
 		fn build(&self) {
-			EligibleRatio::<T>::put(self.eligible_ratio);
+			EligibleCount::<T>::put(self.eligible_count);
 		}
 	}
 
@@ -175,7 +185,7 @@ pub mod pallet {
 	#[pallet::generate_deposit(fn deposit_event)]
 	pub enum Event {
 		/// The amount of eligible authors for the filter to select has been changed.
-		EligibleUpdated(Percent),
+		EligibleUpdated(EligibilityType),
 	}
 }
 
@@ -191,7 +201,6 @@ pub mod tests {
 	use sp_runtime::{
 		testing::Header,
 		traits::{BlakeTwo256, IdentityLookup},
-		Percent,
 	};
 	use sp_std::vec;
 	const AUTHOR_ID: u64 = 1;
@@ -259,10 +268,10 @@ pub mod tests {
 	#[test]
 	fn set_eligibility_works() {
 		new_test_ext().execute_with(|| {
-			let percent = Percent::from_percent(34);
+			let value = 34;
 
-			assert_ok!(AuthorSlotFilter::set_eligible(Origin::root(), percent));
-			assert_eq!(AuthorSlotFilter::eligible_ratio(), percent)
+			assert_ok!(AuthorSlotFilter::set_eligible(Origin::root(), value));
+			assert_eq!(AuthorSlotFilter::eligible_ratio(), value)
 		});
 	}
 }
