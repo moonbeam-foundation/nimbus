@@ -132,9 +132,9 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Update the eligible ratio. Intended to be called by governance.
+		/// Update the eligible count. Intended to be called by governance.
 		#[pallet::weight(T::WeightInfo::set_eligible())]
-		pub fn set_eligible(origin: OriginFor<T>, new: EligibilityType) -> DispatchResultWithPostInfo {
+		pub fn set_eligible(origin: OriginFor<T>, new: EligibilityValue) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
@@ -144,25 +144,25 @@ pub mod pallet {
 	}
 
 	/// The type of eligibility to use
-	pub type EligibilityType = u32;
+	pub type EligibilityValue = u32;
 
 	/// The percentage of active authors that will be eligible at each height.
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_count)]
-	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityType, ValueQuery, Half<T>>;
+	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, Half<T>>;
 
 	/// Total number of eligible authors
-	const TOTAL_ELIGIBLE_AUTHORS: EligibilityType = 100;
+	const TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = 100;
 
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
-	pub fn Half<T: Config>() -> EligibilityType {
+	pub fn Half<T: Config>() -> EligibilityValue {
 		TOTAL_ELIGIBLE_AUTHORS.div_ceil(&2)
 	}
 
 	#[pallet::genesis_config]
 	pub struct GenesisConfig {
-		pub eligible_count: EligibilityType,
+		pub eligible_count: EligibilityValue,
 	}
 
 	#[cfg(feature = "std")]
@@ -185,7 +185,7 @@ pub mod pallet {
 	#[pallet::generate_deposit(fn deposit_event)]
 	pub enum Event {
 		/// The amount of eligible authors for the filter to select has been changed.
-		EligibleUpdated(EligibilityType),
+		EligibleUpdated(EligibilityValue),
 	}
 }
 
