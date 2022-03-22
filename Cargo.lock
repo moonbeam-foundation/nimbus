@@ -4542,7 +4542,6 @@ dependencies = [
  "frame-system",
  "log",
  "nimbus-primitives",
- "num-integer",
  "parity-scale-codec",
  "scale-info",
  "serde",

@@ -42,7 +42,6 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 	use log::debug;
 	use nimbus_primitives::CanAuthor;
-	use num_integer::div_ceil;
 	use sp_core::H256;
 	use sp_std::vec::Vec;
 
@@ -134,7 +133,10 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// Update the eligible count. Intended to be called by governance.
 		#[pallet::weight(T::WeightInfo::set_eligible())]
-		pub fn set_eligible(origin: OriginFor<T>, new: EligibilityValue) -> DispatchResultWithPostInfo {
+		pub fn set_eligible(
+			origin: OriginFor<T>,
+			new: EligibilityValue,
+		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
 			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
@@ -146,18 +148,18 @@ pub mod pallet {
 	/// The type of eligibility to use
 	pub type EligibilityValue = u32;
 
-	/// The percentage of active authors that will be eligible at each height.
+	/// The number of active authors that will be eligible at each height.
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_count)]
 	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, Half<T>>;
 
 	/// Total number of eligible authors
-	const TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = 100;
+	const HALF_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = 50;
 
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
 	pub fn Half<T: Config>() -> EligibilityValue {
-		div_ceil(TOTAL_ELIGIBLE_AUTHORS, 2)
+		HALF_TOTAL_ELIGIBLE_AUTHORS
 	}
 
 	#[pallet::genesis_config]
@@ -169,7 +171,7 @@ pub mod pallet {
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_count: div_ceil(TOTAL_ELIGIBLE_AUTHORS, 2),
+				eligible_count: HALF_TOTAL_ELIGIBLE_AUTHORS,
 			}
 		}
 	}
