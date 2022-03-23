@@ -34,9 +34,54 @@ mod benchmarks;
 
 pub mod weights;
 
+use frame_support::{Deserialize, Serialize};
+use parity_scale_codec::{Decode, Encode};
+use scale_info::TypeInfo;
+
+#[derive(
+	Clone,
+	Debug,
+	TypeInfo,
+	Serialize,
+	Deserialize,
+	Encode,
+	Decode,
+	PartialEq,
+	Eq,
+	PartialOrd,
+	Ord,
+	Hash,
+)]
+pub struct NonZeroU32(u32);
+
+impl core::ops::Deref for NonZeroU32 {
+	type Target = u32;
+	fn deref(&self) -> &Self::Target {
+		&self.0
+	}
+}
+
+impl parity_scale_codec::EncodeLike<u32> for NonZeroU32 {}
+
+impl NonZeroU32 {
+	#[inline]
+	pub const fn new(n: u32) -> Option<Self> {
+		if n != 0 {
+			Some(Self(n))
+		} else {
+			None
+		}
+	}
+
+	pub fn get(self) -> u32 {
+		self.0
+	}
+}
+
 #[pallet]
 pub mod pallet {
 
+	use super::NonZeroU32;
 	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
@@ -73,7 +118,9 @@ pub mod pallet {
 		mut active: Vec<T::AccountId>,
 		seed: &u32,
 	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
-		let mut num_eligible = EligibleCount::<T>::get() as usize;
+		let mut num_eligible = EligibleCount::<T>::get()
+			.expect("expected nonzero u32")
+			.get() as usize;
 		if num_eligible > active.len() {
 			num_eligible = active.len();
 		}
@@ -146,7 +193,7 @@ pub mod pallet {
 	}
 
 	/// The type of eligibility to use
-	pub type EligibilityValue = u32;
+	pub type EligibilityValue = Option<NonZeroU32>;
 
 	/// The number of active authors that will be eligible at each height.
 	#[pallet::storage]
@@ -154,7 +201,7 @@ pub mod pallet {
 	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, Half<T>>;
 
 	/// Total number of eligible authors
-	const HALF_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = 50;
+	const HALF_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new(50);
 
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
@@ -179,7 +226,7 @@ pub mod pallet {
 	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig {
 		fn build(&self) {
-			EligibleCount::<T>::put(self.eligible_count);
+			EligibleCount::<T>::put(self.eligible_count.clone());
 		}
 	}
 
