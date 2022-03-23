@@ -155,15 +155,15 @@ pub mod pallet {
 	/// The number of active authors that will be eligible at each height.
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_count)]
-	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, Half<T>>;
+	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
 
 	/// Total number of eligible authors
-	pub const HALF_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new(50);
+	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new(50);
 
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
-	pub fn Half<T: Config>() -> EligibilityValue {
-		HALF_TOTAL_ELIGIBLE_AUTHORS
+	pub fn DefaultEligibilityValue<T: Config>() -> EligibilityValue {
+		DEFAULT_TOTAL_ELIGIBLE_AUTHORS
 	}
 
 	#[pallet::genesis_config]
@@ -175,7 +175,7 @@ pub mod pallet {
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_count: HALF_TOTAL_ELIGIBLE_AUTHORS,
+				eligible_count: DEFAULT_TOTAL_ELIGIBLE_AUTHORS,
 			}
 		}
 	}
