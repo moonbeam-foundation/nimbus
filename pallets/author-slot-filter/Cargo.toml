@@ -12,7 +12,7 @@ log = { version = "0.4", default-features = false }
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
 parity-scale-codec = { version = "2.0.0", default-features = false, features = [ "derive" ] }
 scale-info = { version = "1.0.0", default-features = false, features = [ "derive" ] }
-serde = { version = "1.0.101", optional = true, features = [ "derive" ] }
+serde = { version = "1.0.101", default-features = false, features = [ "derive" ] }
 sp-core = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-std = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
@@ -35,7 +35,7 @@ std = [
 	"nimbus-primitives/std",
 	"parity-scale-codec/std",
 	"scale-info/std",
-	"serde",
+	"serde/std",
 	"sp-core/std",
 	"sp-runtime/std",
 	"sp-std/std",
