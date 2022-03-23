@@ -54,7 +54,7 @@ impl<'de> Deserialize<'de> for NonZeroU32 {
 		D: Deserializer<'de>,
 	{
 		let value = Deserialize::deserialize(deserializer)?;
-		match <NonZeroU32>::new(value) {
+		match NonZeroU32::new(value) {
 			Some(nonzero) => Ok(nonzero),
 			None => Err(DeserializeError::custom("expected a non-zero value")),
 		}
