@@ -18,6 +18,8 @@ use sp_runtime::{
 
 pub use nimbus_primitives::NimbusId;
 
+pub use pallet_author_slot_filter::HALF_TOTAL_ELIGIBLE_AUTHORS;
+
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;

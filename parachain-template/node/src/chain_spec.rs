@@ -177,7 +177,9 @@ fn testnet_genesis(
 				.collect(),
 		},
 		parachain_info: parachain_template_runtime::ParachainInfoConfig { parachain_id: id },
-		author_filter: parachain_template_runtime::AuthorFilterConfig { eligible_count: 50 },
+		author_filter: parachain_template_runtime::AuthorFilterConfig {
+			eligible_count: parachain_template_runtime::HALF_TOTAL_ELIGIBLE_AUTHORS,
+		},
 		potential_author_set: parachain_template_runtime::PotentialAuthorSetConfig {
 			mapping: authorities,
 		},
