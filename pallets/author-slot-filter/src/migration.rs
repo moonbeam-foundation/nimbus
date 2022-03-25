@@ -5,14 +5,17 @@ use frame_support::traits::OnRuntimeUpgrade;
 use frame_support::weights::Weight;
 use sp_runtime::Percent;
 
+#[cfg(feature = "try-runtime")]
+use frame_support::traits::OnRuntimeUpgradeHelpersExt;
+
 use super::num::NonZeroU32;
 use super::pallet::Config;
 
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
 const PALLET_NAME: &[u8] = b"AuthorSlotFilter";
-const OLD_ITEM_NAME: &[u8] = b"EligibleRatio";
-const NEW_ITEM_NAME: &[u8] = b"EligibleCount";
+const ELIGIBLE_RATIO_ITEM_NAME: &[u8] = b"EligibleRatio";
+const ELIGIBLE_COUNT_ITEM_NAME: &[u8] = b"EligibleCount";
 
 impl<T> OnRuntimeUpgrade for EligibleRatioToEligiblityCount<T>
 where
@@ -22,13 +25,13 @@ where
 		log::info!(target: "EligibleRatioToEligiblityCount", "starting migration");
 
 		if let Some(old_value) =
-			migration::get_storage_value::<Percent>(PALLET_NAME, OLD_ITEM_NAME, &[])
+			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
 		{
 			let total_authors = <T as Config>::PotentialAuthors::get().len();
 			let new_value: u32 = old_value.mul_ceil(total_authors as u32);
 			migration::put_storage_value::<Option<NonZeroU32>>(
 				PALLET_NAME,
-				NEW_ITEM_NAME,
+				ELIGIBLE_COUNT_ITEM_NAME,
 				&[],
 				NonZeroU32::new(new_value),
 			);
@@ -42,11 +45,25 @@ where
 
 	#[cfg(feature = "try-runtime")]
 	fn pre_upgrade() -> Result<(), &'static str> {
-		Ok(())
+		if let Some(eligible_ratio) =
+			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
+		{
+			let total_authors = <T as Config>::PotentialAuthors::get().len();
+			let eligible_count: u32 = eligible_ratio.mul_ceil(total_authors as u32);
+			let eligible_count = NonZeroU32::new(eligible_count);
+			Self::set_temp_storage(new_value, "expected_eligible_count");
+		}
 	}
 
 	#[cfg(feature = "try-runtime")]
 	fn post_upgrade() -> Result<(), &'static str> {
-		Ok(())
+		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count");
+		let actual = migration::get_storage_value::<Option<NonZeroU32>>(
+			PALLET_NAME,
+			ELIGIBLE_COUNT_ITEM_NAME,
+			&[],
+		);
+
+		assert_eq!(expected, actual);
 	}
 }

@@ -154,9 +154,9 @@ pub mod pallet {
 	/// The type of eligibility to use
 	pub type EligibilityValue = Option<NonZeroU32>;
 
-	#[deprecated]
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
+	#[deprecated]
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.
