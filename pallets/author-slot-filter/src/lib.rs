@@ -45,6 +45,7 @@ pub mod pallet {
 	use log::debug;
 	use nimbus_primitives::CanAuthor;
 	use sp_core::H256;
+	use sp_runtime::Percent;
 	use sp_std::vec::Vec;
 
 	/// The Author Filter pallet
@@ -152,10 +153,22 @@ pub mod pallet {
 	/// The type of eligibility to use
 	pub type EligibilityValue = Option<NonZeroU32>;
 
+	#[deprecated]
+	#[pallet::storage]
+	#[pallet::getter(fn eligible_ratio)]
+	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
+
+	// Default value for the `EligibleRatio` is one half.
+	#[pallet::type_value]
+	pub fn Half<T: Config>() -> Percent {
+		Percent::from_percent(50)
+	}
+
 	/// The number of active authors that will be eligible at each height.
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_count)]
-	pub type EligibleCount<T: Config> = StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
+	pub type EligibleCount<T: Config> =
+		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
 
 	/// Total number of eligible authors
 	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new(50);
