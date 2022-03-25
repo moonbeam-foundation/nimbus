@@ -1,3 +1,28 @@
+// Copyright 2019-2021 PureStake Inc.
+// This file is part of Nimbus.
+
+// Nimbus is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// Nimbus is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
+
+//! Small pallet responsible determining which accounts are eligible to author at the current
+//! slot.
+//!
+//! Using a randomness beacon supplied by the `Randomness` trait, this pallet takes the set of
+//! currently active accounts from an upstream source, and filters them down to a pseudorandom subset.
+//! The current technique gives no preference to any particular author. In the future, we could
+//! disfavor authors who are authoring a disproportionate amount of the time in an attempt to
+//! "even the playing field".
+
 use parity_scale_codec::{Decode, Encode, Error, Input};
 use scale_info::TypeInfo;
 use serde::de::Error as DeserializeError;
