@@ -32,10 +32,12 @@ where
 				&[],
 				NonZeroU32::new(new_value),
 			);
-		}
 
-		let db_weights = T::DbWeight::get();
-		db_weights.write + db_weights.read
+			let db_weights = T::DbWeight::get();
+			db_weights.write + db_weights.read
+		} else {
+			0
+		}
 	}
 
 	#[cfg(feature = "try-runtime")]
