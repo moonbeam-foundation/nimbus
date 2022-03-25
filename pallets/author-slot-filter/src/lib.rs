@@ -32,6 +32,7 @@ pub use pallet::*;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
+pub mod migration;
 pub mod num;
 pub mod weights;
 
