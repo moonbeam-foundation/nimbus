@@ -38,9 +38,9 @@ use super::pallet::Config;
 
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
-const PALLET_NAME: &[u8] = b"AuthorSlotFilter";
-const ELIGIBLE_RATIO_ITEM_NAME: &[u8] = b"EligibleRatio";
-const ELIGIBLE_COUNT_ITEM_NAME: &[u8] = b"EligibleCount";
+pub const PALLET_NAME: &[u8] = b"AuthorSlotFilter";
+pub const ELIGIBLE_RATIO_ITEM_NAME: &[u8] = b"EligibleRatio";
+pub const ELIGIBLE_COUNT_ITEM_NAME: &[u8] = b"EligibleCount";
 
 impl<T> OnRuntimeUpgrade for EligibleRatioToEligiblityCount<T>
 where
@@ -53,7 +53,7 @@ where
 			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
 		{
 			let total_authors = <T as Config>::PotentialAuthors::get().len();
-			let new_value: u32 = old_value.mul_ceil(total_authors as u32);
+			let new_value: u32 = percent_of_num(old_value, total_authors as u32);
 			migration::put_storage_value::<Option<NonZeroU32>>(
 				PALLET_NAME,
 				ELIGIBLE_COUNT_ITEM_NAME,
@@ -74,7 +74,7 @@ where
 			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
 		{
 			let total_authors = <T as Config>::PotentialAuthors::get().len();
-			let eligible_count: u32 = eligible_ratio.mul_ceil(total_authors as u32);
+			let eligible_count: u32 = percent_of_num(eligible_ratio, total_authors as u32);
 			let eligible_count = NonZeroU32::new(eligible_count);
 			Self::set_temp_storage(new_value, "expected_eligible_count");
 		}
@@ -91,4 +91,8 @@ where
 
 		assert_eq!(expected, actual);
 	}
+}
+
+fn percent_of_num(percent: Percent, num: u32) -> u32 {
+	percent.mul_ceil(num as u32)
 }
