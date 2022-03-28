@@ -21,6 +21,7 @@ substrate-prometheus-endpoint = { git = "https://github.com/purestake/substrate"
 
 # Polkadot dependencies
 polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
+polkadot-primitives = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
 
 # Cumulus dependencies
 cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
