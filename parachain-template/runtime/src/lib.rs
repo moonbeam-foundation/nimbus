@@ -700,7 +700,8 @@ impl_runtime_apis! {
 			// This runtime uses an entropy source that is updated during block initialization
 			// Therefore we need to initialize it to match the state it will be in when the
 			// next block is being executed.
-			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest, frame_system::InitKind::Inspection);
+			System::reset_events();
+			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest);
 			<Self as pallet_author_slot_filter::Config>::RandomnessSource::on_initialize(System::block_number());
 
 			// And now the actual prediction call
