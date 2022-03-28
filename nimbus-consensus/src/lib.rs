@@ -40,7 +40,7 @@ use polkadot_client::ClientHandle;
 use sc_client_api::Backend;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_api::{ApiExt, BlockId, ProvideRuntimeApi};
-use sp_application_crypto::CryptoTypePublicPair;
+use sp_application_crypto::{ByteArray, CryptoTypePublicPair};
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
@@ -259,7 +259,7 @@ where
 		// That I should be passing Vec<u8> across the wasm boundary?
 		prediction_helper(
 			&at,
-			NimbusId::from_slice(&type_public_pair.1),
+			NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
 			slot_number,
 			parent,
 		)
@@ -364,13 +364,13 @@ where
 				parent.hash(),
 				&validation_data,
 				relay_parent,
-				NimbusId::from_slice(&type_public_pair.1),
+				NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
 			)
 			.await?;
 
 		let inherent_digests = sp_runtime::generic::Digest {
 			logs: vec![CompatibleDigestItem::nimbus_pre_digest(
-				NimbusId::from_slice(&type_public_pair.1),
+				NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
 			)],
 		};
 
