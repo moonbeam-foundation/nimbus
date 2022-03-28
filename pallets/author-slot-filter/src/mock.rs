@@ -1,3 +1,19 @@
+// Copyright 2019-2021 PureStake Inc.
+// This file is part of Nimbus.
+
+// Nimbus is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// Nimbus is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
+
 use crate as pallet_testing;
 use frame_support::parameter_types;
 use frame_support::sp_io;
@@ -13,7 +29,6 @@ use sp_runtime::{
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
 
-// Configure a mock runtime to test the pallet.
 frame_support::construct_runtime!(
 	pub enum Test where
 		Block = Block,

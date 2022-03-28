@@ -14,14 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Small pallet responsible determining which accounts are eligible to author at the current
-//! slot.
-//!
-//! Using a randomness beacon supplied by the `Randomness` trait, this pallet takes the set of
-//! currently active accounts from an upstream source, and filters them down to a pseudorandom subset.
-//! The current technique gives no preference to any particular author. In the future, we could
-//! disfavor authors who are authoring a disproportionate amount of the time in an attempt to
-//! "even the playing field".
+//! Implements a [NonZeroU32] type that interplays nicely with the 
+//! subtrate storage and the SCALE codec.
 
 use parity_scale_codec::{Decode, Encode, Error, Input};
 use scale_info::TypeInfo;
