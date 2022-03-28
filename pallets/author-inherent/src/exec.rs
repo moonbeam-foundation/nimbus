@@ -24,6 +24,7 @@ use log::debug;
 use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NIMBUS_ENGINE_ID};
 use sp_application_crypto::Public as _;
 use sp_runtime::{generic::DigestItem, RuntimeAppPublic};
+use sp_application_crypto::ByteArray;
 
 /// Block executive to be used by relay chain validators when validating parachain blocks built
 /// with the nimubs consensus family.
@@ -82,8 +83,9 @@ where
 		debug!(target: "executive", "🪲 Claimed Author according to executive is {:?}", claimed_author);
 
 		// Verify the signature
-		let valid_signature =
-			NimbusId::from_slice(&claimed_author).verify(&header.hash(), &signature);
+		let valid_signature = NimbusId::from_slice(&claimed_author)
+			.expect("Expected pre-runtime digest with valid author id")
+			.verify(&header.hash(), &signature);
 
 		debug!(target: "executive", "🪲 Valid signature? {:?}", valid_signature);
 
