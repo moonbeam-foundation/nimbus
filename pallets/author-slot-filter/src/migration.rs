@@ -49,7 +49,7 @@ where
 				PALLET_NAME,
 				ELIGIBLE_COUNT_ITEM_NAME,
 				&[],
-				NonZeroU32::new_unchecked(new_value),
+				NonZeroU32::new(new_value).unwrap_or(crate::pallet::DEFAULT_TOTAL_ELIGIBLE_AUTHORS),
 			);
 
 			let db_weights = T::DbWeight::get();

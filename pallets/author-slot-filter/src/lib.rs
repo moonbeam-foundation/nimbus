@@ -174,7 +174,7 @@ pub mod pallet {
 	pub type EligibleCount<T: Config> =
 		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
 
-	/// Default total number of eligible authors, not NOT be 0.
+	/// Default total number of eligible authors, must NOT be 0.
 	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new_unchecked(50);
 
 	// Default value for the `EligibleCount`.
