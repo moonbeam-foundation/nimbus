@@ -24,7 +24,6 @@ use log::debug;
 use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NIMBUS_ENGINE_ID};
 use sp_application_crypto::ByteArray;
 use sp_runtime::{generic::DigestItem, RuntimeAppPublic};
-use sp_application_crypto::ByteArray;
 
 /// Block executive to be used by relay chain validators when validating parachain blocks built
 /// with the nimubs consensus family.
