@@ -92,7 +92,7 @@ consensus engine simply by creating filters that implement the `CanAuthor` trait
 
 This repository comes with a few example filters already, and additional examples are welcome. The examples are:
 * PseudoRandom FixedSized Subset - This filter takes a finite set (eg a staked set) and filters it down to a pseudo-random
-subset at each height. The eligible ratio is configurable in the pallet. This is a good learning example.
+subset at each height. The eligible count is configurable in the pallet. This is a good learning example.
 * Aura - The authority round consensus engine is popular in the Substrate ecosystem because it was one
 of the first (and simplest!) engines implemented in Substrate. Aura can be expressed in the Nimbus
 filter framework and is included as an example filter. If you are considering using aura, that crate

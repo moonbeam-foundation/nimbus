@@ -32,11 +32,19 @@ pub use pallet::*;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
+pub mod migration;
+pub mod num;
 pub mod weights;
+
+#[cfg(test)]
+mod mock;
+#[cfg(test)]
+mod tests;
 
 #[pallet]
 pub mod pallet {
 
+	use crate::num::NonZeroU32;
 	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
@@ -74,7 +82,11 @@ pub mod pallet {
 		mut active: Vec<T::AccountId>,
 		seed: &u32,
 	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
-		let num_eligible = EligibleRatio::<T>::get().mul_ceil(active.len());
+		let mut num_eligible = EligibleCount::<T>::get().get() as usize;
+		if num_eligible > active.len() {
+			num_eligible = active.len();
+		}
+
 		let mut eligible = Vec::with_capacity(num_eligible);
 
 		for i in 0..num_eligible {
@@ -128,20 +140,26 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Update the eligible ratio. Intended to be called by governance.
+		/// Update the eligible count. Intended to be called by governance.
 		#[pallet::weight(T::WeightInfo::set_eligible())]
-		pub fn set_eligible(origin: OriginFor<T>, new: Percent) -> DispatchResultWithPostInfo {
+		pub fn set_eligible(
+			origin: OriginFor<T>,
+			new: EligibilityValue,
+		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
-			EligibleRatio::<T>::put(&new);
+			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
 
 			Ok(Default::default())
 		}
 	}
 
-	/// The percentage of active authors that will be eligible at each height.
+	/// The type of eligibility to use
+	pub type EligibilityValue = NonZeroU32;
+
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
+	#[deprecated]
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.
@@ -150,16 +168,31 @@ pub mod pallet {
 		Percent::from_percent(50)
 	}
 
+	/// The number of active authors that will be eligible at each height.
+	#[pallet::storage]
+	#[pallet::getter(fn eligible_count)]
+	pub type EligibleCount<T: Config> =
+		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
+
+	/// Default total number of eligible authors, must NOT be 0.
+	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new_unchecked(50);
+
+	// Default value for the `EligibleCount`.
+	#[pallet::type_value]
+	pub fn DefaultEligibilityValue<T: Config>() -> EligibilityValue {
+		DEFAULT_TOTAL_ELIGIBLE_AUTHORS
+	}
+
 	#[pallet::genesis_config]
 	pub struct GenesisConfig {
-		pub eligible_ratio: Percent,
+		pub eligible_count: EligibilityValue,
 	}
 
 	#[cfg(feature = "std")]
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_ratio: Percent::from_percent(50),
+				eligible_count: DEFAULT_TOTAL_ELIGIBLE_AUTHORS,
 			}
 		}
 	}
@@ -167,7 +200,7 @@ pub mod pallet {
 	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig {
 		fn build(&self) {
-			EligibleRatio::<T>::put(self.eligible_ratio);
+			EligibleCount::<T>::put(self.eligible_count.clone());
 		}
 	}
 
@@ -175,94 +208,6 @@ pub mod pallet {
 	#[pallet::generate_deposit(fn deposit_event)]
 	pub enum Event {
 		/// The amount of eligible authors for the filter to select has been changed.
-		EligibleUpdated(Percent),
-	}
-}
-
-#[cfg(test)]
-pub mod tests {
-	use super::*;
-	use crate as author_slot_filter;
-
-	use frame_support::{assert_ok, parameter_types, traits::Everything};
-	use frame_support_test::TestRandomness;
-	use sp_core::H256;
-	use sp_io::TestExternalities;
-	use sp_runtime::{
-		testing::Header,
-		traits::{BlakeTwo256, IdentityLookup},
-		Percent,
-	};
-	use sp_std::vec;
-	const AUTHOR_ID: u64 = 1;
-
-	pub fn new_test_ext() -> TestExternalities {
-		let t = frame_system::GenesisConfig::default()
-			.build_storage::<Test>()
-			.unwrap();
-		TestExternalities::new(t)
-	}
-
-	type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
-	type Block = frame_system::mocking::MockBlock<Test>;
-
-	// Configure a mock runtime to test the pallet.
-	frame_support::construct_runtime!(
-		pub enum Test where
-			Block = Block,
-			NodeBlock = Block,
-			UncheckedExtrinsic = UncheckedExtrinsic,
-		{
-			System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
-			AuthorSlotFilter: author_slot_filter::{Pallet, Call, Storage, Event, Config},
-		}
-	);
-
-	parameter_types! {
-		pub const BlockHashCount: u64 = 250;
-	}
-	impl frame_system::Config for Test {
-		type BaseCallFilter = Everything;
-		type BlockWeights = ();
-		type BlockLength = ();
-		type DbWeight = ();
-		type Origin = Origin;
-		type Index = u64;
-		type BlockNumber = u64;
-		type Call = Call;
-		type Hash = H256;
-		type Hashing = BlakeTwo256;
-		type AccountId = u64;
-		type Lookup = IdentityLookup<Self::AccountId>;
-		type Header = Header;
-		type Event = Event;
-		type BlockHashCount = BlockHashCount;
-		type Version = ();
-		type PalletInfo = PalletInfo;
-		type AccountData = ();
-		type OnNewAccount = ();
-		type OnKilledAccount = ();
-		type SystemWeightInfo = ();
-		type SS58Prefix = ();
-		type OnSetCode = ();
-	}
-	parameter_types! {
-		pub Authors: Vec<u64> = vec![AUTHOR_ID];
-	}
-	impl Config for Test {
-		type Event = Event;
-		type RandomnessSource = TestRandomness<Self>;
-		type PotentialAuthors = Authors;
-		type WeightInfo = ();
-	}
-
-	#[test]
-	fn set_eligibility_works() {
-		new_test_ext().execute_with(|| {
-			let percent = Percent::from_percent(34);
-
-			assert_ok!(AuthorSlotFilter::set_eligible(Origin::root(), percent));
-			assert_eq!(AuthorSlotFilter::eligible_ratio(), percent)
-		});
+		EligibleUpdated(EligibilityValue),
 	}
 }
