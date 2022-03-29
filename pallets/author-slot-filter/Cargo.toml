@@ -24,7 +24,6 @@ frame-benchmarking = { git = "https://github.com/purestake/substrate", branch = 
 frame-support-test = { version = "3.0.0", git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17" }
 sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.17"}
 
-
 [features]
 default = [ "std" ]
 std = [
@@ -35,7 +34,7 @@ std = [
 	"nimbus-primitives/std",
 	"parity-scale-codec/std",
 	"scale-info/std",
-	"serde",
+	"serde/std",
 	"sp-core/std",
 	"sp-runtime/std",
 	"sp-std/std",
