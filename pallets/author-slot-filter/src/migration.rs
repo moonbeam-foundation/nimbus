@@ -45,11 +45,11 @@ where
 		{
 			let total_authors = <T as Config>::PotentialAuthors::get().len();
 			let new_value: u32 = percent_of_num(old_value, total_authors as u32);
-			migration::put_storage_value::<Option<NonZeroU32>>(
+			migration::put_storage_value(
 				PALLET_NAME,
 				ELIGIBLE_COUNT_ITEM_NAME,
 				&[],
-				NonZeroU32::new(new_value),
+				NonZeroU32::new_unchecked(new_value),
 			);
 
 			let db_weights = T::DbWeight::get();
@@ -66,7 +66,7 @@ where
 		{
 			let total_authors = <T as Config>::PotentialAuthors::get().len();
 			let eligible_count: u32 = percent_of_num(eligible_ratio, total_authors as u32);
-			let eligible_count = NonZeroU32::new(eligible_count);
+			let eligible_count = NonZeroU32::new_unchecked(eligible_count);
 			Self::set_temp_storage(new_value, "expected_eligible_count");
 		}
 	}
@@ -74,11 +74,8 @@ where
 	#[cfg(feature = "try-runtime")]
 	fn post_upgrade() -> Result<(), &'static str> {
 		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count");
-		let actual = migration::get_storage_value::<Option<NonZeroU32>>(
-			PALLET_NAME,
-			ELIGIBLE_COUNT_ITEM_NAME,
-			&[],
-		);
+		let actual =
+			migration::get_storage_value::<NonZeroU32>(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[]);
 
 		assert_eq!(expected, actual);
 	}

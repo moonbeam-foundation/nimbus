@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Implements a [NonZeroU32] type that interplays nicely with the 
+//! Implements a [NonZeroU32] type that interplays nicely with the
 //! subtrate storage and the SCALE codec.
 
 use parity_scale_codec::{Decode, Encode, Error, Input};

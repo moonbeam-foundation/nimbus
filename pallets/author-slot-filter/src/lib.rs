@@ -44,7 +44,7 @@ mod tests;
 #[pallet]
 pub mod pallet {
 
-	use super::num::NonZeroU32;
+	use crate::num::NonZeroU32;
 	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
@@ -82,9 +82,7 @@ pub mod pallet {
 		mut active: Vec<T::AccountId>,
 		seed: &u32,
 	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
-		let mut num_eligible = EligibleCount::<T>::get()
-			.expect("expected nonzero u32")
-			.get() as usize;
+		let mut num_eligible = EligibleCount::<T>::get().get() as usize;
 		if num_eligible > active.len() {
 			num_eligible = active.len();
 		}
@@ -157,7 +155,7 @@ pub mod pallet {
 	}
 
 	/// The type of eligibility to use
-	pub type EligibilityValue = Option<NonZeroU32>;
+	pub type EligibilityValue = NonZeroU32;
 
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
@@ -176,8 +174,8 @@ pub mod pallet {
 	pub type EligibleCount<T: Config> =
 		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
 
-	/// Total number of eligible authors
-	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new(50);
+	/// Default total number of eligible authors, not NOT be 0.
+	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new_unchecked(50);
 
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]

@@ -24,7 +24,7 @@ use sp_runtime::Percent;
 #[test]
 fn test_set_eligibility_works() {
 	new_test_ext().execute_with(|| {
-		let value = num::NonZeroU32::new(34);
+		let value = num::NonZeroU32::new_unchecked(34);
 
 		assert_ok!(AuthorSlotFilter::set_eligible(
 			Origin::root(),
@@ -44,7 +44,7 @@ fn test_migration_works_for_converting_existing_eligible_ratio_to_eligible_count
 		let total_author_count = mock::Authors::get().len();
 		let eligible_author_count =
 			input_eligible_ratio.clone().mul_ceil(total_author_count) as u32;
-		let expected_eligible_count = NonZeroU32::new(eligible_author_count);
+		let expected_eligible_count = NonZeroU32::new_unchecked(eligible_author_count);
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
 		put_storage_value(
