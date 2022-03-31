@@ -32,7 +32,6 @@ pub use pallet::*;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
-<<<<<<< HEAD
 pub mod migration;
 pub mod num;
 pub mod weights;
@@ -46,13 +45,6 @@ mod tests;
 pub mod pallet {
 
 	use crate::num::NonZeroU32;
-=======
-pub mod weights;
-
-#[pallet]
-pub mod pallet {
-
->>>>>>> moonbeam-polkadot-v0.9.18
 	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
