@@ -23,9 +23,6 @@
 use cumulus_client_consensus_common::{
 	ParachainBlockImport, ParachainCandidate, ParachainConsensus,
 };
-<<<<<<< HEAD
-use cumulus_primitives_core::{relay_chain::v1::Hash as PHash, ParaId, PersistedValidationData};
-=======
 use cumulus_primitives_core::{
 	relay_chain::{
 		v1::{Block as PBlock, Hash as PHash},
@@ -33,7 +30,6 @@ use cumulus_primitives_core::{
 	},
 	ParaId, PersistedValidationData,
 };
->>>>>>> moonbeam-polkadot-v0.9.18
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
 use nimbus_primitives::{
@@ -253,11 +249,7 @@ where
 		// That I should be passing Vec<u8> across the wasm boundary?
 		prediction_helper(
 			&at,
-<<<<<<< HEAD
-			NimbusId::from_slice(&type_public_pair.1).expect("Nimbus ID is invalid (wrong length)"),
-=======
 			NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
->>>>>>> moonbeam-polkadot-v0.9.18
 			slot_number,
 			parent,
 		)

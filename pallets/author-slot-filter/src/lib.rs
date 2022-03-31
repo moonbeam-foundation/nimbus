@@ -149,18 +149,12 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-<<<<<<< HEAD
 		/// Update the eligible count. Intended to be called by governance.
 		#[pallet::weight(T::WeightInfo::set_eligible())]
 		pub fn set_eligible(
 			origin: OriginFor<T>,
 			new: EligibilityValue,
 		) -> DispatchResultWithPostInfo {
-=======
-		/// Update the eligible ratio. Intended to be called by governance.
-		#[pallet::weight(T::WeightInfo::set_eligible())]
-		pub fn set_eligible(origin: OriginFor<T>, new: Percent) -> DispatchResultWithPostInfo {
->>>>>>> moonbeam-polkadot-v0.9.18
 			ensure_root(origin)?;
 			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
@@ -174,10 +168,7 @@ pub mod pallet {
 
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
-<<<<<<< HEAD
 	#[deprecated]
-=======
->>>>>>> moonbeam-polkadot-v0.9.18
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.

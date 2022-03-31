@@ -196,11 +196,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	impl_version: 0,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
-<<<<<<< HEAD
-=======
 	state_version: 1,
->>>>>>> moonbeam-polkadot-v0.9.18
-	state_version: 0,
 };
 
 /// This determines the average expected block time that we are targeting.
@@ -540,17 +536,6 @@ impl cumulus_pallet_xcmp_queue::Config for Runtime {
 	type ChannelInfo = ParachainSystem;
 	type VersionWrapper = ();
 	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
-<<<<<<< HEAD
-	type ControllerOrigin = EnsureRoot<AccountId>;
-	type ControllerOriginConverter = XcmOriginToTransactDispatchOrigin;
-=======
-<<<<<<< HEAD
-	type ControllerOrigin = EnsureRoot<AccountId>;
-	type ControllerOriginConverter = XcmOriginToTransactDispatchOrigin;
-	type WeightInfo = ();
-=======
->>>>>>> 0e06b18 (Update deps + make it build (without tests))
->>>>>>> moonbeam-polkadot-v0.9.18
 }
 
 impl cumulus_pallet_dmp_queue::Config for Runtime {
@@ -719,13 +704,6 @@ impl_runtime_apis! {
 			// This runtime uses an entropy source that is updated during block initialization
 			// Therefore we need to initialize it to match the state it will be in when the
 			// next block is being executed.
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-			System::reset_events();
-=======
->>>>>>> 0e06b18 (Update deps + make it build (without tests))
->>>>>>> moonbeam-polkadot-v0.9.18
 			System::initialize(&(parent_header.number + 1), &parent_header.hash(), &parent_header.digest);
 			<Self as pallet_author_slot_filter::Config>::RandomnessSource::on_initialize(System::block_number());
 
