@@ -1,16 +1,16 @@
 use crate::chain_spec;
-use clap::Parser;
 use std::path::PathBuf;
+use structopt::StructOpt;
 
 /// Sub-commands supported by the collator.
-#[derive(Debug, clap::Subcommand)]
+#[derive(Debug, StructOpt)]
 pub enum Subcommand {
 	/// Export the genesis state of the parachain.
-	#[clap(name = "export-genesis-state")]
+	#[structopt(name = "export-genesis-state")]
 	ExportGenesisState(ExportGenesisStateCommand),
 
 	/// Export the genesis wasm of the parachain.
-	#[clap(name = "export-genesis-wasm")]
+	#[structopt(name = "export-genesis-wasm")]
 	ExportGenesisWasm(ExportGenesisWasmCommand),
 
 	/// Build a chain specification.
@@ -38,63 +38,63 @@ pub enum Subcommand {
 	RunInstantSeal(sc_cli::RunCmd),
 
 	/// The custom benchmark subcommmand benchmarking runtime pallets.
-	#[clap(name = "benchmark", about = "Benchmark runtime pallets.")]
+	#[structopt(name = "benchmark", about = "Benchmark runtime pallets.")]
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 }
 
 /// Command for exporting the genesis state of the parachain
-#[derive(Debug, Parser)]
+#[derive(Debug, StructOpt)]
 pub struct ExportGenesisStateCommand {
 	/// Output file name or stdout if unspecified.
-	#[clap(parse(from_os_str))]
+	#[structopt(parse(from_os_str))]
 	pub output: Option<PathBuf>,
 
 	/// Id of the parachain this state is for.
 	///
 	/// Default: 100
-	#[clap(long, conflicts_with = "chain")]
+	#[structopt(long, conflicts_with = "chain")]
 	pub parachain_id: Option<u32>,
 
 	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long)]
+	#[structopt(short, long)]
 	pub raw: bool,
 
 	/// The name of the chain for that the genesis state should be exported.
-	#[clap(long, conflicts_with = "parachain-id")]
+	#[structopt(long, conflicts_with = "parachain-id")]
 	pub chain: Option<String>,
 }
 
 /// Command for exporting the genesis wasm file.
-#[derive(Debug, Parser)]
+#[derive(Debug, StructOpt)]
 pub struct ExportGenesisWasmCommand {
 	/// Output file name or stdout if unspecified.
-	#[clap(parse(from_os_str))]
+	#[structopt(parse(from_os_str))]
 	pub output: Option<PathBuf>,
 
 	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long)]
+	#[structopt(short, long)]
 	pub raw: bool,
 
 	/// The name of the chain for that the genesis wasm file should be exported.
-	#[clap(long)]
+	#[structopt(long)]
 	pub chain: Option<String>,
 }
 
-#[derive(Debug, Parser)]
-#[clap(
-	propagate_version = true,
-	args_conflicts_with_subcommands = true,
-	subcommand_negates_reqs = true
-)]
+#[derive(Debug, StructOpt)]
+#[structopt(settings = &[
+	structopt::clap::AppSettings::GlobalVersion,
+	structopt::clap::AppSettings::ArgsNegateSubcommands,
+	structopt::clap::AppSettings::SubcommandsNegateReqs,
+])]
 pub struct Cli {
-	#[clap(subcommand)]
+	#[structopt(subcommand)]
 	pub subcommand: Option<Subcommand>,
 
-	#[clap(flatten)]
+	#[structopt(flatten)]
 	pub run: cumulus_client_cli::RunCmd,
 
 	/// Relaychain arguments
-	#[clap(raw = true)]
+	#[structopt(raw = true)]
 	pub relay_chain_args: Vec<String>,
 }
 
@@ -125,7 +125,7 @@ impl RelayChainCli {
 		Self {
 			base_path,
 			chain_id,
-			base: polkadot_cli::RunCmd::parse_from(relay_chain_args),
+			base: polkadot_cli::RunCmd::from_iter(relay_chain_args),
 		}
 	}
 }
