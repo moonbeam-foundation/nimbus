@@ -517,11 +517,6 @@
 <span id="517">517</span>
 <span id="518">518</span>
 <span id="519">519</span>
-<span id="520">520</span>
-<span id="521">521</span>
-<span id="522">522</span>
-<span id="523">523</span>
-<span id="524">524</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.</span>
 
 <span class="comment">// std</span>
@@ -529,7 +524,7 @@
 
 <span class="comment">// Local Runtime Types</span>
 <span class="kw">use</span> <span class="ident">parachain_template_runtime</span>::{
-	<span class="ident">opaque::Block</span>, <span class="ident">AccountId</span>, <span class="ident">Balance</span>, <span class="ident">Hash</span>, <span class="ident">Index</span> <span class="kw">as</span> <span class="ident">Nonce</span>, <span class="ident">NimbusId</span>, <span class="ident">RuntimeApi</span>,
+	<span class="ident">opaque::Block</span>, <span class="ident">AccountId</span>, <span class="ident">Balance</span>, <span class="ident">Hash</span>, <span class="ident">Index</span> <span class="kw">as</span> <span class="ident">Nonce</span>, <span class="ident">RuntimeApi</span>,
 };
 
 <span class="kw">use</span> <span class="ident">nimbus_consensus</span>::{
@@ -901,12 +896,7 @@
 				<span class="ident">parachain_client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 				<span class="ident">keystore</span>,
 				<span class="ident">skip_prediction</span>: <span class="ident">force_authoring</span>,
-				<span class="ident">create_inherent_data_providers</span>: <span class="kw">move</span> <span class="op">|</span><span class="kw">_</span>,
-				                                      (
-					<span class="ident">relay_parent</span>,
-					<span class="ident">validation_data</span>,
-					<span class="ident">author_id</span>,
-				)<span class="op">|</span> {
+				<span class="ident">create_inherent_data_providers</span>: <span class="kw">move</span> <span class="op">|</span><span class="kw">_</span>, (<span class="ident">relay_parent</span>, <span class="ident">validation_data</span>)<span class="op">|</span> {
 					<span class="kw">let</span> <span class="ident">parachain_inherent</span> <span class="op">=</span>
 								<span class="ident">cumulus_primitives_parachain_inherent::ParachainInherentData::create_at_with_client</span>(
 									<span class="ident">relay_parent</span>,
@@ -924,9 +914,9 @@
 							)
 						})<span class="question-mark">?</span>;
 
-						<span class="kw">let</span> <span class="ident">author</span> <span class="op">=</span> <span class="ident">nimbus_primitives::InherentDataProvider</span>::<span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span>(<span class="ident">author_id</span>);
+						<span class="kw">let</span> <span class="ident">nimbus_inherent</span> <span class="op">=</span> <span class="ident">nimbus_primitives::InherentDataProvider</span>;
 
-						<span class="prelude-val">Ok</span>((<span class="ident">time</span>, <span class="ident">parachain_inherent</span>, <span class="ident">author</span>))
+						<span class="prelude-val">Ok</span>((<span class="ident">time</span>, <span class="ident">parachain_inherent</span>, <span class="ident">nimbus_inherent</span>))
 					}
 				},
 			}))

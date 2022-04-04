@@ -5,9 +5,9 @@ This code can be built to no_std for use in the runtime</p>
 <div class="item-table"><div class="item-row"><div class="item-left import-item"><code>pub use digests::<a class="trait" href="digests/trait.CompatibleDigestItem.html" title="trait nimbus_primitives::digests::CompatibleDigestItem">CompatibleDigestItem</a>;</code></div><div class="item-right docblock-short"></div></div></div><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
 <div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="mod" href="digests/index.html" title="nimbus_primitives::digests mod">digests</a></div><div class="item-right docblock-short"><p>A convenient interface over the digests used in nimbus.</p>
 </div></div></div><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
-<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.InherentDataProvider.html" title="nimbus_primitives::InherentDataProvider struct">InherentDataProvider</a></div><div class="item-right docblock-short"><p>A thing that an outer node could use to inject the inherent data.
-This should be used in simple uses of the author inherent (eg permissionless authoring)
-When using the full nimbus system, we are manually inserting the inherent.</p>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.InherentDataProvider.html" title="nimbus_primitives::InherentDataProvider struct">InherentDataProvider</a></div><div class="item-right docblock-short"><p>A bare minimum inherent data provider that provides no real data.
+The inherent is simply used as a way to kick off some computation
+until https://github.com/paritytech/substrate/pull/10128 lands.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.IntervalBeacon.html" title="nimbus_primitives::IntervalBeacon struct">IntervalBeacon</a></div><div class="item-right docblock-short"><p>PLANNED: A SlotBeacon that starts a new slot based on the timestamp. Behaviorally, this is
 similar to what aura, babe and company do. Implementation-wise it is different because it
 depends on the timestamp pallet for its notion of time.</p>

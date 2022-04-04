@@ -50,9 +50,6 @@
 <span id="50">50</span>
 <span id="51">51</span>
 <span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -69,27 +66,24 @@
 <span class="comment">// You should have received a copy of the GNU General Public License</span>
 <span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
-<span class="kw">use</span> <span class="ident">parity_scale_codec::Encode</span>;
 <span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">InherentData</span>, <span class="ident">InherentIdentifier</span>};
 
 <span class="doccomment">/// The InherentIdentifier for nimbus&#39;s author inherent</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INHERENT_IDENTIFIER</span>: <span class="ident">InherentIdentifier</span> <span class="op">=</span> <span class="kw-2">*</span><span class="string">b&quot;author__&quot;</span>;
 
-<span class="doccomment">/// A thing that an outer node could use to inject the inherent data.</span>
-<span class="doccomment">/// This should be used in simple uses of the author inherent (eg permissionless authoring)</span>
-<span class="doccomment">/// When using the full nimbus system, we are manually inserting the inherent.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InherentDataProvider</span><span class="op">&lt;</span><span class="ident">AuthorId</span><span class="op">&gt;</span>(<span class="kw">pub</span> <span class="ident">AuthorId</span>);
+<span class="doccomment">/// A bare minimum inherent data provider that provides no real data.</span>
+<span class="doccomment">/// The inherent is simply used as a way to kick off some computation</span>
+<span class="doccomment">/// until https://github.com/paritytech/substrate/pull/10128 lands.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InherentDataProvider</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">async_trait::async_trait</span>]</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">AuthorId</span>: <span class="ident">Encode</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">sp_inherents::InherentDataProvider</span>
-	<span class="kw">for</span> <span class="ident">InherentDataProvider</span><span class="op">&lt;</span><span class="ident">AuthorId</span><span class="op">&gt;</span>
-{
+<span class="kw">impl</span> <span class="ident">sp_inherents::InherentDataProvider</span> <span class="kw">for</span> <span class="ident">InherentDataProvider</span> {
 	<span class="kw">fn</span> <span class="ident">provide_inherent_data</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">inherent_data</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InherentData</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">sp_inherents::Error</span><span class="op">&gt;</span> {
-		<span class="ident">inherent_data</span>.<span class="ident">put_data</span>(<span class="ident">INHERENT_IDENTIFIER</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>)
+		<span class="ident">inherent_data</span>.<span class="ident">put_data</span>(<span class="ident">INHERENT_IDENTIFIER</span>, <span class="kw-2">&amp;</span>())
 	}
 
 	<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">try_handle_error</span>(
@@ -104,7 +98,7 @@
 
 		<span class="comment">// All errors with the author inehrent are fatal</span>
 		<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">sp_inherents::Error::Application</span>(<span class="ident">Box::from</span>(
-			<span class="ident">String::from</span>(<span class="string">&quot;Error processing author inherent&quot;</span>),
+			<span class="ident">String::from</span>(<span class="string">&quot;Error processing dummy nimbus inherent&quot;</span>),
 		))))
 	}
 }
