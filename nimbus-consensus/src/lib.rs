@@ -98,7 +98,7 @@ where
 	RClient::Api: ParachainHost<PBlock>,
 	RBackend: Backend<PBlock>,
 	ParaClient: ProvideRuntimeApi<B>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData)>,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn new(
@@ -128,21 +128,15 @@ where
 		}
 	}
 
-	//TODO Could this be a provided implementation now that we have this async inherent stuff?
-	/// Create the data.
 	async fn inherent_data(
 		&self,
 		parent: B::Hash,
 		validation_data: &PersistedValidationData,
 		relay_parent: PHash,
-		author_id: NimbusId,
 	) -> Option<InherentData> {
 		let inherent_data_providers = self
 			.create_inherent_data_providers
-			.create_inherent_data_providers(
-				parent,
-				(relay_parent, validation_data.clone(), author_id),
-			)
+			.create_inherent_data_providers(parent, (relay_parent, validation_data.clone()))
 			.await
 			.map_err(|e| {
 				tracing::error!(
@@ -322,7 +316,7 @@ where
 	// We require the client to provide both runtime apis, but only one will be called
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
-	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)>,
+	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData)>,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -357,12 +351,7 @@ where
 			.ok()?;
 
 		let inherent_data = self
-			.inherent_data(
-				parent.hash(),
-				&validation_data,
-				relay_parent,
-				NimbusId::from_slice(&type_public_pair.1),
-			)
+			.inherent_data(parent.hash(), &validation_data, relay_parent)
 			.await?;
 
 		let inherent_digests = sp_runtime::generic::Digest {
@@ -488,7 +477,7 @@ where
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block>,
 	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	NimbusConsensusBuilder::new(
 		para_id,
@@ -539,7 +528,7 @@ where
 	BI: BlockImport<Block> + Send + Sync + 'static,
 	RBackend: Backend<PBlock> + 'static,
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	/// Create a new instance of the builder.
 	fn new(
@@ -595,7 +584,7 @@ where
 	ParaClient: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<Block>,
 	ParaClient::Api: AuthorFilterAPI<Block, NimbusId>,
-	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	CIDP: CreateInherentDataProviders<Block, (PHash, PersistedValidationData)> + 'static,
 {
 	type Output = Box<dyn ParachainConsensus<Block>>;
 

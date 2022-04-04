@@ -14,27 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-use parity_scale_codec::Encode;
 use sp_inherents::{InherentData, InherentIdentifier};
 
 /// The InherentIdentifier for nimbus's author inherent
 pub const INHERENT_IDENTIFIER: InherentIdentifier = *b"author__";
 
-/// A thing that an outer node could use to inject the inherent data.
-/// This should be used in simple uses of the author inherent (eg permissionless authoring)
-/// When using the full nimbus system, we are manually inserting the inherent.
-pub struct InherentDataProvider<AuthorId>(pub AuthorId);
+/// A bare minimum inherent data provider that provides no real data.
+/// The inherent is simply used as a way to kick off some computation
+/// until https://github.com/paritytech/substrate/pull/10128 lands.
+pub struct InherentDataProvider;
 
 #[cfg(feature = "std")]
 #[async_trait::async_trait]
-impl<AuthorId: Encode + Send + Sync> sp_inherents::InherentDataProvider
-	for InherentDataProvider<AuthorId>
-{
+impl sp_inherents::InherentDataProvider for InherentDataProvider {
 	fn provide_inherent_data(
 		&self,
 		inherent_data: &mut InherentData,
 	) -> Result<(), sp_inherents::Error> {
-		inherent_data.put_data(INHERENT_IDENTIFIER, &self.0)
+		inherent_data.put_data(INHERENT_IDENTIFIER, &())
 	}
 
 	async fn try_handle_error(
@@ -49,7 +46,7 @@ impl<AuthorId: Encode + Send + Sync> sp_inherents::InherentDataProvider
 
 		// All errors with the author inehrent are fatal
 		Some(Err(sp_inherents::Error::Application(Box::from(
-			String::from("Error processing author inherent"),
+			String::from("Error processing dummy nimbus inherent"),
 		))))
 	}
 }
