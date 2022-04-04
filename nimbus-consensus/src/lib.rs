@@ -25,8 +25,7 @@ use cumulus_client_consensus_common::{
 };
 use cumulus_primitives_core::{
 	relay_chain::{
-		v1::{Block as PBlock, Hash as PHash},
-		v2::ParachainHost,
+		v1::{Hash as PHash},
 	},
 	ParaId, PersistedValidationData,
 };
