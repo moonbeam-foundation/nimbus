@@ -18,11 +18,11 @@ path = "src/main.rs"
 
 [dependencies]
 codec = { package = "parity-scale-codec", version = "3.0.0" }
+clap = { version = "3.1", features = [ "derive" ] }
 derive_more = "0.99.2"
 hex-literal = "0.3.1"
 log = "0.4.14"
 serde = { version = "1.0.119", features = [ "derive" ] }
-structopt = "0.3.8"
 flume = "0.10.9"
 
 # RPC related Dependencies
