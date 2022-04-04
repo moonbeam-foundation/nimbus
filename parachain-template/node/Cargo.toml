@@ -18,13 +18,12 @@ path = "src/main.rs"
 
 [dependencies]
 codec = { package = "parity-scale-codec", version = "3.0.0" }
+clap = { version = "3.1", features = [ "derive" ] }
 derive_more = "0.99.2"
 hex-literal = "0.3.1"
 log = "0.4.14"
 serde = { version = "1.0.119", features = [ "derive" ] }
 flume = "0.10.9"
-clap = { version = "3.1", features = ["derive"] }
-structopt = "0.3.8"
 
 # RPC related Dependencies
 jsonrpc-core = "18.0.0"
@@ -83,7 +82,9 @@ cumulus-client-network = { git = "https://github.com/purestake/cumulus", branch 
 cumulus-client-service = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
+cumulus-relay-chain-inprocess-interface = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 cumulus-relay-chain-interface = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
+cumulus-relay-chain-rpc-interface = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 
 # Polkadot dependencies
 polkadot-cli = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.18" }

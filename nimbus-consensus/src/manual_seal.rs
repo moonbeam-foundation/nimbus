@@ -24,7 +24,6 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{HeaderT, ProvideRuntimeApi, TransactionFor};
 use sp_application_crypto::ByteArray;
-use sp_core::crypto::Public;
 use sp_inherents::InherentData;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::{
