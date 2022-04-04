@@ -81,11 +81,9 @@ pub struct ExportGenesisWasmCommand {
 }
 
 #[derive(Debug, Parser)]
-#[clap(settings = &[
-	clap::AppSettings::GlobalVersion,
-	clap::AppSettings::ArgsNegateSubcommands,
-	clap::AppSettings::SubcommandsNegateReqs,
-])]
+#[clap(propagate_version = true)]
+#[clap(args_conflicts_with_subcommands = true)]
+#[clap(subcommand_negates_reqs = true)]
 pub struct Cli {
 	#[clap(subcommand)]
 	pub subcommand: Option<Subcommand>,
@@ -125,7 +123,7 @@ impl RelayChainCli {
 		Self {
 			base_path,
 			chain_id,
-			base: polkadot_cli::RunCmd::from_iter(relay_chain_args),
+			base: polkadot_cli::RunCmd::parse_from(relay_chain_args),
 		}
 	}
 }
