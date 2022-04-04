@@ -81,6 +81,7 @@ cumulus-client-network = { git = "https://github.com/purestake/cumulus", branch 
 cumulus-client-service = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
+cumulus-relay-chain-interface = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.18" }
 
 # Polkadot dependencies
 polkadot-cli = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.18" }
