@@ -122,7 +122,7 @@ pub mod pallet {
 			ensure_none(origin)?;
 
 			// First check that the slot number is valid (greater than the previous highest)
-			let slot= T::SlotBeacon::slot();
+			let slot = T::SlotBeacon::slot();
 			assert!(
 				slot > HighestSlotSeen::<T>::get(),
 				"Block invalid; Supplied slot number is not high enough"
