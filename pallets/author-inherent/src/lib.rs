@@ -218,4 +218,3 @@ impl InherentError {
 		}
 	}
 }
-

@@ -26,6 +26,7 @@ use frame_support::traits::OnRuntimeUpgradeHelpersExt;
 
 use super::num::NonZeroU32;
 use super::pallet::Config;
+use super::pallet::EligibilityValue;
 
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
@@ -40,35 +41,39 @@ where
 	fn on_runtime_upgrade() -> Weight {
 		log::info!(target: "EligibleRatioToEligiblityCount", "starting migration");
 
-		if let Some(old_value) =
-			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
-		{
-			let total_authors = <T as Config>::PotentialAuthors::get().len();
-			let new_value: u32 = percent_of_num(old_value, total_authors as u32);
-			migration::put_storage_value(
-				PALLET_NAME,
-				ELIGIBLE_COUNT_ITEM_NAME,
-				&[],
-				NonZeroU32::new(new_value).unwrap_or(crate::pallet::DEFAULT_TOTAL_ELIGIBLE_AUTHORS),
-			);
+		let old_value =
+			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[]);
+		let new_value = old_value
+			.map(|value| {
+				let total_authors = <T as Config>::PotentialAuthors::get().len();
+				let new_value = percent_of_num(value, total_authors as u32);
+				NonZeroU32::new(new_value)
+			})
+			.flatten()
+			.unwrap_or(EligibilityValue::default());
 
-			let db_weights = T::DbWeight::get();
-			db_weights.write + db_weights.read
-		} else {
-			0
-		}
+		let db_weights = T::DbWeight::get();
+		migration::put_storage_value(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[], new_value);
+		db_weights.write + db_weights.read
 	}
 
 	#[cfg(feature = "try-runtime")]
 	fn pre_upgrade() -> Result<(), &'static str> {
-		if let Some(eligible_ratio) =
-			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[])
-		{
-			let total_authors = <T as Config>::PotentialAuthors::get().len();
-			let eligible_count: u32 = percent_of_num(eligible_ratio, total_authors as u32);
-			let eligible_count = NonZeroU32::new_unchecked(eligible_count);
-			Self::set_temp_storage(new_value, "expected_eligible_count");
-		}
+		let old_value =
+			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[]);
+
+		let expected_value = old_value
+			.map(|value| {
+				let total_authors = <T as Config>::PotentialAuthors::get().len();
+				let eligible_count: u32 = percent_of_num(value, total_authors as u32);
+				NonZeroU32::new(eligible_count)
+			})
+			.flatten()
+			.unwrap_or(EligibilityValue::default());
+
+		Self::set_temp_storage(expected_value, "expected_eligible_count");
+
+		Ok(())
 	}
 
 	#[cfg(feature = "try-runtime")]
@@ -78,9 +83,28 @@ where
 			migration::get_storage_value::<NonZeroU32>(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[]);
 
 		assert_eq!(expected, actual);
+
+		Ok(())
 	}
 }
 
 fn percent_of_num(percent: Percent, num: u32) -> u32 {
 	percent.mul_ceil(num as u32)
+}
+
+#[cfg(test)]
+mod tests {
+	use super::percent_of_num;
+	use super::*;
+
+	#[test]
+	fn test_percent_of_num_ceils_value() {
+		let fifty_percent = Percent::from_float(0.5);
+
+		let actual = percent_of_num(fifty_percent, 5);
+		assert_eq!(3, actual);
+
+		let actual = percent_of_num(fifty_percent, 20);
+		assert_eq!(10, actual);
+	}
 }
