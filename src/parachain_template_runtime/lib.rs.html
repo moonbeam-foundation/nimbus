@@ -805,7 +805,6 @@
 <span id="805">805</span>
 <span id="806">806</span>
 <span id="807">807</span>
-<span id="808">808</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 <span class="comment">// `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.</span>
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
@@ -825,8 +824,7 @@
 };
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">nimbus_primitives::NimbusId</span>;
-
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet_author_slot_filter::DEFAULT_TOTAL_ELIGIBLE_AUTHORS</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet_author_slot_filter::EligibilityValue</span>;
 
 <span class="kw">use</span> <span class="ident">sp_std::prelude</span>::<span class="kw-2">*</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>

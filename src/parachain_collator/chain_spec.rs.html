@@ -366,7 +366,7 @@
 		},
 		<span class="ident">parachain_info</span>: <span class="ident">parachain_template_runtime::ParachainInfoConfig</span> { <span class="ident">parachain_id</span>: <span class="ident">id</span> },
 		<span class="ident">author_filter</span>: <span class="ident">parachain_template_runtime::AuthorFilterConfig</span> {
-			<span class="ident">eligible_count</span>: <span class="ident">parachain_template_runtime::DEFAULT_TOTAL_ELIGIBLE_AUTHORS</span>,
+			<span class="ident">eligible_count</span>: <span class="ident">parachain_template_runtime::EligibilityValue::default</span>(),
 		},
 		<span class="ident">potential_author_set</span>: <span class="ident">parachain_template_runtime::PotentialAuthorSetConfig</span> {
 			<span class="ident">mapping</span>: <span class="ident">authorities</span>,
