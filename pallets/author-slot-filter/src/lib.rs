@@ -158,6 +158,13 @@ pub mod pallet {
 	/// The type of eligibility to use
 	pub type EligibilityValue = NonZeroU32;
 
+	impl EligibilityValue {
+		/// Default total number of eligible authors, must NOT be 0.
+		pub fn default() -> Self {
+			NonZeroU32::new_unchecked(50)
+		}
+	}
+
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
 	#[deprecated]
@@ -175,13 +182,10 @@ pub mod pallet {
 	pub type EligibleCount<T: Config> =
 		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
 
-	/// Default total number of eligible authors, must NOT be 0.
-	pub const DEFAULT_TOTAL_ELIGIBLE_AUTHORS: EligibilityValue = NonZeroU32::new_unchecked(50);
-
 	// Default value for the `EligibleCount`.
 	#[pallet::type_value]
 	pub fn DefaultEligibilityValue<T: Config>() -> EligibilityValue {
-		DEFAULT_TOTAL_ELIGIBLE_AUTHORS
+		EligibilityValue::default()
 	}
 
 	#[pallet::genesis_config]
@@ -193,7 +197,7 @@ pub mod pallet {
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_count: DEFAULT_TOTAL_ELIGIBLE_AUTHORS,
+				eligible_count: EligibilityValue::default(),
 			}
 		}
 	}
