@@ -67,7 +67,7 @@ fn test_migration_works_for_converting_existing_eligible_ratio_to_eligible_count
 fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_eligible_count() {
 	new_test_ext().execute_with(|| {
 		let input_eligible_ratio = Percent::from_percent(0);
-		let expected_eligible_count = DEFAULT_TOTAL_ELIGIBLE_AUTHORS;
+		let expected_eligible_count = EligibilityValue::default();
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
 		put_storage_value(
@@ -91,7 +91,7 @@ fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_e
 fn test_migration_skips_converting_missing_eligible_ratio_to_eligible_count_and_returns_default_value(
 ) {
 	new_test_ext().execute_with(|| {
-		let expected_default_eligible_count = DEFAULT_TOTAL_ELIGIBLE_AUTHORS;
+		let expected_default_eligible_count = EligibilityValue::default();
 		let expected_weight = 0;
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
