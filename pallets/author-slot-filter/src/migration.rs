@@ -43,18 +43,17 @@ where
 
 		let old_value =
 			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[]);
+
 		let new_value = old_value
-			.map(|value| {
+			.and_then(|value| {
 				let total_authors = <T as Config>::PotentialAuthors::get().len();
 				let new_value = percent_of_num(value, total_authors as u32);
 				NonZeroU32::new(new_value)
 			})
-			.flatten()
 			.unwrap_or(EligibilityValue::default());
 
-		migration::put_storage_value(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[], new_value);
-
 		let db_weights = T::DbWeight::get();
+		migration::put_storage_value(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[], new_value);
 		db_weights.write + db_weights.read
 	}
 
@@ -64,12 +63,11 @@ where
 			migration::get_storage_value::<Percent>(PALLET_NAME, ELIGIBLE_RATIO_ITEM_NAME, &[]);
 
 		let expected_value = old_value
-			.map(|value| {
+			.and_then(|value| {
 				let total_authors = <T as Config>::PotentialAuthors::get().len();
 				let eligible_count: u32 = percent_of_num(value, total_authors as u32);
 				NonZeroU32::new(eligible_count)
 			})
-			.flatten()
 			.unwrap_or(EligibilityValue::default());
 
 		Self::set_temp_storage(expected_value, "expected_eligible_count");

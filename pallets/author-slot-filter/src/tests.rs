@@ -88,11 +88,10 @@ fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_e
 }
 
 #[test]
-fn test_migration_skips_converting_missing_eligible_ratio_to_eligible_count_and_returns_default_value(
-) {
+fn test_migration_inserts_default_value_for_missing_eligible_ratio() {
 	new_test_ext().execute_with(|| {
 		let expected_default_eligible_count = EligibilityValue::default();
-		let expected_weight = 0;
+		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
 		assert_eq!(expected_weight, actual_weight);
