@@ -52,8 +52,9 @@ where
 			.flatten()
 			.unwrap_or(EligibilityValue::default());
 
-		let db_weights = T::DbWeight::get();
 		migration::put_storage_value(PALLET_NAME, ELIGIBLE_COUNT_ITEM_NAME, &[], new_value);
+
+		let db_weights = T::DbWeight::get();
 		db_weights.write + db_weights.read
 	}
 

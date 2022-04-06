@@ -13,9 +13,8 @@ use nimbus_consensus::{
 };
 
 // Cumulus Imports
-use cumulus_client_cli::CollatorOptions;
 use cumulus_client_consensus_common::ParachainConsensus;
-use cumulus_client_network::BlockAnnounceValidator;
+use cumulus_client_network::build_block_announce_validator;
 use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
@@ -160,30 +159,6 @@ where
 	};
 
 	Ok(params)
-}
-
-async fn build_relay_chain_interface(
-	polkadot_config: Configuration,
-	parachain_config: &Configuration,
-	telemetry_worker_handle: Option<TelemetryWorkerHandle>,
-	task_manager: &mut TaskManager,
-	collator_options: CollatorOptions,
-) -> RelayChainResult<(
-	Arc<(dyn RelayChainInterface + 'static)>,
-	Option<CollatorPair>,
-)> {
-	match collator_options.relay_chain_rpc_url {
-		Some(relay_chain_url) => Ok((
-			Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>,
-			None,
-		)),
-		None => build_inprocess_relay_chain(
-			polkadot_config,
-			parachain_config,
-			telemetry_worker_handle,
-			task_manager,
-		),
-	}
 }
 
 /// Start a node with the given parachain `Configuration` and relay chain `Configuration`.

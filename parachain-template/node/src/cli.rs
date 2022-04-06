@@ -1,6 +1,6 @@
 use crate::chain_spec;
-use clap::Parser;
 use std::path::PathBuf;
+use structopt::StructOpt;
 
 /// Sub-commands supported by the collator.
 #[derive(Debug, StructOpt)]
