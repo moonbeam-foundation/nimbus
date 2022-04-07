@@ -29,9 +29,23 @@ use frame_support::pallet;
 
 pub use pallet::*;
 
+#[cfg(any(test, feature = "runtime-benchmarks"))]
+mod benchmarks;
+
+pub mod migration;
+pub mod num;
+pub mod weights;
+
+#[cfg(test)]
+mod mock;
+#[cfg(test)]
+mod tests;
+
 #[pallet]
 pub mod pallet {
 
+	use crate::num::NonZeroU32;
+	use crate::weights::WeightInfo;
 	use frame_support::{pallet_prelude::*, traits::Randomness};
 	use frame_system::pallet_prelude::*;
 	use log::debug;
@@ -58,6 +72,7 @@ pub mod pallet {
 		/// A source for the complete set of potential authors.
 		/// The starting point of the filtering.
 		type PotentialAuthors: Get<Vec<Self::AccountId>>;
+		type WeightInfo: WeightInfo;
 	}
 
 	/// Compute a pseudo-random subset of the input accounts by using Pallet's
@@ -67,7 +82,11 @@ pub mod pallet {
 		mut active: Vec<T::AccountId>,
 		seed: &u32,
 	) -> (Vec<T::AccountId>, Vec<T::AccountId>) {
-		let num_eligible = EligibleRatio::<T>::get().mul_ceil(active.len());
+		let mut num_eligible = EligibleCount::<T>::get().get() as usize;
+		if num_eligible > active.len() {
+			num_eligible = active.len();
+		}
+
 		let mut eligible = Vec::with_capacity(num_eligible);
 
 		for i in 0..num_eligible {
@@ -82,14 +101,17 @@ pub mod pallet {
 			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
 
 			// Cast to u32 first so we get consistent results on 32- and 64-bit platforms.
-			let index = (randomness.to_fixed_bytes()[0] as u32) as usize;
+			let bytes: [u8; 4] = randomness.to_fixed_bytes()[0..4]
+				.try_into()
+				.expect("H256 has at least 4 bytes; qed");
+			let randomness = u32::from_le_bytes(bytes) as usize;
 
 			// Move the selected author from the original vector into the eligible vector
 			// TODO we could short-circuit this check by returning early when the claimed
 			// author is selected. For now I'll leave it like this because:
 			// 1. it is easier to understand what our core filtering logic is
 			// 2. we currently show the entire filtered set in the debug event
-			eligible.push(active.remove(index % active.len()));
+			eligible.push(active.remove(randomness % active.len()));
 		}
 		(eligible, active)
 	}
@@ -118,19 +140,33 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Update the eligible ratio. Intended to be called by governance.
-		#[pallet::weight(0)]
-		pub fn set_eligible(origin: OriginFor<T>, new: Percent) -> DispatchResultWithPostInfo {
+		/// Update the eligible count. Intended to be called by governance.
+		#[pallet::weight(T::WeightInfo::set_eligible())]
+		pub fn set_eligible(
+			origin: OriginFor<T>,
+			new: EligibilityValue,
+		) -> DispatchResultWithPostInfo {
 			ensure_root(origin)?;
-			EligibleRatio::<T>::put(&new);
+			EligibleCount::<T>::put(&new);
 			<Pallet<T>>::deposit_event(Event::EligibleUpdated(new));
 
 			Ok(Default::default())
 		}
 	}
 
-	/// The percentage of active authors that will be eligible at each height.
+	/// The type of eligibility to use
+	pub type EligibilityValue = NonZeroU32;
+
+	impl EligibilityValue {
+		/// Default total number of eligible authors, must NOT be 0.
+		pub fn default() -> Self {
+			NonZeroU32::new_unchecked(50)
+		}
+	}
+
 	#[pallet::storage]
+	#[pallet::getter(fn eligible_ratio)]
+	#[deprecated]
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.
@@ -139,16 +175,28 @@ pub mod pallet {
 		Percent::from_percent(50)
 	}
 
+	/// The number of active authors that will be eligible at each height.
+	#[pallet::storage]
+	#[pallet::getter(fn eligible_count)]
+	pub type EligibleCount<T: Config> =
+		StorageValue<_, EligibilityValue, ValueQuery, DefaultEligibilityValue<T>>;
+
+	// Default value for the `EligibleCount`.
+	#[pallet::type_value]
+	pub fn DefaultEligibilityValue<T: Config>() -> EligibilityValue {
+		EligibilityValue::default()
+	}
+
 	#[pallet::genesis_config]
 	pub struct GenesisConfig {
-		pub eligible_ratio: Percent,
+		pub eligible_count: EligibilityValue,
 	}
 
 	#[cfg(feature = "std")]
 	impl Default for GenesisConfig {
 		fn default() -> Self {
 			Self {
-				eligible_ratio: Percent::from_percent(50),
+				eligible_count: EligibilityValue::default(),
 			}
 		}
 	}
@@ -156,7 +204,7 @@ pub mod pallet {
 	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig {
 		fn build(&self) {
-			EligibleRatio::<T>::put(self.eligible_ratio);
+			EligibleCount::<T>::put(self.eligible_count.clone());
 		}
 	}
 
@@ -164,6 +212,6 @@ pub mod pallet {
 	#[pallet::generate_deposit(fn deposit_event)]
 	pub enum Event {
 		/// The amount of eligible authors for the filter to select has been changed.
-		EligibleUpdated(Percent),
+		EligibleUpdated(EligibilityValue),
 	}
 }
