@@ -83,6 +83,11 @@ pub mod pallet {
 	#[pallet::storage]
 	pub type Author<T: Config> = StorageValue<_, T::AccountId, OptionQuery>;
 
+	/// The highest slot that has been seen in the history of this chain.
+	/// This is a strictly-increasing value.
+	#[pallet::storage]
+	pub type HighestSlotSeen<T: Config> = StorageValue<_, u32, ValueQuery>;
+
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
@@ -116,13 +121,23 @@ pub mod pallet {
 		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
 
+			// First check that the slot number is valid (greater than the previous highest)
+			let slot = T::SlotBeacon::slot();
+			assert!(
+				slot > HighestSlotSeen::<T>::get(),
+				"Block invalid; Supplied slot number is not high enough"
+			);
+
+			// Now check that the author is valid in this slot
 			let author = <Author<T>>::get()
 				.expect("Block invalid, no authorship information supplied in preruntime digest.");
-
 			assert!(
 				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
 				"Block invalid, supplied author is not eligible."
 			);
+
+			// Once that is validated, update the stored slot number
+			HighestSlotSeen::<T>::put(slot);
 
 			Ok(Pays::No.into())
 		}
