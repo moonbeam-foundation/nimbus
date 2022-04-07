@@ -19,14 +19,14 @@
 use crate::{Call, Config, Pallet};
 use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
 use frame_system::RawOrigin;
-use sp_runtime::Percent;
+use crate::num::NonZeroU32;
 
 benchmarks! {
 	set_eligible {
-		let percent = Percent::from_percent(34);
-	}: _(RawOrigin::Root, percent.clone())
+		let count = NonZeroU32::new_unchecked(34);
+	}: _(RawOrigin::Root, count.clone())
 	verify {
-		assert_eq!(Pallet::<T>::eligible_ratio(), percent);
+		assert_eq!(Pallet::<T>::eligible_count(), count);
 	}
 }
 
