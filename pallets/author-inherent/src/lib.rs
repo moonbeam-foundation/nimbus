@@ -128,16 +128,16 @@ pub mod pallet {
 				"Block invalid; Supplied slot number is not high enough"
 			);
 
-			HighestSlotSeen::<T>::put(slot);
-
 			// Now check that the author is valid in this slot
 			let author = <Author<T>>::get()
 				.expect("Block invalid, no authorship information supplied in preruntime digest.");
-
 			assert!(
 				T::CanAuthor::can_author(&author, &T::SlotBeacon::slot()),
 				"Block invalid, supplied author is not eligible."
 			);
+
+			// Once that is validated, update the stored slot number
+			HighestSlotSeen::<T>::put(slot);
 
 			Ok(Pays::No.into())
 		}
