@@ -167,7 +167,7 @@ pub mod pallet {
 
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
-	#[deprecated]
+	#[deprecated(note = "use `pallet::EligibleCount` instead")]
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.
