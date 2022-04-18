@@ -26,7 +26,7 @@ use sp_application_crypto::ByteArray;
 benchmarks! {
 	kick_off_authorship_validation {
 		let pallet_prefix: &[u8] = b"AuthorInherent";
-		let storage_item_prefix: &[u8] = b"AUthor";
+		let storage_item_prefix: &[u8] = b"Author";
 		let nimbus_key = [1u8; 32];
 
 		put_storage_value(
