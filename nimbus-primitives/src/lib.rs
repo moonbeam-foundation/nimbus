@@ -25,6 +25,7 @@ use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 use sp_std::vec::Vec;
+use sp_std::vec;
 
 pub mod digests;
 mod inherents;
@@ -81,6 +82,12 @@ impl SlotBeacon for IntervalBeacon {
 /// implementation replies with a complete set of eligible authors.
 pub trait CanAuthor<AuthorId> {
 	fn can_author(author: &AuthorId, slot: &u32) -> bool;
+	#[cfg(feature = "runtime-benchmarks")]
+	fn get_authors(_slot: &u32) -> Vec<AuthorId> {
+		vec![]
+	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_eligible_author(_slot: &u32) {} 
 }
 /// Default implementation where anyone can author.
 ///

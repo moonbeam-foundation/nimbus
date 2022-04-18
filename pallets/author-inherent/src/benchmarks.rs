@@ -19,8 +19,10 @@
 use crate::{Call, Config, Pallet};
 use frame_benchmarking::{benchmarks};
 use frame_system::RawOrigin;
-
+use nimbus_primitives::CanAuthor;
+use nimbus_primitives::SlotBeacon;
 benchmarks! {
 	kick_off_authorship_validation {
+		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }
