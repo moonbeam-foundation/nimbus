@@ -25,6 +25,7 @@ use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 use sp_std::vec::Vec;
+use sp_std::vec;
 
 pub mod digests;
 mod inherents;
