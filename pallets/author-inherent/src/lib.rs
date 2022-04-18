@@ -37,11 +37,14 @@ pub use pallet::*;
 #[cfg(any(test, feature = "runtime-benchmarks"))]
 mod benchmarks;
 
+pub mod weights;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
+	use crate::weights::WeightInfo;
 
 	/// The Author Inherent pallet. The core of the nimbus consensus framework's runtime presence.
 	#[pallet::pallet]
@@ -66,6 +69,8 @@ pub mod pallet {
 
 		/// Some way of determining the current slot for purposes of verifying the author's eligibility
 		type SlotBeacon: SlotBeacon;
+
+		type WeightInfo: WeightInfo;
 	}
 
 	impl<T> sp_runtime::BoundToRuntimeAppPublic for Pallet<T> {
@@ -120,7 +125,7 @@ pub mod pallet {
 		/// but before transactions are executed.
 		// This should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
 		// TODO better weight. For now we just set a somewhat conservative fudge factor
-		#[pallet::weight((10 * T::DbWeight::get().write, DispatchClass::Mandatory))]
+		#[pallet::weight(T::WeightInfo::kick_off_authorship_validation())]
 		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
 
