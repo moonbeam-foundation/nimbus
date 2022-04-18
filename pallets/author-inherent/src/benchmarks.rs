@@ -19,8 +19,11 @@
 use crate::{Call, Config, Pallet};
 use frame_benchmarking::{benchmarks};
 use frame_system::RawOrigin;
-
+use frame_support::traits::OnInitialize;
 benchmarks! {
 	kick_off_authorship_validation {
+		Pallet::<T>::on_initialize(
+			1u32.into()
+		);
 	}: _(RawOrigin::None)
 }
