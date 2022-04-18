@@ -193,6 +193,13 @@ pub mod pallet {
 
 			T::CanAuthor::can_author(&account, slot)
 		}
+		#[cfg(feature = "runtime-benchmarks")]
+		fn set_eligible_author(slot: &u32) {
+			let eligible_authors = T::CanAuthor::get_authors(slot);
+			if let Some(author) = eligible_authors.first() {
+				Author::<T>::put(author)
+			}
+		}
 	}
 }
 

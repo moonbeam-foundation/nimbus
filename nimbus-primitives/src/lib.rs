@@ -86,6 +86,9 @@ pub trait CanAuthor<AuthorId> {
 	fn get_authors(slot: &u32) -> Vec<AuthorId> {
 		vec![]
 	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_eligible_author(slot: &u32) {} 
+
 }
 /// Default implementation where anyone can author.
 ///

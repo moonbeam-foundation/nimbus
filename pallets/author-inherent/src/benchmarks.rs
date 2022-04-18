@@ -27,17 +27,6 @@ use nimbus_primitives::SlotBeacon;
 use sp_application_crypto::ByteArray;
 benchmarks! {
 	kick_off_authorship_validation {
-		let nimbus_key = [1u8; 32];
-		let eligible = T::CanAuthor::get_authors(&T::SlotBeacon::slot());
-		let pallet_prefix: &[u8] = b"AuthorInherent";
-		let storage_item_prefix: &[u8] = b"Author";
-
-		put_storage_value(
-			pallet_prefix,
-			storage_item_prefix,
-			&[],
-			eligible[0].clone(),
-		);
-
+		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }
