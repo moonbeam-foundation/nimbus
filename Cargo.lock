@@ -4516,6 +4516,7 @@ dependencies = [
 name = "pallet-author-inherent"
 version = "0.9.0"
 dependencies = [
+ "frame-benchmarking",
  "frame-support",
  "frame-system",
  "log",

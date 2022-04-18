@@ -34,6 +34,9 @@ pub use exec::BlockExecutor;
 
 pub use pallet::*;
 
+#[cfg(any(test, feature = "runtime-benchmarks"))]
+mod benchmarks;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;

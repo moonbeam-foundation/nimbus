@@ -20,6 +20,9 @@ sp-inherents = { git = "https://github.com/paritytech/substrate", branch = "mast
 sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-std = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 
+# Benchmarks
+frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "master", optional = true, default-features = false }
+
 [dev-dependencies]
 sp-core = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-io = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
@@ -27,6 +30,7 @@ sp-io = { git = "https://github.com/paritytech/substrate", branch = "master", de
 [features]
 default = [ "std" ]
 std = [
+	"frame-benchmarking/std",
 	"frame-support/std",
 	"frame-system/std",
 	"log/std",
@@ -39,4 +43,8 @@ std = [
 	"sp-inherents/std",
 	"sp-runtime/std",
 	"sp-std/std",
+]
+
+runtime-benchmarks = [
+	"frame-benchmarking",
 ]
