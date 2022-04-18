@@ -81,6 +81,8 @@ impl SlotBeacon for IntervalBeacon {
 /// implementation replies with a complete set of eligible authors.
 pub trait CanAuthor<AuthorId> {
 	fn can_author(author: &AuthorId, slot: &u32) -> bool;
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_author(author: &AuthorId, slot: &u32);
 }
 /// Default implementation where anyone can author.
 ///
@@ -88,6 +90,9 @@ pub trait CanAuthor<AuthorId> {
 impl<T> CanAuthor<T> for () {
 	fn can_author(_: &T, _: &u32) -> bool {
 		true
+	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_author(_: &T, slot: &u32) {
 	}
 }
 
