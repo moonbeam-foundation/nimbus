@@ -193,21 +193,6 @@ pub mod pallet {
 
 			T::CanAuthor::can_author(&account, slot)
 		}
-		#[cfg(feature = "runtime-benchmarks")]
-		fn set_author(author: &NimbusId, slot: &u32) {
-			let account = match T::AccountLookup::lookup_account(&author) {
-				Some(account) => account,
-				// Authors whose account lookups fail will not be eligible
-				None => {
-					let zero_account_id =
-						T::AccountId::decode(&mut sp_runtime::traits::TrailingZeroInput::zeroes())
-							.expect("infinite length input; no invalid inputs for type; qed");
-					zero_account_id
-				}
-			};
-			Author::<T>::put(&account);
-			T::CanAuthor::set_author(&account, slot)
-		}
 	}
 }
 
