@@ -367,7 +367,7 @@
 			<span class="kw">let</span> <span class="ident">author</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Author</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>()
 				.<span class="ident">expect</span>(<span class="string">&quot;Block invalid, no authorship information supplied in preruntime digest.&quot;</span>);
 			<span class="macro">assert!</span>(
-				<span class="ident">T::CanAuthor::can_author</span>(<span class="kw-2">&amp;</span><span class="ident">author</span>, <span class="kw-2">&amp;</span><span class="ident">T::SlotBeacon::slot</span>()),
+				<span class="ident">T::CanAuthor::can_author</span>(<span class="kw-2">&amp;</span><span class="ident">author</span>, <span class="kw-2">&amp;</span><span class="ident">slot</span>),
 				<span class="string">&quot;Block invalid, supplied author is not eligible.&quot;</span>
 			);
 
