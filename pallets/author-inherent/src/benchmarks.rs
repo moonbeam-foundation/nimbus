@@ -20,20 +20,21 @@ use crate::{Call, Config, Pallet};
 use frame_benchmarking::{benchmarks};
 use frame_system::RawOrigin;
 use frame_support::traits::OnInitialize;
+use frame_support::traits::OnFinalize;
 use frame_support::storage::migration::put_storage_value;
 use nimbus_primitives::NimbusId;
 use sp_application_crypto::ByteArray;
+use frame_system::Pallet as System;
+use sp_runtime::traits::One;
+
 benchmarks! {
 	kick_off_authorship_validation {
-		let pallet_prefix: &[u8] = b"AuthorInherent";
-		let storage_item_prefix: &[u8] = b"Author";
-		let nimbus_key = [1u8; 32];
 
-		put_storage_value(
-			pallet_prefix,
-			storage_item_prefix,
-			&[],
-			NimbusId::from_slice(&nimbus_key),
-		);
+		System::<T>::on_initialize(T::BlockNumber::one());
+		Pallet::<T>::on_initialize(T::BlockNumber::one());
+
+		System::<T>::on_finalize(T::BlockNumber::one());
+		Pallet::<T>::on_finalize(T::BlockNumber::one());
+
 	}: _(RawOrigin::None)
 }
