@@ -30,7 +30,6 @@ benchmarks! {
 	kick_off_authorship_validation {
 		// The slot inserted needs to be higher than that already in storage
 		T::SlotBeacon::set_slot(1);
-		panic!("The slot we are getting is {:?}", T::SlotBeacon::slot());
 		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }
