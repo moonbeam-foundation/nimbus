@@ -25,8 +25,11 @@ use nimbus_primitives::NimbusId;
 use nimbus_primitives::CanAuthor;
 use nimbus_primitives::SlotBeacon;
 use sp_application_crypto::ByteArray;
+use frame_system::Pallet as System;
 benchmarks! {
 	kick_off_authorship_validation {
+		// The slot inserted needs to be higher than that already in storage
+		T::SlotBeacon::set_slot(1);
 		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }

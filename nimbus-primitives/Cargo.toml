@@ -37,4 +37,5 @@ std = [
 
 runtime-benchmarks = [
 	"frame-benchmarking",
+	"sp-runtime/runtime-benchmarks",
 ]
