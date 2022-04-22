@@ -17,7 +17,7 @@
 #![cfg(feature = "runtime-benchmarks")]
 
 use crate::{Call, Config, Pallet};
-use frame_benchmarking::{benchmarks};
+use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
 use frame_system::RawOrigin;
 use frame_support::traits::OnInitialize;
 use frame_support::storage::migration::put_storage_value;
@@ -29,7 +29,26 @@ use frame_system::Pallet as System;
 benchmarks! {
 	kick_off_authorship_validation {
 		// The slot inserted needs to be higher than that already in storage
-		T::SlotBeacon::set_slot(1);
+		T::SlotBeacon::set_slot(100);
 		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }
+
+#[cfg(test)]
+mod tests {
+	use crate::mock::Test;
+	use sp_io::TestExternalities;
+
+	pub fn new_test_ext() -> TestExternalities {
+		let t = frame_system::GenesisConfig::default()
+			.build_storage::<Test>()
+			.unwrap();
+		TestExternalities::new(t)
+	}
+}
+
+impl_benchmark_test_suite!(
+	Pallet,
+	crate::benchmarks::tests::new_test_ext(),
+	crate::mock::Test
+);

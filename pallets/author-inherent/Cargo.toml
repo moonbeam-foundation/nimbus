@@ -19,6 +19,8 @@ sp-authorship = { git = "https://github.com/purestake/substrate", branch = "moon
 sp-inherents = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
 sp-runtime = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
 sp-std = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
+cumulus-pallet-parachain-system = { git = "https://github.com/purestake/cumulus", branch = "gorka-kick-off-polkadot-v0.9.18", default-features= false}
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "gorka-kick-off-polkadot-v0.9.18", default-features = false}
 
 # Benchmarks
 frame-benchmarking = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", optional = true, default-features = false }
@@ -26,10 +28,11 @@ frame-benchmarking = { git = "https://github.com/purestake/substrate", branch = 
 [dev-dependencies]
 sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
 sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.18", default-features = false }
-
 [features]
 default = [ "std" ]
 std = [
+	"cumulus-primitives-core/std",
+	"cumulus-pallet-parachain-system/std",
 	"frame-benchmarking/std",
 	"frame-support/std",
 	"frame-system/std",
@@ -47,5 +50,6 @@ std = [
 
 runtime-benchmarks = [
 	"frame-benchmarking",
-	"nimbus-primitives/runtime-benchmarks"
+	"nimbus-primitives/runtime-benchmarks",
+	"cumulus-pallet-parachain-system/runtime-benchmarks"
 ]
