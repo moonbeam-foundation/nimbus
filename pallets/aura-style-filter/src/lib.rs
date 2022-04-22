@@ -34,7 +34,7 @@
 //!    easy for relay chain validators to confirm the author is valid.
 //!
 //!    Whereas sc-consensus-aura places the author checking offchain. The offchain approach is fine
-//!    for standalone layer 1 blockchains, but net well suited for verification on the relay chain
+//!    for standalone layer 1 blockchains, but not well suited for verification on the relay chain
 //!    where validators only run a wasm blob.
 
 #![cfg_attr(not(feature = "std"), no_std)]
