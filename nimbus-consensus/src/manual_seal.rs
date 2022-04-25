@@ -23,7 +23,7 @@ use nimbus_primitives::{
 use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{HeaderT, ProvideRuntimeApi, TransactionFor};
-use sp_core::crypto::Public;
+use sp_application_crypto::ByteArray;
 use sp_inherents::InherentData;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::{
@@ -73,9 +73,15 @@ where
 
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
-			Some(key) => Ok(Digest {
-				logs: vec![DigestItem::nimbus_pre_digest(NimbusId::from_slice(&key.1))],
-			}),
+			Some(key) => {
+				let nimbus_id = NimbusId::from_slice(&key.1).map_err(|_| {
+					Error::StringError(String::from("invalid nimbus id (wrong length)"))
+				})?;
+
+				Ok(Digest {
+					logs: vec![DigestItem::nimbus_pre_digest(nimbus_id)],
+				})
+			}
 			None => Err(Error::StringError(String::from(
 				"no nimbus keys available to manual seal",
 			))),
@@ -106,7 +112,8 @@ where
 			})
 			.expect("Expected one pre-runtime digest that contains author id bytes");
 
-		let nimbus_public = NimbusId::from_slice(&claimed_author);
+		let nimbus_public = NimbusId::from_slice(&claimed_author)
+			.map_err(|_| Error::StringError(String::from("invalid nimbus id (wrong length)")))?;
 
 		let sig_digest =
 			crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.into());
