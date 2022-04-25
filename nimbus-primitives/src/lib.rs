@@ -25,6 +25,7 @@ use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 use sp_std::vec::Vec;
+#[cfg(feature = "runtime-benchmarks")]
 use sp_std::vec;
 
 pub mod digests;
@@ -49,7 +50,7 @@ impl<T> EventHandler<T> for () {
 pub trait SlotBeacon {
 	fn slot() -> u32;
 	#[cfg(feature = "runtime-benchmarks")]
-	fn set_slot(slot: u32) {}
+	fn set_slot(_slot: u32) {}
 }
 
 /// Anything that can provide a block height can be used as a slot beacon. This could be
