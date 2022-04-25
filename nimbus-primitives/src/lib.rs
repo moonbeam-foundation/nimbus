@@ -48,6 +48,8 @@ impl<T> EventHandler<T> for () {
 /// For now we use u32 as the slot type everywhere. Let's see how long we can get away with that.
 pub trait SlotBeacon {
 	fn slot() -> u32;
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_slot(slot: u32) {}
 }
 
 /// Anything that can provide a block height can be used as a slot beacon. This could be
@@ -57,6 +59,10 @@ pub trait SlotBeacon {
 impl<T: BlockNumberProvider<BlockNumber = u32>> SlotBeacon for T {
 	fn slot() -> u32 {
 		Self::current_block_number()
+	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_slot(slot: u32) {
+		Self::set_block_number(slot);
 	}
 }
 

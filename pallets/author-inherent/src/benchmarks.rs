@@ -23,6 +23,8 @@ use nimbus_primitives::CanAuthor;
 use nimbus_primitives::SlotBeacon;
 benchmarks! {
 	kick_off_authorship_validation {
+		// The slot inserted needs to be higher than that already in storage
+		T::SlotBeacon::set_slot(100);
 		Pallet::<T>::set_eligible_author(&T::SlotBeacon::slot());
 	}: _(RawOrigin::None)
 }
