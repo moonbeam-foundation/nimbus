@@ -446,7 +446,7 @@ dependencies = [
  "futures-timer",
  "hex",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-chain-spec",
  "sc-client-api",
@@ -482,7 +482,7 @@ dependencies = [
  "jsonrpc-derive",
  "jsonrpc-pubsub",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-rpc",
  "sc-utils",
@@ -502,7 +502,7 @@ name = "beefy-primitives"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-application-crypto",
@@ -553,26 +553,14 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "bitvec"
-version = "0.20.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7774144344a4faa177370406a7ff5f1da24303817368584c6206c8303eb07848"
-dependencies = [
- "funty 1.1.0",
- "radium 0.6.2",
- "tap",
- "wyz 0.2.0",
-]
-
-[[package]]
-name = "bitvec"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1489fcb93a5bb47da0462ca93ad252ad6af2145cce58d10d46a83931ba9f016b"
 dependencies = [
- "funty 2.0.0",
- "radium 0.7.0",
+ "funty",
+ "radium",
  "tap",
- "wyz 0.5.0",
+ "wyz",
 ]
 
 [[package]]
@@ -1357,7 +1345,7 @@ dependencies = [
  "cumulus-primitives-core",
  "cumulus-relay-chain-interface",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -1380,7 +1368,7 @@ dependencies = [
  "cumulus-relay-chain-interface",
  "dyn-clone",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "sc-client-api",
  "sc-consensus",
@@ -1402,7 +1390,7 @@ dependencies = [
  "derive_more",
  "futures 0.3.21",
  "futures-timer",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-node-primitives",
  "polkadot-parachain",
@@ -1426,7 +1414,7 @@ dependencies = [
  "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "futures-timer",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
  "polkadot-overseer",
@@ -1452,7 +1440,7 @@ dependencies = [
  "cumulus-client-pov-recovery",
  "cumulus-primitives-core",
  "cumulus-relay-chain-interface",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-overseer",
  "polkadot-primitives",
@@ -1480,7 +1468,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -1503,7 +1491,7 @@ dependencies = [
  "impl-trait-for-tuples",
  "log",
  "pallet-balances",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-parachain",
  "scale-info",
  "serde",
@@ -1538,7 +1526,7 @@ dependencies = [
  "cumulus-primitives-core",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-io",
@@ -1556,7 +1544,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "rand_chacha 0.3.1",
  "scale-info",
  "sp-runtime",
@@ -1571,7 +1559,7 @@ version = "0.1.0"
 source = "git+https://github.com/paritytech/cumulus?branch=master#d5434b3054b14bdb77e63d803474e400b932f52b"
 dependencies = [
  "frame-support",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-core-primitives",
  "polkadot-parachain",
  "polkadot-primitives",
@@ -1590,7 +1578,7 @@ dependencies = [
  "cumulus-primitives-core",
  "cumulus-relay-chain-interface",
  "cumulus-test-relay-sproof-builder",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "scale-info",
  "sp-api",
@@ -1611,7 +1599,7 @@ source = "git+https://github.com/paritytech/cumulus?branch=master#d5434b3054b14b
 dependencies = [
  "cumulus-primitives-core",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-inherents",
  "sp-std",
  "sp-timestamp",
@@ -1624,7 +1612,7 @@ source = "git+https://github.com/paritytech/cumulus?branch=master#d5434b3054b14b
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-core-primitives",
  "polkadot-parachain",
  "polkadot-primitives",
@@ -1672,7 +1660,7 @@ dependencies = [
  "derive_more",
  "futures 0.3.21",
  "jsonrpsee-core 0.11.0",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-overseer",
  "polkadot-service",
@@ -1698,7 +1686,7 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "jsonrpsee 0.11.0",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-service",
  "sc-client-api",
@@ -1718,7 +1706,7 @@ version = "0.1.0"
 source = "git+https://github.com/paritytech/cumulus?branch=master#d5434b3054b14bdb77e63d803474e400b932f52b"
 dependencies = [
  "cumulus-primitives-core",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "sp-runtime",
  "sp-state-machine",
@@ -2239,7 +2227,7 @@ dependencies = [
  "futures-timer",
  "log",
  "num-traits",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.11.2",
  "scale-info",
 ]
@@ -2299,7 +2287,7 @@ name = "fork-tree"
 version = "3.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
 ]
 
 [[package]]
@@ -2321,7 +2309,7 @@ dependencies = [
  "frame-system",
  "linregress",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "paste",
  "scale-info",
  "serde",
@@ -2353,7 +2341,7 @@ dependencies = [
  "linked-hash-map",
  "log",
  "memory-db",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "prettytable-rs",
  "rand 0.8.5",
  "rand_pcg 0.3.1",
@@ -2401,7 +2389,7 @@ dependencies = [
  "frame-election-provider-solution-type",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-arithmetic",
  "sp-npos-elections",
@@ -2416,7 +2404,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -2432,7 +2420,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df6bb8542ef006ef0de09a5c4420787d79823c0ed7924225822362fd2bf2ff2d"
 dependencies = [
  "cfg-if 1.0.0",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
 ]
@@ -2449,7 +2437,7 @@ dependencies = [
  "k256",
  "log",
  "once_cell",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "paste",
  "scale-info",
  "serde",
@@ -2509,7 +2497,7 @@ dependencies = [
  "frame-support",
  "frame-support-test-pallet",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "pretty_assertions",
  "rustversion",
  "scale-info",
@@ -2531,7 +2519,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
 ]
 
@@ -2542,7 +2530,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -2560,7 +2548,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-runtime",
@@ -2572,7 +2560,7 @@ name = "frame-system-rpc-runtime-api"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api",
 ]
 
@@ -2636,12 +2624,6 @@ name = "fuchsia-zircon-sys"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
-
-[[package]]
-name = "funty"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fed34cd105917e91daa4da6b3728c47b068749d6a62c59811f06ed2ac71d9da7"
 
 [[package]]
 name = "funty"
@@ -3208,7 +3190,7 @@ version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba6a270039626615617f3f36d15fc827041df3b78c439da2cadfa47455a77f2f"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
 ]
 
 [[package]]
@@ -3703,7 +3685,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#7fb297c20f749a7d81f9e0ffe66c161ee9daddf9"
 dependencies = [
  "beefy-primitives",
- "bitvec 1.0.0",
+ "bitvec",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",
@@ -3748,7 +3730,7 @@ dependencies = [
  "pallet-utility",
  "pallet-vesting",
  "pallet-xcm",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "polkadot-runtime-common",
  "polkadot-runtime-parachains",
@@ -4919,7 +4901,7 @@ dependencies = [
  "futures 0.3.21",
  "log",
  "nimbus-primitives",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-client",
  "sc-client-api",
@@ -4945,7 +4927,7 @@ dependencies = [
  "async-trait",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-application-crypto",
@@ -5170,7 +5152,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "nimbus-primitives",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5186,7 +5168,7 @@ dependencies = [
  "frame-system",
  "log",
  "nimbus-primitives",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-application-crypto",
@@ -5208,7 +5190,7 @@ dependencies = [
  "frame-system",
  "log",
  "nimbus-primitives",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5225,7 +5207,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-application-crypto",
  "sp-authority-discovery",
@@ -5241,7 +5223,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "impl-trait-for-tuples",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-authorship",
  "sp-runtime",
@@ -5260,7 +5242,7 @@ dependencies = [
  "pallet-authorship",
  "pallet-session",
  "pallet-timestamp",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-application-crypto",
  "sp-consensus-babe",
@@ -5281,7 +5263,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-runtime",
  "sp-std",
@@ -5296,7 +5278,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-runtime",
  "sp-std",
@@ -5311,7 +5293,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-runtime",
@@ -5332,7 +5314,7 @@ dependencies = [
  "pallet-beefy",
  "pallet-mmr",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5350,7 +5332,7 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-treasury",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5368,7 +5350,7 @@ dependencies = [
  "log",
  "pallet-bounties",
  "pallet-treasury",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5387,7 +5369,7 @@ dependencies = [
  "log",
  "pallet-authorship",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "rand 0.8.5",
  "scale-info",
  "serde",
@@ -5405,7 +5387,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5421,7 +5403,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-io",
@@ -5439,7 +5421,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "rand 0.7.3",
  "scale-info",
  "sp-arithmetic",
@@ -5460,7 +5442,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5477,7 +5459,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-arithmetic",
  "sp-runtime",
@@ -5495,7 +5477,7 @@ dependencies = [
  "log",
  "pallet-authorship",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-application-crypto",
  "sp-core",
@@ -5516,7 +5498,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5532,7 +5514,7 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-authorship",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-application-crypto",
  "sp-core",
@@ -5549,7 +5531,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5567,7 +5549,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5584,7 +5566,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5601,7 +5583,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-core-client",
  "jsonrpc-derive",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "serde",
  "sp-api",
  "sp-blockchain",
@@ -5617,7 +5599,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5631,7 +5613,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5647,7 +5629,7 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-balances",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-runtime",
@@ -5663,7 +5645,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5678,7 +5660,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5692,7 +5674,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "safe-mix",
  "scale-info",
  "sp-runtime",
@@ -5706,7 +5688,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5722,7 +5704,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5739,7 +5721,7 @@ dependencies = [
  "impl-trait-for-tuples",
  "log",
  "pallet-timestamp",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5757,7 +5739,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "rand_chacha 0.2.2",
  "scale-info",
  "sp-runtime",
@@ -5775,7 +5757,7 @@ dependencies = [
  "log",
  "pallet-authorship",
  "pallet-session",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-application-crypto",
@@ -5812,7 +5794,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-io",
  "sp-runtime",
@@ -5826,7 +5808,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5843,7 +5825,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-inherents",
  "sp-io",
@@ -5861,7 +5843,7 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-treasury",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5877,7 +5859,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "smallvec",
@@ -5896,7 +5878,7 @@ dependencies = [
  "jsonrpc-core-client",
  "jsonrpc-derive",
  "pallet-transaction-payment-rpc-runtime-api",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api",
  "sp-blockchain",
  "sp-core",
@@ -5910,7 +5892,7 @@ version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "pallet-transaction-payment",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api",
  "sp-runtime",
 ]
@@ -5924,7 +5906,7 @@ dependencies = [
  "frame-system",
  "impl-trait-for-tuples",
  "pallet-balances",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-runtime",
@@ -5938,7 +5920,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5954,7 +5936,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-runtime",
  "sp-std",
@@ -5968,7 +5950,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -5986,7 +5968,7 @@ dependencies = [
  "cumulus-primitives-core",
  "frame-support",
  "frame-system",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
 ]
@@ -6017,7 +5999,7 @@ dependencies = [
  "nimbus-primitives",
  "pallet-transaction-payment-rpc",
  "parachain-template-runtime",
- "parity-scale-codec 2.3.1",
+ "parity-scale-codec",
  "polkadot-cli",
  "polkadot-parachain",
  "polkadot-primitives",
@@ -6088,7 +6070,7 @@ dependencies = [
  "pallet-transaction-payment-rpc-runtime-api",
  "pallet-xcm",
  "parachain-info",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-parachain",
  "polkadot-runtime-common",
  "scale-info",
@@ -6132,25 +6114,12 @@ dependencies = [
 
 [[package]]
 name = "parity-scale-codec"
-version = "2.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "373b1a4c1338d9cd3d1fa53b3a11bdab5ab6bd80a20f7f7becd76953ae2be909"
-dependencies = [
- "arrayvec 0.7.2",
- "bitvec 0.20.4",
- "byte-slice-cast",
- "impl-trait-for-tuples",
- "serde",
-]
-
-[[package]]
-name = "parity-scale-codec"
 version = "3.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8b44461635bbb1a0300f100a841e571e7d919c81c73075ef5d152ffdb521066"
 dependencies = [
  "arrayvec 0.7.2",
- "bitvec 1.0.0",
+ "bitvec",
  "byte-slice-cast",
  "impl-trait-for-tuples",
  "parity-scale-codec-derive",
@@ -6505,7 +6474,7 @@ dependencies = [
  "fatality",
  "futures 0.3.21",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-erasure-coding",
  "polkadot-node-network-protocol",
  "polkadot-node-primitives",
@@ -6527,7 +6496,7 @@ dependencies = [
  "fatality",
  "futures 0.3.21",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-erasure-coding",
  "polkadot-node-network-protocol",
  "polkadot-node-primitives",
@@ -6630,7 +6599,7 @@ name = "polkadot-core-primitives"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "scale-info",
  "sp-core",
@@ -6647,7 +6616,7 @@ dependencies = [
  "fatality",
  "futures 0.3.21",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-erasure-coding",
  "polkadot-node-network-protocol",
  "polkadot-node-primitives",
@@ -6666,7 +6635,7 @@ name = "polkadot-erasure-coding"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-primitives",
  "polkadot-primitives",
  "reed-solomon-novelpoly",
@@ -6704,7 +6673,7 @@ dependencies = [
  "async-trait",
  "bytes 1.1.0",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-node-network-protocol",
  "polkadot-node-subsystem",
@@ -6722,7 +6691,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-erasure-coding",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -6739,14 +6708,14 @@ name = "polkadot-node-core-approval-voting"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "derive_more",
  "futures 0.3.21",
  "futures-timer",
  "kvdb",
  "lru 0.7.5",
  "merlin",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-jaeger",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -6768,11 +6737,11 @@ name = "polkadot-node-core-av-store"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "futures 0.3.21",
  "futures-timer",
  "kvdb",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-erasure-coding",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -6788,7 +6757,7 @@ name = "polkadot-node-core-backing"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "futures 0.3.21",
  "polkadot-erasure-coding",
  "polkadot-node-primitives",
@@ -6823,7 +6792,7 @@ source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff
 dependencies = [
  "async-trait",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-core-pvf",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -6857,7 +6826,7 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "kvdb",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
  "polkadot-node-subsystem-util",
@@ -6875,7 +6844,7 @@ dependencies = [
  "futures 0.3.21",
  "kvdb",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
  "polkadot-node-subsystem-util",
@@ -6907,7 +6876,7 @@ name = "polkadot-node-core-provisioner"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "futures 0.3.21",
  "futures-timer",
  "polkadot-node-primitives",
@@ -6930,7 +6899,7 @@ dependencies = [
  "async-std",
  "futures 0.3.21",
  "futures-timer",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "pin-project 1.0.10",
  "polkadot-core-primitives",
  "polkadot-node-subsystem-util",
@@ -6992,7 +6961,7 @@ dependencies = [
  "lazy_static",
  "log",
  "mick-jaeger",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "polkadot-node-primitives",
  "polkadot-primitives",
@@ -7011,7 +6980,7 @@ dependencies = [
  "futures-timer",
  "log",
  "metered-channel",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "sc-cli",
  "sc-service",
@@ -7029,7 +6998,7 @@ dependencies = [
  "derive_more",
  "fatality",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-jaeger",
  "polkadot-node-primitives",
  "polkadot-primitives",
@@ -7047,7 +7016,7 @@ source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff
 dependencies = [
  "bounded-vec",
  "futures 0.3.21",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-parachain",
  "polkadot-primitives",
  "schnorrkel",
@@ -7105,7 +7074,7 @@ dependencies = [
  "lru 0.7.5",
  "metered-channel",
  "parity-db",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.11.2",
  "pin-project 1.0.10",
@@ -7181,7 +7150,7 @@ source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff
 dependencies = [
  "derive_more",
  "frame-support",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "polkadot-core-primitives",
  "scale-info",
@@ -7211,10 +7180,10 @@ name = "polkadot-primitives"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "frame-system",
  "hex-literal",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "polkadot-core-primitives",
  "polkadot-parachain",
@@ -7274,7 +7243,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "beefy-primitives",
- "bitvec 1.0.0",
+ "bitvec",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",
@@ -7315,7 +7284,7 @@ dependencies = [
  "pallet-utility",
  "pallet-vesting",
  "pallet-xcm",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "polkadot-runtime-common",
  "polkadot-runtime-constants",
@@ -7354,7 +7323,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "beefy-primitives",
- "bitvec 1.0.0",
+ "bitvec",
  "frame-election-provider-support",
  "frame-support",
  "frame-system",
@@ -7372,7 +7341,7 @@ dependencies = [
  "pallet-transaction-payment",
  "pallet-treasury",
  "pallet-vesting",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "polkadot-runtime-parachains",
  "rustc-hex",
@@ -7411,7 +7380,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "bs58",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "sp-std",
  "sp-tracing",
@@ -7423,7 +7392,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "bitflags",
- "bitvec 1.0.0",
+ "bitvec",
  "derive_more",
  "frame-support",
  "frame-system",
@@ -7436,7 +7405,7 @@ dependencies = [
  "pallet-staking",
  "pallet-timestamp",
  "pallet-vesting",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "polkadot-runtime-metrics",
  "rand 0.8.5",
@@ -7563,7 +7532,7 @@ dependencies = [
  "fatality",
  "futures 0.3.21",
  "indexmap",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-node-network-protocol",
  "polkadot-node-primitives",
  "polkadot-node-subsystem",
@@ -7580,7 +7549,7 @@ name = "polkadot-statement-table"
 version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-primitives",
  "sp-core",
 ]
@@ -7591,7 +7560,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#7fb297c20f749a7d81f9e0ffe66c161ee9daddf9"
 dependencies = [
  "beefy-primitives",
- "bitvec 1.0.0",
+ "bitvec",
  "frame-election-provider-support",
  "frame-executive",
  "frame-support",
@@ -7615,7 +7584,7 @@ dependencies = [
  "pallet-transaction-payment-rpc-runtime-api",
  "pallet-vesting",
  "pallet-xcm",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-parachain",
  "polkadot-primitives",
  "polkadot-runtime-common",
@@ -7944,12 +7913,6 @@ dependencies = [
 
 [[package]]
 name = "radium"
-version = "0.6.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "643f8f41a8ebc4c5dc4515c82bb8abd397b527fc20fd681b7c011c2aee5d44fb"
-
-[[package]]
-name = "radium"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
@@ -8211,7 +8174,7 @@ dependencies = [
  "env_logger 0.9.0",
  "jsonrpsee 0.10.1",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "serde",
  "serde_json",
  "sp-core",
@@ -8492,7 +8455,7 @@ dependencies = [
  "ip_network",
  "libp2p",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "prost",
  "prost-build",
  "rand 0.7.3",
@@ -8516,7 +8479,7 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-block-builder",
  "sc-client-api",
  "sc-proposer-metrics",
@@ -8536,7 +8499,7 @@ name = "sc-block-builder"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sp-api",
  "sp-block-builder",
@@ -8554,7 +8517,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "impl-trait-for-tuples",
  "memmap2 0.5.0",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-chain-spec-derive",
  "sc-network",
  "sc-telemetry",
@@ -8588,7 +8551,7 @@ dependencies = [
  "libp2p",
  "log",
  "names",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "rand 0.7.3",
  "regex",
  "rpassword",
@@ -8622,7 +8585,7 @@ dependencies = [
  "futures 0.3.21",
  "hash-db",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-executor",
  "sc-transaction-pool-api",
@@ -8653,7 +8616,7 @@ dependencies = [
  "linked-hash-map",
  "log",
  "parity-db",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-client-api",
  "sc-state-db",
@@ -8698,7 +8661,7 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-block-builder",
  "sc-client-api",
  "sc-consensus",
@@ -8732,7 +8695,7 @@ dependencies = [
  "num-bigint",
  "num-rational 0.2.4",
  "num-traits",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "rand 0.7.3",
  "retain_mut",
@@ -8792,7 +8755,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "fork-tree",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-consensus",
  "sp-blockchain",
@@ -8811,7 +8774,7 @@ dependencies = [
  "jsonrpc-core-client",
  "jsonrpc-derive",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-consensus",
  "sc-consensus-aura",
@@ -8844,7 +8807,7 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-consensus",
  "sc-telemetry",
@@ -8878,7 +8841,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "lazy_static",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-executor-common",
  "sc-executor-wasmi",
@@ -8904,7 +8867,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "environmental",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-allocator",
  "sp-core",
  "sp-maybe-compressed-blob",
@@ -8921,7 +8884,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-allocator",
  "sc-executor-common",
  "scoped-tls",
@@ -8939,7 +8902,7 @@ dependencies = [
  "cfg-if 1.0.0",
  "libc",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-wasm 0.42.2",
  "sc-allocator",
  "sc-executor-common",
@@ -8963,7 +8926,7 @@ dependencies = [
  "futures-timer",
  "hex",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "rand 0.8.5",
  "sc-block-builder",
@@ -9001,7 +8964,7 @@ dependencies = [
  "jsonrpc-derive",
  "jsonrpc-pubsub",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-finality-grandpa",
  "sc-rpc",
@@ -9067,7 +9030,7 @@ dependencies = [
  "linked_hash_set",
  "log",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "pin-project 1.0.10",
  "prost",
@@ -9125,7 +9088,7 @@ dependencies = [
  "hyper-rustls 0.22.1",
  "num_cpus",
  "once_cell",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "rand 0.7.3",
  "sc-client-api",
@@ -9171,7 +9134,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-pubsub",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-block-builder",
  "sc-chain-spec",
@@ -9203,7 +9166,7 @@ dependencies = [
  "jsonrpc-derive",
  "jsonrpc-pubsub",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sc-chain-spec",
  "sc-transaction-pool-api",
@@ -9249,7 +9212,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-pubsub",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.12.0",
  "pin-project 1.0.10",
@@ -9306,7 +9269,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "parity-util-mem-derive",
  "parking_lot 0.12.0",
@@ -9322,7 +9285,7 @@ dependencies = [
  "jsonrpc-core",
  "jsonrpc-core-client",
  "jsonrpc-derive",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-chain-spec",
  "sc-client-api",
  "sc-consensus-babe",
@@ -9423,7 +9386,7 @@ dependencies = [
  "futures-timer",
  "linked-hash-map",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.12.0",
  "retain_mut",
@@ -9473,10 +9436,10 @@ version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8980cafbe98a7ee7a9cc16b32ebce542c77883f512d83fbf2ddc8f6a85ea74c9"
 dependencies = [
- "bitvec 1.0.0",
+ "bitvec",
  "cfg-if 1.0.0",
  "derive_more",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info-derive",
  "serde",
 ]
@@ -9857,7 +9820,7 @@ version = "0.9.19"
 source = "git+https://github.com/paritytech/polkadot?branch=master#1dc3318badaff1a2e59673de5874aaebd3091f12"
 dependencies = [
  "enumn",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "paste",
  "sp-runtime",
  "sp-std",
@@ -9946,7 +9909,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "hash-db",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api-proc-macro",
  "sp-core",
  "sp-runtime",
@@ -9973,7 +9936,7 @@ name = "sp-application-crypto"
 version = "6.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-core",
@@ -9988,7 +9951,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "integer-sqrt",
  "num-traits",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-debug-derive",
@@ -10001,7 +9964,7 @@ name = "sp-authority-discovery"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-application-crypto",
@@ -10015,7 +9978,7 @@ version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "async-trait",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-inherents",
  "sp-runtime",
  "sp-std",
@@ -10026,7 +9989,7 @@ name = "sp-block-builder"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api",
  "sp-inherents",
  "sp-runtime",
@@ -10041,7 +10004,7 @@ dependencies = [
  "futures 0.3.21",
  "log",
  "lru 0.7.5",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "sp-api",
  "sp-consensus",
@@ -10060,7 +10023,7 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-core",
  "sp-inherents",
  "sp-runtime",
@@ -10076,7 +10039,7 @@ version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "async-trait",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-application-crypto",
@@ -10095,7 +10058,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "async-trait",
  "merlin",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-api",
@@ -10116,7 +10079,7 @@ name = "sp-consensus-slots"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-arithmetic",
@@ -10130,7 +10093,7 @@ name = "sp-consensus-vrf"
 version = "0.10.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "schnorrkel",
  "sp-core",
  "sp-runtime",
@@ -10158,7 +10121,7 @@ dependencies = [
  "log",
  "merlin",
  "num-traits",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.12.0",
  "primitive-types",
@@ -10233,7 +10196,7 @@ version = "0.12.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "environmental",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-std",
  "sp-storage",
 ]
@@ -10245,7 +10208,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "finality-grandpa",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-api",
@@ -10263,7 +10226,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "async-trait",
  "impl-trait-for-tuples",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-core",
  "sp-runtime",
  "sp-std",
@@ -10279,7 +10242,7 @@ dependencies = [
  "hash-db",
  "libsecp256k1",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "secp256k1",
  "sp-core",
@@ -10314,7 +10277,7 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "merlin",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "schnorrkel",
  "serde",
@@ -10338,7 +10301,7 @@ version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "serde",
  "sp-api",
  "sp-core",
@@ -10352,7 +10315,7 @@ name = "sp-npos-elections"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "serde",
  "sp-arithmetic",
@@ -10400,7 +10363,7 @@ dependencies = [
  "hash256-std-hasher",
  "impl-trait-for-tuples",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-util-mem",
  "paste",
  "rand 0.7.3",
@@ -10419,7 +10382,7 @@ version = "6.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "impl-trait-for-tuples",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "primitive-types",
  "sp-externalities",
  "sp-runtime-interface-proc-macro",
@@ -10456,7 +10419,7 @@ name = "sp-session"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-api",
  "sp-core",
@@ -10470,7 +10433,7 @@ name = "sp-staking"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-runtime",
  "sp-std",
@@ -10484,7 +10447,7 @@ dependencies = [
  "hash-db",
  "log",
  "num-traits",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parking_lot 0.12.0",
  "rand 0.7.3",
  "smallvec",
@@ -10509,7 +10472,7 @@ version = "6.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "impl-serde",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "ref-cast",
  "serde",
  "sp-debug-derive",
@@ -10537,7 +10500,7 @@ dependencies = [
  "async-trait",
  "futures-timer",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-api",
  "sp-inherents",
  "sp-runtime",
@@ -10550,7 +10513,7 @@ name = "sp-tracing"
 version = "5.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-std",
  "tracing",
  "tracing-core",
@@ -10573,7 +10536,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "async-trait",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-inherents",
@@ -10589,7 +10552,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "hash-db",
  "memory-db",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "sp-core",
  "sp-std",
@@ -10604,7 +10567,7 @@ version = "5.0.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
  "impl-serde",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "parity-wasm 0.42.2",
  "scale-info",
  "serde",
@@ -10620,7 +10583,7 @@ name = "sp-version-proc-macro"
 version = "4.0.0-dev"
 source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51ca7af1bfa0138b76c1b358c70692"
 dependencies = [
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "proc-macro2",
  "quote",
  "syn",
@@ -10633,7 +10596,7 @@ source = "git+https://github.com/paritytech/substrate?branch=master#52cc538d8e51
 dependencies = [
  "impl-trait-for-tuples",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-std",
  "wasmi",
  "wasmtime",
@@ -10801,7 +10764,7 @@ dependencies = [
  "jsonrpc-core-client",
  "jsonrpc-derive",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-rpc-api",
  "sc-transaction-pool-api",
@@ -10834,7 +10797,7 @@ dependencies = [
  "jsonrpc-core-client",
  "jsonrpc-derive",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-rpc-api",
  "scale-info",
@@ -10856,7 +10819,7 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "hex",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sc-client-api",
  "sc-client-db",
  "sc-consensus",
@@ -11392,7 +11355,7 @@ dependencies = [
  "clap",
  "jsonrpsee 0.10.1",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "remote-externalities",
  "sc-chain-spec",
  "sc-cli",
@@ -12136,12 +12099,6 @@ dependencies = [
 
 [[package]]
 name = "wyz"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
-
-[[package]]
-name = "wyz"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "30b31594f29d27036c383b53b59ed3476874d518f0efb151b27a4c275141390e"
@@ -12168,7 +12125,7 @@ dependencies = [
  "derivative",
  "impl-trait-for-tuples",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "scale-info",
  "xcm-procedural",
 ]
@@ -12182,7 +12139,7 @@ dependencies = [
  "frame-system",
  "log",
  "pallet-transaction-payment",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "polkadot-parachain",
  "scale-info",
  "sp-arithmetic",
@@ -12201,7 +12158,7 @@ dependencies = [
  "frame-support",
  "impl-trait-for-tuples",
  "log",
- "parity-scale-codec 3.1.2",
+ "parity-scale-codec",
  "sp-arithmetic",
  "sp-core",
  "sp-io",
