@@ -11,8 +11,8 @@ frame-support = { git = "https://github.com/paritytech/substrate", branch = "mas
 frame-system = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 log = { version = "0.4", default-features = false }
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
-parity-scale-codec = { version = "2.0.0", default-features = false, features = [ "derive" ] }
-scale-info = { version = "1.0.0", default-features = false, features = [ "derive" ] }
+parity-scale-codec = { version = "3.0.0", default-features = false, features = [ "derive" ] }
+scale-info = { version = "2.0.0", default-features = false, features = [ "derive" ] }
 sp-api = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-application-crypto = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-authorship = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
