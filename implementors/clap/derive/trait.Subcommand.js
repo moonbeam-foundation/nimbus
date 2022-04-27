@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["parachain_collator"] = [{"text":"impl Subcommand for <a class=\"enum\" href=\"parachain_collator/cli/enum.Subcommand.html\" title=\"enum parachain_collator::cli::Subcommand\">Subcommand</a>","synthetic":false,"types":["parachain_collator::cli::Subcommand"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

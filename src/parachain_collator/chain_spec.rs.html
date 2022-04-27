@@ -186,6 +186,9 @@
 <span id="186">186</span>
 <span id="187">187</span>
 <span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">cumulus_primitives_core::ParaId</span>;
 <span class="kw">use</span> <span class="ident">parachain_template_runtime</span>::{<span class="ident">AccountId</span>, <span class="ident">NimbusId</span>, <span class="ident">Signature</span>};
 <span class="kw">use</span> <span class="ident">sc_chain_spec</span>::{<span class="ident">ChainSpecExtension</span>, <span class="ident">ChainSpecGroup</span>};
@@ -280,6 +283,7 @@
 		<span class="prelude-val">None</span>,
 		<span class="prelude-val">None</span>,
 		<span class="prelude-val">None</span>,
+		<span class="prelude-val">None</span>,
 		<span class="ident">Extensions</span> {
 			<span class="ident">relay_chain</span>: <span class="string">&quot;rococo-local&quot;</span>.<span class="ident">into</span>(), <span class="comment">// You MUST set this to the correct network!</span>
 			<span class="ident">para_id</span>: <span class="number">1000</span>,
@@ -336,6 +340,8 @@
 		<span class="prelude-val">None</span>,
 		<span class="comment">// Protocol ID</span>
 		<span class="prelude-val">Some</span>(<span class="string">&quot;template-local&quot;</span>),
+		<span class="comment">// Fork ID</span>
+		<span class="prelude-val">None</span>,
 		<span class="comment">// Properties</span>
 		<span class="prelude-val">Some</span>(<span class="ident">properties</span>),
 		<span class="comment">// Extensions</span>

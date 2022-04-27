@@ -96,6 +96,7 @@
 <span id="96">96</span>
 <span id="97">97</span>
 <span id="98">98</span>
+<span id="99">99</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -120,7 +121,7 @@
 <span class="comment">// For some reason I can&#39;t get these logs to actually print</span>
 <span class="kw">use</span> <span class="ident">log::debug</span>;
 <span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">digests::CompatibleDigestItem</span>, <span class="ident">NimbusId</span>, <span class="ident">NIMBUS_ENGINE_ID</span>};
-<span class="kw">use</span> <span class="ident">sp_application_crypto::Public</span> <span class="kw">as</span> <span class="kw">_</span>;
+<span class="kw">use</span> <span class="ident">sp_application_crypto::ByteArray</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{<span class="ident">generic::DigestItem</span>, <span class="ident">RuntimeAppPublic</span>};
 
 <span class="doccomment">/// Block executive to be used by relay chain validators when validating parachain blocks built</span>
@@ -180,8 +181,9 @@
 		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;executive&quot;</span>, <span class="string">&quot;🪲 Claimed Author according to executive is {:?}&quot;</span>, <span class="ident">claimed_author</span>);
 
 		<span class="comment">// Verify the signature</span>
-		<span class="kw">let</span> <span class="ident">valid_signature</span> <span class="op">=</span>
-			<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">claimed_author</span>).<span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">hash</span>(), <span class="kw-2">&amp;</span><span class="ident">signature</span>);
+		<span class="kw">let</span> <span class="ident">valid_signature</span> <span class="op">=</span> <span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">claimed_author</span>)
+			.<span class="ident">expect</span>(<span class="string">&quot;Expected claimed author to be a valid NimbusId.&quot;</span>)
+			.<span class="ident">verify</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>.<span class="ident">hash</span>(), <span class="kw-2">&amp;</span><span class="ident">signature</span>);
 
 		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;executive&quot;</span>, <span class="string">&quot;🪲 Valid signature? {:?}&quot;</span>, <span class="ident">valid_signature</span>);
 
