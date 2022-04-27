@@ -236,26 +236,23 @@ pub fn run() -> Result<()> {
 			let runner = cli.create_runner(cmd)?;
 			// Switch on the concrete benchmark sub-command-
 			match cmd {
-				BenchmarkCmd::Pallet(cmd) =>
+				BenchmarkCmd::Pallet(cmd) => {
 					if cfg!(feature = "runtime-benchmarks") {
 						runner.sync_run(|config| cmd.run::<Block, TemplateRuntimeExecutor>(config))
 					} else {
 						Err("Benchmarking wasn't enabled when building the node. \
 			  You can enable it with `--features runtime-benchmarks`."
 							.into())
-					},
+					}
+				}
 				BenchmarkCmd::Block(cmd) => runner.sync_run(|config| {
-					let partials = new_partial::<RuntimeApi, TemplateRuntimeExecutor,>(
-						&config,
-						false,
-					)?;
+					let partials =
+						new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 					cmd.run(partials.client)
 				}),
 				BenchmarkCmd::Storage(cmd) => runner.sync_run(|config| {
-					let partials = new_partial::<RuntimeApi, TemplateRuntimeExecutor,>(
-						&config,
-						false,
-					)?;
+					let partials =
+						new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 					let db = partials.backend.expose_db();
 					let storage = partials.backend.expose_storage();
 
@@ -264,7 +261,7 @@ pub fn run() -> Result<()> {
 				BenchmarkCmd::Overhead(_) => Err("Unsupported benchmarking command".into()),
 				BenchmarkCmd::Machine(cmd) => runner.sync_run(|config| cmd.run(&config)),
 			}
-		},
+		}
 		Some(Subcommand::RunInstantSeal(run_cmd)) => {
 			let runner = cli.create_runner(run_cmd)?;
 			runner.run_node_until_exit(|config| async move {
