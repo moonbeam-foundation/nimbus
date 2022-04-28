@@ -42,7 +42,6 @@ where
 		let total_authors = <T as Config>::PotentialAuthors::get().len();
 		let new_value = percent_of_num(old_value, total_authors as u32);
 		let new_value = NonZeroU32::new(new_value).unwrap_or(EligibilityValue::default());
-
 		<EligibleCount<T>>::put(new_value);
 
 		T::DbWeight::get().reads_writes(1, 1)

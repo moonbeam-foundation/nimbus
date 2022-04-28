@@ -78,10 +78,13 @@ fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_e
 	});
 }
 
+#[allow(deprecated)]
 #[test]
 fn test_migration_inserts_default_value_for_missing_eligible_ratio() {
 	new_test_ext().execute_with(|| {
-		let expected_default_eligible_count = EligibilityValue::default();
+		let default_eligible_ratio = Percent::from_percent(50);
+		let expected_default_eligible_count =
+			NonZeroU32::new_unchecked(default_eligible_ratio.mul_ceil(Authors::get().len() as u32));
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
