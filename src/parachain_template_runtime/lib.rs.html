@@ -812,6 +812,7 @@
 <span id="812">812</span>
 <span id="813">813</span>
 <span id="814">814</span>
+<span id="815">815</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 <span class="comment">// `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.</span>
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
@@ -1366,6 +1367,7 @@
 	<span class="kw">type</span> <span class="ident">AccountLookup</span> <span class="op">=</span> <span class="ident">PotentialAuthorSet</span>;
 	<span class="kw">type</span> <span class="ident">EventHandler</span> <span class="op">=</span> ();
 	<span class="kw">type</span> <span class="ident">CanAuthor</span> <span class="op">=</span> <span class="ident">AuthorFilter</span>;
+	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> ();
 }
 
 <span class="kw">impl</span> <span class="ident">pallet_author_slot_filter::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
