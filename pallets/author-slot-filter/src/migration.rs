@@ -30,7 +30,7 @@ use super::pallet::EligibilityValue;
 
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
-pub const PALLET_NAME: &[u8] = b"AuthorSlotFilter";
+pub const PALLET_NAME: &[u8] = b"AuthorFilter";
 pub const ELIGIBLE_RATIO_ITEM_NAME: &[u8] = b"EligibleRatio";
 pub const ELIGIBLE_COUNT_ITEM_NAME: &[u8] = b"EligibleCount";
 
