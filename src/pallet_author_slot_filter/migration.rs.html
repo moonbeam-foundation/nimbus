@@ -102,11 +102,6 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
-<span id="105">105</span>
-<span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2021 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -124,7 +119,6 @@
 <span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 <span class="kw">use</span> <span class="ident">core::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">frame_support::storage::migration</span>;
 <span class="kw">use</span> <span class="ident">frame_support::traits::Get</span>;
 <span class="kw">use</span> <span class="ident">frame_support::traits::OnRuntimeUpgrade</span>;
 <span class="kw">use</span> <span class="ident">frame_support::weights::Weight</span>;
@@ -136,12 +130,10 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::num::NonZeroU32</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::Config</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::EligibilityValue</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::EligibleCount</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::Pallet</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EligibleRatioToEligiblityCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
-
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PALLET_NAME</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;AuthorSlotFilter&quot;</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ELIGIBLE_RATIO_ITEM_NAME</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;EligibleRatio&quot;</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ELIGIBLE_COUNT_ITEM_NAME</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;EligibleCount&quot;</span>;
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">OnRuntimeUpgrade</span> <span class="kw">for</span> <span class="ident">EligibleRatioToEligiblityCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -150,34 +142,22 @@
 	<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
 		<span class="macro">log::info!</span>(<span class="ident">target</span>: <span class="string">&quot;EligibleRatioToEligiblityCount&quot;</span>, <span class="string">&quot;starting migration&quot;</span>);
 
-		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span>
-			<span class="ident">migration::get_storage_value</span>::<span class="op">&lt;</span><span class="ident">Percent</span><span class="op">&gt;</span>(<span class="ident">PALLET_NAME</span>, <span class="ident">ELIGIBLE_RATIO_ITEM_NAME</span>, <span class="kw-2">&amp;</span>[]);
+		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_ratio</span>();
+		<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
+		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">old_value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
+		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">NonZeroU32::new</span>(<span class="ident">new_value</span>).<span class="ident">unwrap_or</span>(<span class="ident">EligibilityValue::default</span>());
+		<span class="op">&lt;</span><span class="ident">EligibleCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">new_value</span>);
 
-		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">old_value</span>
-			.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
-				<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
-				<span class="ident">NonZeroU32::new</span>(<span class="ident">new_value</span>)
-			})
-			.<span class="ident">unwrap_or</span>(<span class="ident">EligibilityValue::default</span>());
-
-		<span class="kw">let</span> <span class="ident">db_weights</span> <span class="op">=</span> <span class="ident">T::DbWeight::get</span>();
-		<span class="ident">migration::put_storage_value</span>(<span class="ident">PALLET_NAME</span>, <span class="ident">ELIGIBLE_COUNT_ITEM_NAME</span>, <span class="kw-2">&amp;</span>[], <span class="ident">new_value</span>);
-		<span class="ident">db_weights</span>.<span class="ident">write</span> <span class="op">+</span> <span class="ident">db_weights</span>.<span class="ident">read</span>
+		<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)
 	}
 
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
 	<span class="kw">fn</span> <span class="ident">pre_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span>
-			<span class="ident">migration::get_storage_value</span>::<span class="op">&lt;</span><span class="ident">Percent</span><span class="op">&gt;</span>(<span class="ident">PALLET_NAME</span>, <span class="ident">ELIGIBLE_RATIO_ITEM_NAME</span>, <span class="kw-2">&amp;</span>[]);
+		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_ratio</span>();
 
-		<span class="kw">let</span> <span class="ident">expected_value</span> <span class="op">=</span> <span class="ident">old_value</span>
-			.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
-				<span class="kw">let</span> <span class="ident">eligible_count</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
-				<span class="ident">NonZeroU32::new</span>(<span class="ident">eligible_count</span>)
-			})
-			.<span class="ident">unwrap_or</span>(<span class="ident">EligibilityValue::default</span>());
+		<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
+		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">old_value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
+		<span class="kw">let</span> <span class="ident">expected_value</span> <span class="op">=</span> <span class="ident">NonZeroU32::new</span>(<span class="ident">new_value</span>).<span class="ident">unwrap_or</span>(<span class="ident">EligibilityValue::default</span>());
 
 		<span class="ident"><span class="self">Self</span>::set_temp_storage</span>(<span class="ident">expected_value</span>, <span class="string">&quot;expected_eligible_count&quot;</span>);
 
@@ -187,8 +167,7 @@
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
 	<span class="kw">fn</span> <span class="ident">post_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_temp_storage</span>::<span class="op">&lt;</span><span class="ident">NonZeroU32</span><span class="op">&gt;</span>(<span class="string">&quot;expected_eligible_count&quot;</span>);
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span>
-			<span class="ident">migration::get_storage_value</span>::<span class="op">&lt;</span><span class="ident">NonZeroU32</span><span class="op">&gt;</span>(<span class="ident">PALLET_NAME</span>, <span class="ident">ELIGIBLE_COUNT_ITEM_NAME</span>, <span class="kw-2">&amp;</span>[]);
+		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_count</span>();
 
 		<span class="macro">assert_eq!</span>(<span class="ident">expected</span>, <span class="ident">actual</span>);
 
@@ -214,6 +193,17 @@
 
 		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">fifty_percent</span>, <span class="number">20</span>);
 		<span class="macro">assert_eq!</span>(<span class="number">10</span>, <span class="ident">actual</span>);
+	}
+
+	<span class="attribute">#[<span class="ident">test</span>]</span>
+	<span class="kw">fn</span> <span class="ident">test_percent_of_num_hundred_percent_uses_full_value</span>() {
+		<span class="kw">let</span> <span class="ident">one_hundred_percent</span> <span class="op">=</span> <span class="ident">Percent::from_float</span>(<span class="number">1.0</span>);
+
+		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">one_hundred_percent</span>, <span class="number">5</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">5</span>, <span class="ident">actual</span>);
+
+		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">one_hundred_percent</span>, <span class="number">20</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">20</span>, <span class="ident">actual</span>);
 	}
 }
 </code></pre></div>

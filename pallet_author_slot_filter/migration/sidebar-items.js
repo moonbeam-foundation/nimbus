@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["ELIGIBLE_COUNT_ITEM_NAME",""],["ELIGIBLE_RATIO_ITEM_NAME",""],["PALLET_NAME",""]],"struct":[["EligibleRatioToEligiblityCount",""]]});
+initSidebarItems({"struct":[["EligibleRatioToEligiblityCount",""]]});
