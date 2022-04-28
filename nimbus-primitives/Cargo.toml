@@ -18,6 +18,8 @@ sp-inherents = { git = "https://github.com/paritytech/substrate", branch = "mast
 sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-std = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 
+frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "master", optional = true, default-features = false }
+
 [features]
 default = [ "std" ]
 std = [
@@ -31,4 +33,9 @@ std = [
 	"sp-inherents/std",
 	"sp-runtime/std",
 	"sp-std/std",
+]
+
+runtime-benchmarks = [
+	"frame-benchmarking",
+	"sp-runtime/runtime-benchmarks"
 ]

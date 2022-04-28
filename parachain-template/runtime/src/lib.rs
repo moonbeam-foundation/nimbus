@@ -552,6 +552,7 @@ impl pallet_author_inherent::Config for Runtime {
 	type AccountLookup = PotentialAuthorSet;
 	type EventHandler = ();
 	type CanAuthor = AuthorFilter;
+	type WeightInfo = ();
 }
 
 impl pallet_author_slot_filter::Config for Runtime {

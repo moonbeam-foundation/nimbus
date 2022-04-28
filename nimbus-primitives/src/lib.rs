@@ -25,6 +25,8 @@ use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 use sp_std::vec::Vec;
+#[cfg(feature = "runtime-benchmarks")]
+use sp_std::vec;
 
 pub mod digests;
 mod inherents;
@@ -47,6 +49,8 @@ impl<T> EventHandler<T> for () {
 /// For now we use u32 as the slot type everywhere. Let's see how long we can get away with that.
 pub trait SlotBeacon {
 	fn slot() -> u32;
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_slot(_slot: u32) {}
 }
 
 /// Anything that can provide a block height can be used as a slot beacon. This could be
@@ -56,6 +60,10 @@ pub trait SlotBeacon {
 impl<T: BlockNumberProvider<BlockNumber = u32>> SlotBeacon for T {
 	fn slot() -> u32 {
 		Self::current_block_number()
+	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_slot(slot: u32) {
+		Self::set_block_number(slot);
 	}
 }
 
@@ -81,6 +89,12 @@ impl SlotBeacon for IntervalBeacon {
 /// implementation replies with a complete set of eligible authors.
 pub trait CanAuthor<AuthorId> {
 	fn can_author(author: &AuthorId, slot: &u32) -> bool;
+	#[cfg(feature = "runtime-benchmarks")]
+	fn get_authors(_slot: &u32) -> Vec<AuthorId> {
+		vec![]
+	}
+	#[cfg(feature = "runtime-benchmarks")]
+	fn set_eligible_author(_slot: &u32) {} 
 }
 /// Default implementation where anyone can author.
 ///
