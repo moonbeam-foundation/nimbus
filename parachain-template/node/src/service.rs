@@ -424,7 +424,7 @@ pub async fn start_parachain_node(
 				                                      (
 					relay_parent,
 					validation_data,
-					author_id,
+					_author_id,
 				)| {
 					let relay_chain_interface = relay_chain_interface.clone();
 					async move {
