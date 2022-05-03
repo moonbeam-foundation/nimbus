@@ -314,7 +314,28 @@ where
 		relay_parent: PHash,
 		validation_data: &PersistedValidationData,
 	) -> Option<ParachainCandidate<B>> {
-		let maybe_key = if self.skip_prediction {
+		// Determine if runtime change
+		let runtime_upgraded = if *parent.number() > sp_runtime::traits::Zero::zero() {
+			let at = BlockId::Hash(parent.hash());
+			let parent_at = BlockId::<B>::Hash(*parent.parent_hash());
+			use sp_api::Core as _;
+			let previous_runtime_version: sp_api::RuntimeVersion = self
+				.parachain_client
+				.runtime_api()
+				.version(&parent_at)
+				.expect("Runtime api access to not error.");
+			let runtime_version: sp_api::RuntimeVersion = self
+				.parachain_client
+				.runtime_api()
+				.version(&at)
+				.expect("Runtime api access to not error.");
+
+			previous_runtime_version != runtime_version
+		} else {
+			false
+		};
+
+		let maybe_key = if self.skip_prediction || runtime_upgraded {
 			first_available_key(&*self.keystore)
 		} else {
 			first_eligible_key::<B, ParaClient>(
