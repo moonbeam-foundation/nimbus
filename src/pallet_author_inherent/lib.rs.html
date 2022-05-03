@@ -292,9 +292,9 @@
 <span class="attribute">#[<span class="ident">frame_support::pallet</span>]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pallet</span> {
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::weights::WeightInfo</span>;
 	<span class="kw">use</span> <span class="ident">frame_support::pallet_prelude</span>::<span class="kw-2">*</span>;
 	<span class="kw">use</span> <span class="ident">frame_system::pallet_prelude</span>::<span class="kw-2">*</span>;
-	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::weights::WeightInfo</span>;
 
 	<span class="doccomment">/// The Author Inherent pallet. The core of the nimbus consensus framework&#39;s runtime presence.</span>
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
