@@ -24,9 +24,9 @@
 use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
-use sp_std::vec::Vec;
 #[cfg(feature = "runtime-benchmarks")]
 use sp_std::vec;
+use sp_std::vec::Vec;
 
 pub mod digests;
 mod inherents;
@@ -94,7 +94,7 @@ pub trait CanAuthor<AuthorId> {
 		vec![]
 	}
 	#[cfg(feature = "runtime-benchmarks")]
-	fn set_eligible_author(_slot: &u32) {} 
+	fn set_eligible_author(_slot: &u32) {}
 }
 /// Default implementation where anyone can author.
 ///
