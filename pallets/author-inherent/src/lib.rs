@@ -42,9 +42,9 @@ pub mod weights;
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
+	use crate::weights::WeightInfo;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
-	use crate::weights::WeightInfo;
 
 	/// The Author Inherent pallet. The core of the nimbus consensus framework's runtime presence.
 	#[pallet::pallet]

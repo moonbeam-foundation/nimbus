@@ -138,11 +138,10 @@ pub mod pallet {
 			eligible.contains(author)
 		}
 		#[cfg(feature = "runtime-benchmarks")]
-		fn get_authors(slot: &u32) -> Vec<T::AccountId>  {
-		// Compute pseudo-random subset of potential authors
-		let (eligible, _) =
-			compute_pseudo_random_subset::<T>(T::PotentialAuthors::get(), slot);
-		eligible
+		fn get_authors(slot: &u32) -> Vec<T::AccountId> {
+			// Compute pseudo-random subset of potential authors
+			let (eligible, _) = compute_pseudo_random_subset::<T>(T::PotentialAuthors::get(), slot);
+			eligible
 		}
 	}
 

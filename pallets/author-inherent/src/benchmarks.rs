@@ -17,7 +17,7 @@
 #![cfg(feature = "runtime-benchmarks")]
 
 use crate::{Call, Config, Pallet};
-use frame_benchmarking::{benchmarks};
+use frame_benchmarking::benchmarks;
 use frame_system::RawOrigin;
 use nimbus_primitives::CanAuthor;
 use nimbus_primitives::SlotBeacon;
