@@ -13,6 +13,10 @@ sp-application-crypto = { git = "https://github.com/paritytech/substrate", branc
 sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-blockchain = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
+# TODO: Do we need both sp- and sc- ?
+sp-consensus-slots = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-consensus-slots = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sc-telemetry = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-core = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-inherents = { git = "https://github.com/paritytech/substrate", branch = "master" }
 sp-keystore = { git = "https://github.com/paritytech/substrate", branch = "master" }

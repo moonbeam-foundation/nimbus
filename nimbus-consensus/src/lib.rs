@@ -47,6 +47,8 @@ use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 mod import_queue;
 mod manual_seal;
+//TODO, maybe only export specific parts of it.
+pub mod standalone;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
 
 const LOG_TARGET: &str = "filtering-consensus";
