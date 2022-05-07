@@ -17,21 +17,20 @@
 //! This module contains the code necessary to use nimbus in a sovereign
 //! (non-parachain) blockchain node. It implements the SlotWorker trait.
 
-use std::{sync::Arc, time::Duration, marker::PhantomData};
-use parking_lot::Mutex;
+use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
 use nimbus_primitives::{NimbusApi, NimbusId};
-use sc_consensus_slots::{self, SlotWorker, SlotInfo, SlotResult};
-use sp_inherents::CreateInherentDataProviders;
-use sp_keystore::SyncCryptoStorePtr;
+use parking_lot::Mutex;
 use sc_consensus::{BlockImport, BlockImportParams};
-use sp_consensus::{Proposal, BlockOrigin, Environment, Proposer};
+use sc_consensus_slots::{self, SlotInfo, SlotResult, SlotWorker};
 use sp_api::ProvideRuntimeApi;
 use sp_api::{BlockT, HeaderT};
-use tracing::error;
-use crate::{CompatibleDigestItem, LOG_TARGET, first_eligible_key, seal_header};
 use sp_application_crypto::ByteArray;
+use sp_consensus::{BlockOrigin, Environment, Proposal, Proposer};
+use sp_inherents::CreateInherentDataProviders;
 use sp_inherents::InherentDataProvider;
-
+use sp_keystore::SyncCryptoStorePtr;
+use std::{marker::PhantomData, sync::Arc, time::Duration};
+use tracing::error;
 
 // pub function start_nimbus_standalone(...) -> Result<impl Future<Output = ()>, sp_consensus::Error> {
 // 	let worker = ...;
@@ -56,7 +55,8 @@ pub struct NimbusStandaloneWorker<B, C, PF, BI, CIDP> {
 }
 
 #[async_trait::async_trait]
-impl<B, C, PF, BI, CIDP> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof> for NimbusStandaloneWorker<B, C, PF, BI, CIDP>
+impl<B, C, PF, BI, CIDP> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>
+	for NimbusStandaloneWorker<B, C, PF, BI, CIDP>
 where
 	B: BlockT,
 	BI: BlockImport<B>,
@@ -66,8 +66,10 @@ where
 	PF::Proposer: Proposer<B, Transaction = BI::Transaction>,
 	CIDP: CreateInherentDataProviders<B, ()>,
 {
-	async fn on_slot(&mut self, slot_info: SlotInfo<B>) -> Option<SlotResult<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>> {
-
+	async fn on_slot(
+		&mut self,
+		slot_info: SlotInfo<B>,
+	) -> Option<SlotResult<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>> {
 		//TODO should we consult a SyncOracle and not author if we're syncing?
 
 		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
@@ -76,12 +78,8 @@ where
 
 		// Call into the runtime to predict eligibility
 		//TODO maybe offer a skip prediction feature. Not tackling that yet.
-		let maybe_key = first_eligible_key::<B, C>(
-			self.client.clone(),
-			&*self.keystore,
-			parent,
-			slot,
-		);
+		let maybe_key =
+			first_eligible_key::<B, C>(self.client.clone(), &*self.keystore, parent, slot);
 
 		// Here I'll prototype using the public instead of the type public pair
 		// I've had a hunch that this is the correct way to do it for a little while
@@ -104,10 +102,7 @@ where
 
 		let inherent_data_providers = self
 			.create_inherent_data_providers
-			.create_inherent_data_providers(
-				parent.hash(),
-				(),
-			)
+			.create_inherent_data_providers(parent.hash(), ())
 			.await
 			.map_err(|e| {
 				tracing::error!(
@@ -130,10 +125,7 @@ where
 			.ok()?;
 
 		// Author the block
-		let proposer_future = self
-			.proposer_factory
-			.lock()
-			.init(&parent);
+		let proposer_future = self.proposer_factory.lock().init(&parent);
 
 		let proposer = proposer_future
 			.await
