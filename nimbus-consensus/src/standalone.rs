@@ -19,7 +19,7 @@
 //! (at least that's the plan for now).
 //! 
 
-use std::{pin::Pin, sync::Arc};
+use std::{pin::Pin, sync::Arc, time::Duration};
 use futures::prelude::*;
 use sp_api::NumberFor;
 use nimbus_primitives::{NimbusApi, NimbusId};
@@ -29,11 +29,14 @@ use sp_keystore::SyncCryptoStorePtr;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sc_telemetry::TelemetryHandle;
 use sp_keystore::SyncCryptoStore;
-use sp_consensus::{Environment, SyncOracle, Proposer};
+use sp_consensus::{Proposal, BlockOrigin, Environment, SyncOracle, Proposer};
 use sp_blockchain::HeaderBackend;
 use sc_client_api::BlockOf;
 use sp_api::ProvideRuntimeApi;
-use sp_api::BlockT;
+use sp_api::{BlockT, HeaderT};
+use tracing::error;
+use crate::{CompatibleDigestItem, LOG_TARGET, first_eligible_key, seal_header};
+use sp_application_crypto::ByteArray;
 
 
 // pub function start_nimbus_standalone(...) -> Result<impl Future<Output = ()>, sp_consensus::Error> {
@@ -57,15 +60,129 @@ pub struct NimbusStandaloneWorker {
 impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 	async fn on_slot(&mut self, slot_info: SlotInfo<B>) -> Option<SlotResult<B, Proof>> {
 
-		unimplemented!()
+
+		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
+		let slot = slot_info.slot.into() as u32;
+		let parent = &slot_info.chain_head;
 
 		// Call into the runtime to predict eligibility
+		//TODO maybe offer a skip prediction feature. Not tackling that yet.
+		let maybe_key = first_eligible_key::<B, Client>(
+			self.client.clone(),
+			&*self.keystore,
+			parent,
+			slot,
+		);
 
-		// Make the predigest
+		// Here I'll prototype using the public instead of the type public pair
+		// I've had a hunch that this is the correct way to do it for a little while
+		let nimbus_id = match maybe_key {
+			Some(p) => NimbusId::from_slice(&p.1)
+				.map_err(
+					|e| error!(target: LOG_TARGET, error = ?e, "Invalid Nimbus ID (wrong length)."),
+				)
+				.ok()?,
+			None => {
+				return None;
+			}
+		};
+
+		// Make the predigest and inherent data
+
+		let inherent_digests = sp_runtime::generic::Digest {
+			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
+		};
+
+		let inherent_data_providers = self
+			.create_inherent_data_providers
+			.create_inherent_data_providers(
+				parent,
+				(),
+			)
+			.await
+			.map_err(|e| {
+				tracing::error!(
+					target: LOG_TARGET,
+					error = ?e,
+					"Failed to create inherent data providers.",
+				)
+			})
+			.ok()?;
+
+		let inherent_data = inherent_data_providers
+			.create_inherent_data()
+			.map_err(|e| {
+				tracing::error!(
+					target: LOG_TARGET,
+					error = ?e,
+					"Failed to create inherent data.",
+				)
+			})
+			.ok();
 
 		// Author the block
+		let proposer_future = self.proposer_factory.lock().init(&parent);
 
-		// Sign it
+		let proposer = proposer_future
+			.await
+			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
+			.ok()?;
+
+		let Proposal {
+			block,
+			storage_changes,
+			proof,
+		} = proposer
+			.propose(
+				inherent_data,
+				inherent_digests,
+				//TODO: Fix this.
+				Duration::from_millis(500),
+				slot_info.block_size_limit,
+			)
+			.await
+			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Proposing failed."))
+			.ok()?;
+
+		// Sign the block
+		let (header, extrinsics) = block.clone().deconstruct();
+
+		let sig_digest = seal_header::<B>(&header, &*self.keystore, &nimbus_id.into());
+
+		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
+		block_import_params.post_digests.push(sig_digest.clone());
+		block_import_params.body = Some(extrinsics.clone());
+		block_import_params.state_action = sc_consensus::StateAction::ApplyChanges(
+			sc_consensus::StorageChanges::Changes(storage_changes),
+		);
+
+		// Import our own block
+		if let Err(err) = self
+			.block_import
+			.lock()
+			.await
+			.import_block(block_import_params, Default::default())
+			.await
+		{
+			error!(
+				target: LOG_TARGET,
+				at = ?parent.hash(),
+				error = ?err,
+				"Error importing built block.",
+			);
+
+			return None;
+		}
+
+		// Return the block WITH the seal for distribution around the network.
+		let mut post_header = header.clone();
+		post_header.digest_mut().logs.push(sig_digest.clone());
+		let post_block = B::new(post_header, extrinsics);
+
+		Some(SlotResult {
+			block: post_block,
+			proof,
+		})
 	}
 }
 
