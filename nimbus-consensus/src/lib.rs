@@ -356,13 +356,6 @@ where
 			}
 		};
 
-		let proposer_future = self.proposer_factory.lock().init(&parent);
-
-		let proposer = proposer_future
-			.await
-			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
-			.ok()?;
-
 		let nimbus_id = NimbusId::from_slice(&type_public_pair.1)
 			.map_err(
 				|e| error!(target: LOG_TARGET, error = ?e, "Invalid Nimbus ID (wrong length)."),
@@ -381,6 +374,13 @@ where
 		let inherent_digests = sp_runtime::generic::Digest {
 			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
 		};
+
+		let proposer_future = self.proposer_factory.lock().init(&parent);
+
+		let proposer = proposer_future
+			.await
+			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
+			.ok()?;
 
 		let Proposal {
 			block,
