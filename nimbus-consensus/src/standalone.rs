@@ -15,7 +15,7 @@
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
 //! This module contains the code necessary to use nimbus in a sovereign
-//! (non-parachain) blockchain node. It implements the SimpleSlotWorker trait
+//! (non-parachain) blockchain node. It implements the SlotWorker trait
 //! (at least that's the plan for now).
 //! 
 
@@ -23,7 +23,7 @@ use std::{pin::Pin, sync::Arc};
 use futures::prelude::*;
 use sp_api::NumberFor;
 use nimbus_primitives::{NimbusApi, NimbusId};
-use sc_consensus_slots::{self, BackoffAuthoringBlocksStrategy, SimpleSlotWorker, SlotProportion, SlotInfo};
+use sc_consensus_slots::{self, BackoffAuthoringBlocksStrategy, SlotWorker, SimpleSlotWorker, SlotProportion, SlotInfo, SlotResult};
 use sp_consensus_slots::Slot;
 use sp_keystore::SyncCryptoStorePtr;
 use sc_consensus::{BlockImport, BlockImportParams};
@@ -35,9 +35,47 @@ use sc_client_api::BlockOf;
 use sp_api::ProvideRuntimeApi;
 use sp_api::BlockT;
 
+
+// pub function start_nimbus_standalone(...) -> Result<impl Future<Output = ()>, sp_consensus::Error> {
+// 	let worker = ...;
+
+// 	Ok(sc_consensus_slots::start_slot_worker(
+// 		slot_duration,
+// 		select_chain,
+// 		worker,
+// 		sync_oracle,
+// 		create_inherent_data_providers,
+// 		can_author_with,
+// 	))
+// }
+
+pub struct NimbusStandaloneWorker {
+
+}
+
+#[async_trait::async_trait]
+impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
+	async fn on_slot(&mut self, slot_info: SlotInfo<B>) -> Option<SlotResult<B, Proof>> {
+
+		unimplemented!()
+
+		// Call into the runtime to predict eligibility
+
+		// Make the predigest
+
+		// Author the block
+
+		// Sign it
+	}
+}
+
+
+// Okay, so actually, I think implementing SlotWorker directly
+// will be more straightforward. Let's try that first
+/*
 /// The SlotWorker implementation for Nimbus standalone chains.
 /// This code is responsible running the authoring process on a
-/// fixed interval in the node service. It is analogous to the
+/// fixed interval in th)e node service. It is analogous to the
 /// Aura or Babe workers.
 pub struct NimbusStandaloneWorker<C, E, I, SO, L, BS> {
     // Fields are copied from Aura
@@ -232,6 +270,4 @@ where
 		// )
 	}
 }
-
-//TODO Do I need some simple async function that can be called from the service to start it?
-// For example, I think aura has a function that creates a clock and....
+*/
