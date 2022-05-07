@@ -19,12 +19,14 @@
 //! (at least that's the plan for now).
 //! 
 
-use std::{pin::Pin, sync::Arc, time::Duration};
+use std::{pin::Pin, sync::Arc, time::Duration, marker::PhantomData};
+use parking_lot::Mutex;
 use futures::prelude::*;
 use sp_api::NumberFor;
 use nimbus_primitives::{NimbusApi, NimbusId};
 use sc_consensus_slots::{self, BackoffAuthoringBlocksStrategy, SlotWorker, SimpleSlotWorker, SlotProportion, SlotInfo, SlotResult};
 use sp_consensus_slots::Slot;
+use sp_inherents::CreateInherentDataProviders;
 use sp_keystore::SyncCryptoStorePtr;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sc_telemetry::TelemetryHandle;
@@ -37,6 +39,7 @@ use sp_api::{BlockT, HeaderT};
 use tracing::error;
 use crate::{CompatibleDigestItem, LOG_TARGET, first_eligible_key, seal_header};
 use sp_application_crypto::ByteArray;
+use sp_inherents::InherentDataProvider;
 
 
 // pub function start_nimbus_standalone(...) -> Result<impl Future<Output = ()>, sp_consensus::Error> {
@@ -51,14 +54,28 @@ use sp_application_crypto::ByteArray;
 // 		can_author_with,
 // 	))
 // }
-
-pub struct NimbusStandaloneWorker {
-
+pub struct NimbusStandaloneWorker<B, C, PF, BI, CIDP> {
+	client: Arc<C>,
+	block_import: BI,
+	proposer_factory: Arc<Mutex<PF>>,
+	keystore: SyncCryptoStorePtr,
+	// TODO, why does AuraWorker not have CIDP?
+	create_inherent_data_providers: Arc<CIDP>,
+	_phantom: PhantomData<B>,
 }
 
 #[async_trait::async_trait]
-impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
-	async fn on_slot(&mut self, slot_info: SlotInfo<B>) -> Option<SlotResult<B, Proof>> {
+impl<B, C, PF, BI, CIDP> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof> for NimbusStandaloneWorker<B, C, PF, BI, CIDP>
+where
+	B: BlockT,
+	BI: BlockImport<B>,
+	C: ProvideRuntimeApi<B>,
+	C::Api: NimbusApi<B>,
+	PF: Environment<B> + Send + Sync + 'static,
+	PF::Proposer: Proposer<B, Transaction = BI::Transaction>,
+	CIDP: CreateInherentDataProviders<B, ()>,
+{
+	async fn on_slot(&mut self, slot_info: SlotInfo<B>) -> Option<SlotResult<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>> {
 
 
 		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
@@ -67,7 +84,7 @@ impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 
 		// Call into the runtime to predict eligibility
 		//TODO maybe offer a skip prediction feature. Not tackling that yet.
-		let maybe_key = first_eligible_key::<B, Client>(
+		let maybe_key = first_eligible_key::<B, C>(
 			self.client.clone(),
 			&*self.keystore,
 			parent,
@@ -96,7 +113,7 @@ impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 		let inherent_data_providers = self
 			.create_inherent_data_providers
 			.create_inherent_data_providers(
-				parent,
+				parent.hash(),
 				(),
 			)
 			.await
@@ -118,10 +135,13 @@ impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 					"Failed to create inherent data.",
 				)
 			})
-			.ok();
+			.ok()?;
 
 		// Author the block
-		let proposer_future = self.proposer_factory.lock().init(&parent);
+		let proposer_future = self
+			.proposer_factory
+			.lock()
+			.init(&parent);
 
 		let proposer = proposer_future
 			.await
@@ -159,8 +179,6 @@ impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 		// Import our own block
 		if let Err(err) = self
 			.block_import
-			.lock()
-			.await
 			.import_block(block_import_params, Default::default())
 			.await
 		{
@@ -181,7 +199,7 @@ impl<B: BlockT, Proof> SlotWorker<B, Proof> for NimbusStandaloneWorker {
 
 		Some(SlotResult {
 			block: post_block,
-			proof,
+			storage_proof: proof,
 		})
 	}
 }
