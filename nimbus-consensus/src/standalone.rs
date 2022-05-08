@@ -83,7 +83,7 @@ where
 
 	Ok(sc_consensus_slots::start_slot_worker(
 		slot_duration,
-		select_chain,
+		select_chain, // The second parameter is called "client" in the function definition, but its trait bound is `SelectChain` and Aura also passes a select chain here, so I believe this is right.
 		worker,
 		sync_oracle,
 		create_inherent_data_providers,
