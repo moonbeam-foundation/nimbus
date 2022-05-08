@@ -102,7 +102,7 @@ impl<B, C, PF, BI> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B
 where
 	B: BlockT,
 	BI: BlockImport<B> + Send + Sync + 'static,
-	C: ProvideRuntimeApi<B> + Send + Sync + 'static,
+	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: NimbusApi<B>,
 	C::Api: AuthorFilterAPI<B, NimbusId>, // Grrrrr. Remove this after https://github.com/PureStake/nimbus/pull/30 lands
 	PF: Environment<B> + Send + Sync + 'static,
