@@ -17,9 +17,12 @@
 //! This module contains the code necessary to use nimbus in a sovereign
 //! (non-parachain) blockchain node. It implements the SlotWorker trait.
 
+//TODO Am I supposed to be using a select chain rule myself here?
+// I haven't seemed to use it yet. And what blocks are we actually authoring on anyway?
+
 use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
 use nimbus_primitives::{NimbusApi, NimbusId, AuthorFilterAPI};
-use parking_lot::Mutex;
+// use parking_lot::Mutex;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sc_consensus_slots::{self, SlotInfo, SlotResult, SlotWorker};
 use sp_api::ProvideRuntimeApi;
@@ -27,36 +30,78 @@ use sp_api::{BlockT, HeaderT};
 use sp_application_crypto::ByteArray;
 use sp_consensus::{BlockOrigin, Environment, Proposal, Proposer};
 use sp_inherents::CreateInherentDataProviders;
-use sp_inherents::InherentDataProvider;
+// use sp_inherents::InherentDataProvider;
 use sp_keystore::SyncCryptoStorePtr;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
+use sc_consensus_slots::InherentDataProviderExt;
+use futures::Future;
+use sp_consensus::CanAuthorWith;
+use sp_consensus::SyncOracle;
+// use sc_client_api::BlockOf;
+use sp_consensus::SelectChain;
+use sp_consensus_slots::SlotDuration;
 
-// pub function start_nimbus_standalone(...) -> Result<impl Future<Output = ()>, sp_consensus::Error> {
-// 	let worker = ...;
+/// Start the nimbus standalone worker. The returned future should be run in a futures executor.
+pub fn start_nimbus_standalone<B, C, SC, BI, PF, CIDP, SO, CAW, Error>(
+	client: Arc<C>,
+	select_chain: SC,
+	block_import: BI,
+	proposer_factory: PF,
+	create_inherent_data_providers: CIDP,
+	keystore: SyncCryptoStorePtr,
+	sync_oracle: SO,
+	can_author_with: CAW,
+) -> Result<impl Future<Output = ()>, sp_consensus::Error>
+where
+	B: BlockT,
+	C: ProvideRuntimeApi<B> + Send + Sync,
+	C::Api: NimbusApi<B>,
+	C::Api: AuthorFilterAPI<B, NimbusId>, // Grrrrr. Remove this after https://github.com/PureStake/nimbus/pull/30 lands
+	SC: SelectChain<B>,
+	BI: BlockImport<B, Transaction = sp_api::TransactionFor<C, B>> + Send + Sync + 'static,
+	PF: Environment<B, Error = Error> + Send + Sync + 'static,
+	PF::Proposer: Proposer<B, Error = Error, Transaction = sp_api::TransactionFor<C, B>>,
+	CIDP: CreateInherentDataProviders<B, ()> + Send,
+	CIDP::InherentDataProviders: InherentDataProviderExt + Send,
+	SO: SyncOracle + Send + Sync + Clone,
+	CAW: CanAuthorWith<B> + Send,
+	Error: std::error::Error + Send + From<sp_consensus::Error> + 'static,
+{
+	// TODO This should match what the runtime expects.
+	// To enforce that we'll need a runtime api. Or maybe we can leave it up to the node operator...
+	// In aura they get it from the genesis
+	let slot_duration = SlotDuration::from_millis(6000);
 
-// 	Ok(sc_consensus_slots::start_slot_worker(
-// 		slot_duration,
-// 		select_chain,
-// 		worker,
-// 		sync_oracle,
-// 		create_inherent_data_providers,
-// 		can_author_with,
-// 	))
-// }
-pub struct NimbusStandaloneWorker<B, C, PF, BI, CIDP> {
+	let worker = NimbusStandaloneWorker {
+		client: client.clone(),
+		block_import,
+		proposer_factory,
+		keystore,
+		_phantom: Default::default(),
+	};
+
+	Ok(sc_consensus_slots::start_slot_worker(
+		slot_duration,
+		select_chain,
+		worker,
+		sync_oracle,
+		create_inherent_data_providers,
+		can_author_with,
+	))
+}
+
+pub struct NimbusStandaloneWorker<B, C, PF, BI> {
 	client: Arc<C>,
 	block_import: BI,
-	proposer_factory: Arc<Mutex<PF>>,
+	proposer_factory: PF,
 	keystore: SyncCryptoStorePtr,
-	// TODO, why does AuraWorker not have CIDP?
-	create_inherent_data_providers: Arc<CIDP>,
 	_phantom: PhantomData<B>,
 }
 
 #[async_trait::async_trait]
-impl<B, C, PF, BI, CIDP> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>
-	for NimbusStandaloneWorker<B, C, PF, BI, CIDP>
+impl<B, C, PF, BI> SlotWorker<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>
+	for NimbusStandaloneWorker<B, C, PF, BI>
 where
 	B: BlockT,
 	BI: BlockImport<B> + Send + Sync + 'static,
@@ -65,7 +110,7 @@ where
 	C::Api: AuthorFilterAPI<B, NimbusId>, // Grrrrr. Remove this after https://github.com/PureStake/nimbus/pull/30 lands
 	PF: Environment<B> + Send + Sync + 'static,
 	PF::Proposer: Proposer<B, Transaction = BI::Transaction>,
-	CIDP: CreateInherentDataProviders<B, ()>,
+	// CIDP: CreateInherentDataProviders<B, ()>,
 {
 	async fn on_slot(
 		&mut self,
@@ -104,32 +149,8 @@ where
 			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())],
 		};
 
-		let inherent_data_providers = self
-			.create_inherent_data_providers
-			.create_inherent_data_providers(parent.hash(), ())
-			.await
-			.map_err(|e| {
-				tracing::error!(
-					target: LOG_TARGET,
-					error = ?e,
-					"Failed to create inherent data providers.",
-				)
-			})
-			.ok()?;
-
-		let inherent_data = inherent_data_providers
-			.create_inherent_data()
-			.map_err(|e| {
-				tracing::error!(
-					target: LOG_TARGET,
-					error = ?e,
-					"Failed to create inherent data.",
-				)
-			})
-			.ok()?;
-
 		// Author the block
-		let proposer_future = self.proposer_factory.lock().init(&parent);
+		let proposer_future = self.proposer_factory.init(&parent);
 
 		let proposer = proposer_future
 			.await
@@ -142,7 +163,7 @@ where
 			proof,
 		} = proposer
 			.propose(
-				inherent_data,
+				slot_info.inherent_data,
 				inherent_digests,
 				//TODO: Fix this.
 				Duration::from_millis(500),
