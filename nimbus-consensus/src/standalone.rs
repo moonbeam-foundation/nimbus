@@ -18,7 +18,7 @@
 //! (non-parachain) blockchain node. It implements the SlotWorker trait.
 
 use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
-use nimbus_primitives::{NimbusApi, NimbusId};
+use nimbus_primitives::{NimbusApi, NimbusId, AuthorFilterAPI};
 use parking_lot::Mutex;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sc_consensus_slots::{self, SlotInfo, SlotResult, SlotWorker};
@@ -59,9 +59,10 @@ impl<B, C, PF, BI, CIDP> SlotWorker<B, <<PF as Environment<B>>::Proposer as Prop
 	for NimbusStandaloneWorker<B, C, PF, BI, CIDP>
 where
 	B: BlockT,
-	BI: BlockImport<B>,
-	C: ProvideRuntimeApi<B>,
+	BI: BlockImport<B> + Send + Sync + 'static,
+	C: ProvideRuntimeApi<B> + Send + Sync + 'static,
 	C::Api: NimbusApi<B>,
+	C::Api: AuthorFilterAPI<B, NimbusId>, // Grrrrr. Remove this after https://github.com/PureStake/nimbus/pull/30 lands
 	PF: Environment<B> + Send + Sync + 'static,
 	PF::Proposer: Proposer<B, Transaction = BI::Transaction>,
 	CIDP: CreateInherentDataProviders<B, ()>,
@@ -73,7 +74,10 @@ where
 		//TODO should we consult a SyncOracle and not author if we're syncing?
 
 		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
-		let slot = slot_info.slot.into() as u32;
+		let slot: u32 = {
+			let slot_u64: u64 = slot_info.slot.into();
+			slot_u64 as u32
+		};
 		let parent = &slot_info.chain_head;
 
 		// Call into the runtime to predict eligibility
@@ -97,7 +101,7 @@ where
 		// Make the predigest and inherent data
 
 		let inherent_digests = sp_runtime::generic::Digest {
-			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
+			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())],
 		};
 
 		let inherent_data_providers = self
