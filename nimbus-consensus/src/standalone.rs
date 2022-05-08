@@ -78,7 +78,7 @@ where
 		block_import,
 		proposer_factory,
 		keystore,
-		_phantom: Default::default(),
+		_phantom: PhantomData::<B>,
 	};
 
 	Ok(sc_consensus_slots::start_slot_worker(
