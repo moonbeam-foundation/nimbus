@@ -113,8 +113,7 @@ where
 		&mut self,
 		slot_info: SlotInfo<B>,
 	) -> Option<SlotResult<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>> {
-		//TODO should we consult a SyncOracle and not author if we're syncing?
-
+		
 		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
 		let slot: u32 = {
 			let slot_u64: u64 = slot_info.slot.into();
