@@ -25,6 +25,11 @@ log = "0.4.14"
 serde = { version = "1.0.119", features = [ "derive" ] }
 flume = "0.10.9"
 
+# Only used for inherent adapter hack. Remove them once that has a better home.
+async-trait = "0.1.42"
+sc-consensus-slots = { git = "https://github.com/paritytech/substrate", branch = "master" }
+sp-consensus = { git = "https://github.com/paritytech/substrate", branch = "master" }
+
 # RPC related Dependencies
 jsonrpc-core = "18.0.0"
 

@@ -642,7 +642,7 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 	};
 
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		network,
+		network: network.clone(),
 		client: client.clone(),
 		keystore: keystore_container.sync_keystore(),
 		task_manager: &mut task_manager,
@@ -681,6 +681,9 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 		let (_downward_xcm_sender, downward_xcm_receiver) = flume::bounded::<Vec<u8>>(100);
 		let (_hrmp_xcm_sender, hrmp_xcm_receiver) = flume::bounded::<(ParaId, Vec<u8>)>(100);
 
+		let can_author_with =
+			sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone());
+		
 		let authorship_future = start_nimbus_standalone(
 			client.clone(),
 			select_chain,
@@ -689,7 +692,7 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 			//TODO, I didn't pass the pool here. Does something know how to get the transactions it needs?
 			// Instant seal took the pool, hopefully just for triggers... Actually Manual seal takes it too...
 			keystore_container.sync_keystore(),
-			sync_oracle,
+			network.clone(),
 			can_author_with,
 			// This is the create_inherent_data_providers function. Maybe positional arguments are not sufficient here.
 			move |block, _extra_args| {
@@ -718,7 +721,7 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 						raw_horizontal_messages: hrmp_xcm_receiver.drain().collect(),
 					};
 
-					Ok((time, mocked_parachain))
+					Ok(SlotCompatibleInherentDataProviders{time, mocked_parachain})
 				}
 			},
 		)?;
@@ -732,4 +735,45 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 
 	network_starter.start_network();
 	Ok(task_manager)
+}
+
+/// This is a hack because we need to implement https://crates.parity.io/sc_consensus_slots/trait.InherentDataProviderExt.html
+/// This trait allows sc-consensus-slots to extract the timestamp and slot from the inherents.
+/// The only problem is that the provided impls are pretty basic and assume that the timestamp comes from the first
+/// inherent and the slot fomr the second.
+/// In our case we only explicitly provide a timestamp, and the slot is calculated from it.
+struct SlotCompatibleInherentDataProviders {
+	time: sp_timestamp::InherentDataProvider,
+	mocked_parachain: MockValidationDataInherentDataProvider,
+}
+
+use sp_inherents::{InherentData, InherentDataProvider, InherentIdentifier};
+#[async_trait::async_trait]
+impl InherentDataProvider for SlotCompatibleInherentDataProviders {
+	fn provide_inherent_data(
+        &self, 
+        inherent_data: &mut InherentData
+    ) -> Result<(), sp_inherents::Error> {
+		InherentDataProvider::provide_inherent_data((time, mocked_parachain), inherent_data)
+	}
+
+	async fn try_handle_error(
+		&self,
+		identifier: &InherentIdentifier,
+		_error: &[u8],
+	) -> Option<Result<(), sp_inherents::Error>> {
+		InherentDataProvider::try_handle_error((time, mocked_parachain), identifier)
+	}
+}
+
+impl sc_consensus_slots::InherentDataProviderExt for SlotCompatibleInherentDataProviders {
+	fn timestamp(&self) -> Timestamp {
+		*self.time.0
+	}
+
+    fn slot(&self) -> Slot {
+		// TODO yuck. Here is another place were we hardcode the 6 second block time.
+		let slot_number = self.timestamp() % 6000; //TODO what is the resolution of self.timestamp?
+		Slot(slot_number)
+	}
 }
