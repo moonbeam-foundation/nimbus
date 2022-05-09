@@ -17,9 +17,6 @@
 //! This module contains the code necessary to use nimbus in a sovereign
 //! (non-parachain) blockchain node. It implements the SlotWorker trait.
 
-//TODO Am I supposed to be using a select chain rule myself here?
-// I haven't seemed to use it yet. And what blocks are we actually authoring on anyway?
-
 use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
 use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NimbusId};
 use sc_consensus::{BlockImport, BlockImportParams};
