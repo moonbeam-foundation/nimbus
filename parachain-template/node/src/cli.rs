@@ -37,6 +37,9 @@ pub enum Subcommand {
 	/// Run Instant Seal
 	RunInstantSeal(sc_cli::RunCmd),
 
+	/// Run Standalone Sovereign node
+	RunStandalone(sc_cli::RunCmd),
+
 	/// Sub-commands concerned with benchmarking.
 	/// The pallet benchmarking moved to the `pallet` sub-command.
 	#[clap(subcommand)]

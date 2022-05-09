@@ -268,6 +268,14 @@ pub fn run() -> Result<()> {
 				crate::service::start_instant_seal_node(config).map_err(sc_cli::Error::Service)
 			})
 		}
+		//TODO I wonder if it would be better to refactor this into multiple services (instant seal, standalone, parachain) that each have their own purge, etc
+		// But for now I'll just try to get something running
+		Some(Subcommand::RunStandalone(run_cmd)) => {
+			let runner = cli.create_runner(run_cmd)?;
+			runner.run_node_until_exit(|config| async move {
+				crate::service::start_standalone_node(config).map_err(sc_cli::Error::Service)
+			})
+		}
 		None => {
 			let runner = cli.create_runner(&cli.run.normalize())?;
 			let collator_options = cli.run.collator_options();

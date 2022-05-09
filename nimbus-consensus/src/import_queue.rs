@@ -185,14 +185,15 @@ where
 	}
 }
 
-/// Start an import queue for a Cumulus collator that does not uses any special authoring logic.
+/// Start an import queue for nimbus consensus
+///
+/// The block import object provided should be the `NimbusBlockImport` or a wrapper of it.
 pub fn import_queue<Client, Block: BlockT, I, CIDP>(
 	client: Arc<Client>,
 	block_import: I,
 	create_inherent_data_providers: CIDP,
 	spawner: &impl sp_core::traits::SpawnEssentialNamed,
 	registry: Option<&substrate_prometheus_endpoint::Registry>,
-	parachain: bool,
 ) -> ClientResult<BasicQueue<Block, I::Transaction>>
 where
 	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
@@ -209,7 +210,7 @@ where
 
 	Ok(BasicQueue::new(
 		verifier,
-		Box::new(NimbusBlockImport::new(block_import, parachain)),
+		Box::new(block_import),
 		None,
 		spawner,
 		registry,
@@ -225,6 +226,7 @@ where
 ///
 /// There may be additional nimbus-specific logic here in the future, but for now it is
 /// only the conditional parachain logic
+#[derive(Clone)]
 pub struct NimbusBlockImport<I> {
 	inner: I,
 	parachain_context: bool,

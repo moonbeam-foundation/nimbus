@@ -24,7 +24,7 @@ use cumulus_client_consensus_common::{
 	ParachainBlockImport, ParachainCandidate, ParachainConsensus,
 };
 use cumulus_primitives_core::{relay_chain::v2::Hash as PHash, ParaId, PersistedValidationData};
-pub use import_queue::import_queue;
+pub use import_queue::{NimbusBlockImport, import_queue};
 use log::{debug, info, warn};
 use nimbus_primitives::{
 	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
@@ -47,8 +47,8 @@ use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
 mod import_queue;
 mod manual_seal;
-//TODO, maybe only export specific parts of it.
-pub mod standalone;
+mod standalone;
+pub use standalone::start_nimbus_standalone;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
 
 const LOG_TARGET: &str = "filtering-consensus";

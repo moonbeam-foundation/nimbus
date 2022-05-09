@@ -42,10 +42,10 @@ pub fn start_nimbus_standalone<B, C, SC, BI, PF, CIDP, SO, CAW, Error>(
 	select_chain: SC,
 	block_import: BI,
 	proposer_factory: PF,
-	create_inherent_data_providers: CIDP,
 	keystore: SyncCryptoStorePtr,
 	sync_oracle: SO,
 	can_author_with: CAW,
+	create_inherent_data_providers: CIDP,
 ) -> Result<impl Future<Output = ()>, sp_consensus::Error>
 where
 	B: BlockT,
