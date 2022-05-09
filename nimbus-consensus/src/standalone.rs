@@ -107,7 +107,6 @@ where
 	C::Api: AuthorFilterAPI<B, NimbusId>, // Grrrrr. Remove this after https://github.com/PureStake/nimbus/pull/30 lands
 	PF: Environment<B> + Send + Sync + 'static,
 	PF::Proposer: Proposer<B, Transaction = BI::Transaction>,
-	// CIDP: CreateInherentDataProviders<B, ()>,
 {
 	async fn on_slot(
 		&mut self,
@@ -139,8 +138,7 @@ where
 			}
 		};
 
-		// Make the predigest and inherent data
-
+		// Make the predigest (sc-consensus-slots tackles the inherent data)
 		let inherent_digests = sp_runtime::generic::Digest {
 			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())],
 		};
