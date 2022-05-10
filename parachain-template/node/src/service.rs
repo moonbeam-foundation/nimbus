@@ -9,7 +9,8 @@ use parachain_template_runtime::{
 };
 
 use nimbus_consensus::{
-	BuildNimbusConsensusParams, NimbusBlockImport, NimbusConsensus, NimbusManualSealConsensusDataProvider, start_nimbus_standalone,
+	start_nimbus_standalone, BuildNimbusConsensusParams, NimbusBlockImport, NimbusConsensus,
+	NimbusManualSealConsensusDataProvider,
 };
 
 // Cumulus Imports
@@ -30,6 +31,7 @@ use cumulus_relay_chain_rpc_interface::RelayChainRPCInterface;
 use polkadot_service::CollatorPair;
 
 // Substrate Imports
+use sc_client_api::ExecutorProvider;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
 use sc_network::NetworkService;
@@ -39,7 +41,6 @@ use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
-use sc_client_api::ExecutorProvider;
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
@@ -79,9 +80,11 @@ pub fn new_partial<RuntimeApi, Executor>(
 		>,
 		(
 			//TODO I didn't expect to need this Arc. It looks different than Babe's in the Substrate node.
-			NimbusBlockImport<Arc<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>>>,
+			NimbusBlockImport<
+				Arc<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>>,
+			>,
 			Option<Telemetry>,
-			Option<TelemetryWorkerHandle>
+			Option<TelemetryWorkerHandle>,
 		),
 	>,
 	sc_service::Error,
@@ -674,7 +677,7 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 		// SECURITY WARNING: It is not secure to have this xcm stuff in the runtime for a standalone chain.
 		// If you are using this template as the basis for a sovereign chain, you must remove the XCM stuff
 		// from FROM THE RUNTIME and also for here.
-		// 
+		//
 		// We'll leave this code in the template for several reasons:
 		// 1. A single template runtime improves maintainability
 		// 2. Parachain developers will test their parachain runtime in sovereign mode (an instant seal mode)
@@ -689,7 +692,7 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 
 		let can_author_with =
 			sp_consensus::CanAuthorWithNativeVersion::new(client.executor().clone());
-		
+
 		let authorship_future = start_nimbus_standalone(
 			client.clone(),
 			select_chain,
@@ -727,7 +730,10 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 						raw_horizontal_messages: hrmp_xcm_receiver.drain().collect(),
 					};
 
-					Ok(SlotCompatibleInherentDataProviders{time, mocked_parachain})
+					Ok(SlotCompatibleInherentDataProviders {
+						time,
+						mocked_parachain,
+					})
 				}
 			},
 		)?;
@@ -754,15 +760,15 @@ struct SlotCompatibleInherentDataProviders {
 	mocked_parachain: MockValidationDataInherentDataProvider,
 }
 
-use sp_timestamp::Timestamp;
 use sp_consensus_slots::Slot;
 use sp_inherents::{InherentData, InherentDataProvider, InherentIdentifier};
+use sp_timestamp::Timestamp;
 #[async_trait::async_trait]
 impl InherentDataProvider for SlotCompatibleInherentDataProviders {
 	fn provide_inherent_data(
-        &self, 
-        inherent_data: &mut InherentData
-    ) -> Result<(), sp_inherents::Error> {
+		&self,
+		inherent_data: &mut InherentData,
+	) -> Result<(), sp_inherents::Error> {
 		// This was my attempt at doing this somewhat elegantly, but I ran into ownership issues.
 		// InherentDataProvider::provide_inherent_data(&(self.time, self.mocked_parachain), inherent_data)
 
@@ -791,7 +797,7 @@ impl sc_consensus_slots::InherentDataProviderExt for SlotCompatibleInherentDataP
 		self.time.timestamp()
 	}
 
-    fn slot(&self) -> Slot {
+	fn slot(&self) -> Slot {
 		// TODO yuck. Here is another place were we hardcode the 6 second block time.
 		let slot_number = *self.timestamp() % 6000;
 		slot_number.into()

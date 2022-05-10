@@ -24,7 +24,7 @@ use cumulus_client_consensus_common::{
 	ParachainBlockImport, ParachainCandidate, ParachainConsensus,
 };
 use cumulus_primitives_core::{relay_chain::v2::Hash as PHash, ParaId, PersistedValidationData};
-pub use import_queue::{NimbusBlockImport, import_queue};
+pub use import_queue::{import_queue, NimbusBlockImport};
 use log::{debug, info, warn};
 use nimbus_primitives::{
 	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
@@ -48,8 +48,8 @@ use tracing::error;
 mod import_queue;
 mod manual_seal;
 mod standalone;
-pub use standalone::start_nimbus_standalone;
 pub use manual_seal::NimbusManualSealConsensusDataProvider;
+pub use standalone::start_nimbus_standalone;
 
 const LOG_TARGET: &str = "filtering-consensus";
 

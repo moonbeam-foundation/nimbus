@@ -18,23 +18,23 @@
 //! (non-parachain) blockchain node. It implements the SlotWorker trait.
 
 use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
+use futures::Future;
 use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NimbusId};
 use sc_consensus::{BlockImport, BlockImportParams};
+use sc_consensus_slots::InherentDataProviderExt;
 use sc_consensus_slots::{self, SlotInfo, SlotResult, SlotWorker};
 use sp_api::ProvideRuntimeApi;
 use sp_api::{BlockT, HeaderT};
 use sp_application_crypto::ByteArray;
-use sp_consensus::{BlockOrigin, Environment, Proposal, Proposer};
-use sp_inherents::CreateInherentDataProviders;
-use futures::Future;
-use sc_consensus_slots::InherentDataProviderExt;
 use sp_consensus::CanAuthorWith;
+use sp_consensus::SelectChain;
 use sp_consensus::SyncOracle;
+use sp_consensus::{BlockOrigin, Environment, Proposal, Proposer};
+use sp_consensus_slots::SlotDuration;
+use sp_inherents::CreateInherentDataProviders;
 use sp_keystore::SyncCryptoStorePtr;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
-use sp_consensus::SelectChain;
-use sp_consensus_slots::SlotDuration;
 
 /// Start the nimbus standalone worker. The returned future should be run in a futures executor.
 pub fn start_nimbus_standalone<B, C, SC, BI, PF, CIDP, SO, CAW, Error>(
@@ -109,7 +109,6 @@ where
 		&mut self,
 		slot_info: SlotInfo<B>,
 	) -> Option<SlotResult<B, <<PF as Environment<B>>::Proposer as Proposer<B>>::Proof>> {
-		
 		// Here's the rough seam between nimnus's simple u32 and Substrate's `struct Slot<u64>`
 		let slot: u32 = {
 			let slot_u64: u64 = slot_info.slot.into();
