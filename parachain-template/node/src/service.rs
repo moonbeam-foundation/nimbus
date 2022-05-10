@@ -39,6 +39,7 @@ use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
+use sc_client_api::ExecutorProvider;
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
@@ -76,7 +77,12 @@ pub fn new_partial<RuntimeApi, Executor>(
 			Block,
 			TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>,
 		>,
-		(NimbusBlockImport<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>>, Option<Telemetry>, Option<TelemetryWorkerHandle>),
+		(
+			//TODO I didn't expect to need this Arc. It looks different than Babe's in the Substrate node.
+			NimbusBlockImport<Arc<TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>>>,
+			Option<Telemetry>,
+			Option<TelemetryWorkerHandle>
+		),
 	>,
 	sc_service::Error,
 >
@@ -743,10 +749,13 @@ pub fn start_standalone_node(config: Configuration) -> Result<TaskManager, sc_se
 /// inherent and the slot fomr the second.
 /// In our case we only explicitly provide a timestamp, and the slot is calculated from it.
 struct SlotCompatibleInherentDataProviders {
+	// I could put a slot duration field in here. Then in the service we pass the same duration....
 	time: sp_timestamp::InherentDataProvider,
 	mocked_parachain: MockValidationDataInherentDataProvider,
 }
 
+use sp_timestamp::Timestamp;
+use sp_consensus_slots::Slot;
 use sp_inherents::{InherentData, InherentDataProvider, InherentIdentifier};
 #[async_trait::async_trait]
 impl InherentDataProvider for SlotCompatibleInherentDataProviders {
@@ -754,26 +763,37 @@ impl InherentDataProvider for SlotCompatibleInherentDataProviders {
         &self, 
         inherent_data: &mut InherentData
     ) -> Result<(), sp_inherents::Error> {
-		InherentDataProvider::provide_inherent_data((time, mocked_parachain), inherent_data)
+		// This was my attempt at doing this somewhat elegantly, but I ran into ownership issues.
+		// InherentDataProvider::provide_inherent_data(&(self.time, self.mocked_parachain), inherent_data)
+
+		// Here's my next attempt based on how this trait is implemented for tuples.
+		// We pass the same buffer to both of the data providers. I guess they append it...
+		self.time.provide_inherent_data(inherent_data)?;
+		self.mocked_parachain.provide_inherent_data(inherent_data)?;
+
+		Ok(())
 	}
 
 	async fn try_handle_error(
 		&self,
-		identifier: &InherentIdentifier,
+		_identifier: &InherentIdentifier,
 		_error: &[u8],
 	) -> Option<Result<(), sp_inherents::Error>> {
-		InherentDataProvider::try_handle_error((time, mocked_parachain), identifier)
+		// This also didn't work for ownership reasons.
+		// InherentDataProvider::try_handle_error(&(self.time, self.mocked_parachain), identifier, error).await
+		//TODO We are not doing any error handling here, and even suppressing the internal error handling of the individual data providers.
+		None
 	}
 }
 
 impl sc_consensus_slots::InherentDataProviderExt for SlotCompatibleInherentDataProviders {
 	fn timestamp(&self) -> Timestamp {
-		*self.time.0
+		self.time.timestamp()
 	}
 
     fn slot(&self) -> Slot {
 		// TODO yuck. Here is another place were we hardcode the 6 second block time.
-		let slot_number = self.timestamp() % 6000; //TODO what is the resolution of self.timestamp?
-		Slot(slot_number)
+		let slot_number = *self.timestamp() % 6000;
+		slot_number.into()
 	}
 }
