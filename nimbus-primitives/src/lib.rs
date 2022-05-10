@@ -21,6 +21,9 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use core::marker::PhantomData;
+
+use frame_support::traits::{Get, UnixTime};
 use sp_application_crypto::KeyTypeId;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
@@ -67,14 +70,18 @@ impl<T: BlockNumberProvider<BlockNumber = u32>> SlotBeacon for T {
 	}
 }
 
-/// PLANNED: A SlotBeacon that starts a new slot based on the timestamp. Behaviorally, this is
+/// A SlotBeacon that starts a new slot based on the timestamp. Behaviorally, this is
 /// similar to what aura, babe and company do. Implementation-wise it is different because it
 /// depends on the timestamp pallet for its notion of time.
-pub struct IntervalBeacon;
+pub struct TimeBasedSlots<C, D>(PhantomData<(C, D)>);
 
-impl SlotBeacon for IntervalBeacon {
+impl<C: UnixTime, D: Get<core::time::Duration>> SlotBeacon for TimeBasedSlots<C, D> {
 	fn slot() -> u32 {
-		todo!()
+		let now = C::now().as_millis();
+		let duration = D::get().as_millis();
+		let slot = now % duration;
+
+		slot as u32
 	}
 }
 
