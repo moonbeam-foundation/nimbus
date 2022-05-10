@@ -6,6 +6,7 @@
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
+use core::time::Duration;
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -16,7 +17,7 @@ use sp_runtime::{
 	ApplyExtrinsicResult, MultiSignature,
 };
 
-pub use nimbus_primitives::NimbusId;
+pub use nimbus_primitives::{NimbusId, TimeBasedSlots};
 pub use pallet_author_slot_filter::EligibilityValue;
 
 use sp_std::prelude::*;
@@ -546,9 +547,15 @@ impl cumulus_pallet_dmp_queue::Config for Runtime {
 	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
 }
 
+parameter_types! {
+	pub const SlotDuration: Duration = Duration::from_millis(6000);
+}
+
 impl pallet_author_inherent::Config for Runtime {
-	// We start a new slot each time we see a new relay block.
-	type SlotBeacon = cumulus_pallet_parachain_system::RelaychainBlockNumberProvider<Self>;
+	// Typically the relay-chain block number is used as the slot beacon for parachains.
+	// But I don't see any reason time based slots couldn't work there.
+	// (Although it would not be production ready until after asynchronous backing)
+	type SlotBeacon = TimeBasedSlots<Timestamp, SlotDuration>;
 	type AccountLookup = PotentialAuthorSet;
 	type EventHandler = ();
 	type CanAuthor = AuthorFilter;
