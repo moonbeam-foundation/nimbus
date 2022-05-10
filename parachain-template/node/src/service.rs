@@ -799,7 +799,7 @@ impl sc_consensus_slots::InherentDataProviderExt for SlotCompatibleInherentDataP
 
 	fn slot(&self) -> Slot {
 		// TODO yuck. Here is another place were we hardcode the 6 second block time.
-		let slot_number = *self.timestamp() % 6000;
+		let slot_number = *self.timestamp() / 6000;
 		slot_number.into()
 	}
 }

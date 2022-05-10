@@ -79,7 +79,7 @@ impl<C: UnixTime, D: Get<core::time::Duration>> SlotBeacon for TimeBasedSlots<C,
 	fn slot() -> u32 {
 		let now = C::now().as_millis();
 		let duration = D::get().as_millis();
-		let slot = now % duration;
+		let slot = now / duration;
 
 		slot as u32
 	}
