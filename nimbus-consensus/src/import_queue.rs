@@ -258,6 +258,14 @@ where
 		self.inner.check_block(block).await
 	}
 
+	//TODO Is this even useful at all?
+	// Why not just use the parachain block import for parachain context and nothing for the
+	// standalone context? This is the same as Aura.
+	// In hindsight, creating a nimbus block import was probably a bad idea.
+	//
+	// Also, the fork choice strategy is set correctly in both the individual consensus workers
+	// So we don't even need parachain consensus to override it. That is only necessary for Aura
+	// Where they share the same SlotWorker implementation for parachain and standalone.
 	async fn import_block(
 		&mut self,
 		mut block_import_params: sc_consensus::BlockImportParams<Block, Self::Transaction>,

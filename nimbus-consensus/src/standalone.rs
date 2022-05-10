@@ -20,7 +20,7 @@
 use crate::{first_eligible_key, seal_header, CompatibleDigestItem, LOG_TARGET};
 use futures::Future;
 use nimbus_primitives::{AuthorFilterAPI, NimbusApi, NimbusId};
-use sc_consensus::{BlockImport, BlockImportParams};
+use sc_consensus::{BlockImport, BlockImportParams, ForkChoiceStrategy};
 use sc_consensus_slots::InherentDataProviderExt;
 use sc_consensus_slots::{self, SlotInfo, SlotResult, SlotWorker};
 use sp_api::ProvideRuntimeApi;
@@ -174,6 +174,7 @@ where
 		block_import_params.state_action = sc_consensus::StateAction::ApplyChanges(
 			sc_consensus::StorageChanges::Changes(storage_changes),
 		);
+		block_import_params.fork_choice = Some(ForkChoiceStrategy::LongestChain);
 
 		// Import our own block
 		if let Err(err) = self
