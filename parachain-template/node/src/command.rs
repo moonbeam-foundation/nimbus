@@ -259,7 +259,12 @@ pub fn run() -> Result<()> {
 					cmd.run(config, partials.client.clone(), db, storage)
 				}),
 				BenchmarkCmd::Overhead(_) => Err("Unsupported benchmarking command".into()),
-				BenchmarkCmd::Machine(cmd) => runner.sync_run(|config| cmd.run(&config)),
+				BenchmarkCmd::Machine(cmd) => runner.sync_run(|config| {
+					cmd.run(
+						&config,
+						frame_benchmarking_cli::SUBSTRATE_REFERENCE_HARDWARE.clone(),
+					)
+				}),
 			}
 		}
 		Some(Subcommand::RunInstantSeal(run_cmd)) => {

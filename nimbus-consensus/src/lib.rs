@@ -218,7 +218,7 @@ where
 			// There are two versions of the author filter, so we do that dynamically also.
 			let api_version = client
 				.runtime_api()
-				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
+				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(at)
 				.expect("Runtime api access to not error.")
 				.expect("Should be able to detect author filter version");
 
@@ -229,7 +229,7 @@ where
 				#[allow(deprecated)]
 				client
 					.runtime_api()
-					.can_author_before_version_2(&at, nimbus_id, slot_number)
+					.can_author_before_version_2(at, nimbus_id, slot_number)
 					.expect("Author API version 2 should not return error")
 			}
 		}
@@ -282,7 +282,6 @@ where
 	debug!(target: LOG_TARGET, "The signature is \n{:?}", raw_sig);
 
 	let signature = raw_sig
-		.clone()
 		.try_into()
 		.expect("signature bytes produced by keystore should be right length");
 
@@ -354,7 +353,7 @@ where
 			}
 		};
 
-		let proposer_future = self.proposer_factory.lock().init(&parent);
+		let proposer_future = self.proposer_factory.lock().init(parent);
 
 		let proposer = proposer_future
 			.await
@@ -370,7 +369,7 @@ where
 		let inherent_data = self
 			.inherent_data(
 				parent.hash(),
-				&validation_data,
+				validation_data,
 				relay_parent,
 				nimbus_id.clone(),
 			)
