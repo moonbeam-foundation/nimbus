@@ -125,7 +125,7 @@ pub mod pallet {
 		/// but before transactions are executed.
 		// This should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128
 		// TODO better weight. For now we just set a somewhat conservative fudge factor
-		#[pallet::weight(T::WeightInfo::kick_off_authorship_validation(), DispatchClass::Mandatory)]
+		#[pallet::weight((T::WeightInfo::kick_off_authorship_validation(), DispatchClass::Mandatory))]
 		pub fn kick_off_authorship_validation(origin: OriginFor<T>) -> DispatchResultWithPostInfo {
 			ensure_none(origin)?;
 
