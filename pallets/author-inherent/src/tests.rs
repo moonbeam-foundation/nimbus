@@ -23,4 +23,3 @@ fn kick_off_authorship_validation_is_mandatory() {
 	let info = crate::Call::<Test>::kick_off_authorship_validation {}.get_dispatch_info();
 	assert_eq!(info.class, DispatchClass::Mandatory);
 }
-

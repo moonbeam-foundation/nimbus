@@ -89,4 +89,3 @@ impl pallet_testing::Config for Test {
 	type SlotBeacon = DummyBeacon;
 	type WeightInfo = ();
 }
-
