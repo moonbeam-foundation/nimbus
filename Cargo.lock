@@ -1333,7 +1333,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-cli"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "clap",
  "sc-cli",
@@ -1344,7 +1344,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-collator"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-client-consensus-common",
  "cumulus-client-network",
@@ -1353,10 +1353,10 @@ dependencies = [
  "futures 0.3.21",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sp-api",
  "sp-consensus",
@@ -1368,14 +1368,14 @@ dependencies = [
 [[package]]
 name = "cumulus-client-consensus-common"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "cumulus-relay-chain-interface",
  "dyn-clone",
  "futures 0.3.21",
  "parity-scale-codec",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-consensus",
  "sp-api",
@@ -1389,7 +1389,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-network"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "cumulus-relay-chain-interface",
@@ -1398,9 +1398,9 @@ dependencies = [
  "futures-timer",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-node-primitives",
- "polkadot-parachain",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sp-api",
  "sp-blockchain",
@@ -1414,17 +1414,17 @@ dependencies = [
 [[package]]
 name = "cumulus-client-pov-recovery"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "cumulus-relay-chain-interface",
  "futures 0.3.21",
  "futures-timer",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "sc-client-api",
  "sc-consensus",
@@ -1438,7 +1438,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-service"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-client-cli",
  "cumulus-client-collator",
@@ -1448,8 +1448,8 @@ dependencies = [
  "cumulus-relay-chain-interface",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-chain-spec",
  "sc-client-api",
  "sc-consensus",
@@ -1468,7 +1468,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-dmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1479,14 +1479,14 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
- "xcm",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "cumulus-pallet-parachain-system"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-pallet-parachain-system-proc-macro",
  "cumulus-primitives-core",
@@ -1498,7 +1498,7 @@ dependencies = [
  "log",
  "pallet-balances",
  "parity-scale-codec",
- "polkadot-parachain",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "scale-info",
  "serde",
  "sp-core",
@@ -1510,13 +1510,13 @@ dependencies = [
  "sp-std",
  "sp-trie",
  "sp-version",
- "xcm",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "cumulus-pallet-parachain-system-proc-macro"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "proc-macro-crate 1.1.3",
  "proc-macro2",
@@ -1527,7 +1527,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcm"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1538,13 +1538,13 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
- "xcm",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "cumulus-pallet-xcmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1555,20 +1555,20 @@ dependencies = [
  "scale-info",
  "sp-runtime",
  "sp-std",
- "xcm",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "cumulus-primitives-core"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "frame-support",
  "parity-scale-codec",
- "polkadot-core-primitives",
- "polkadot-parachain",
- "polkadot-primitives",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-api",
  "sp-runtime",
  "sp-std",
@@ -1578,7 +1578,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-parachain-inherent"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1601,7 +1601,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-timestamp"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "futures 0.3.21",
@@ -1614,24 +1614,24 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-utility"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
  "parity-scale-codec",
- "polkadot-core-primitives",
- "polkadot-parachain",
- "polkadot-primitives",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-runtime",
  "sp-std",
  "sp-trie",
- "xcm",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "cumulus-relay-chain-inprocess-interface"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1639,8 +1639,8 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "parking_lot 0.12.0",
- "polkadot-client",
- "polkadot-service",
+ "polkadot-client 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-service 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-consensus-babe",
  "sc-network",
@@ -1659,7 +1659,7 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-interface"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1668,8 +1668,8 @@ dependencies = [
  "jsonrpsee-core",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-overseer",
- "polkadot-service",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-service 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-service",
  "sp-api",
@@ -1683,7 +1683,7 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-rpc-interface"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "async-trait",
  "backoff",
@@ -1694,7 +1694,7 @@ dependencies = [
  "jsonrpsee",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-service",
+ "polkadot-service 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-rpc-api",
  "sp-api",
@@ -1709,11 +1709,11 @@ dependencies = [
 [[package]]
 name = "cumulus-test-relay-sproof-builder"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "parity-scale-codec",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-runtime",
  "sp-state-machine",
  "sp-std",
@@ -3606,7 +3606,7 @@ dependencies = [
 [[package]]
 name = "kusama-runtime"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "beefy-primitives",
  "bitvec",
@@ -3653,11 +3653,11 @@ dependencies = [
  "pallet-treasury",
  "pallet-utility",
  "pallet-vesting",
- "pallet-xcm",
+ "pallet-xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -3682,19 +3682,19 @@ dependencies = [
  "sp-version",
  "static_assertions",
  "substrate-wasm-builder",
- "xcm",
- "xcm-builder",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-builder 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
 name = "kusama-runtime-constants"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "frame-support",
- "polkadot-primitives",
- "polkadot-runtime-common",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "smallvec",
  "sp-runtime",
 ]
@@ -4553,6 +4553,21 @@ dependencies = [
 [[package]]
 name = "metered-channel"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "coarsetime",
+ "crossbeam-queue",
+ "derive_more",
+ "futures 0.3.21",
+ "futures-timer",
+ "nanorand",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "metered-channel"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "coarsetime",
@@ -4562,7 +4577,7 @@ dependencies = [
  "futures-timer",
  "nanorand",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
@@ -4827,7 +4842,7 @@ dependencies = [
  "nimbus-primitives",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-client",
+ "polkadot-client 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "sc-client-api",
  "sc-consensus",
  "sc-consensus-manual-seal",
@@ -5288,7 +5303,7 @@ dependencies = [
 [[package]]
 name = "pallet-collator-selection"
 version = "3.0.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -5872,6 +5887,25 @@ dependencies = [
 [[package]]
 name = "pallet-xcm"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "pallet-xcm"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "frame-support",
@@ -5883,14 +5917,14 @@ dependencies = [
  "sp-core",
  "sp-runtime",
  "sp-std",
- "xcm",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "parachain-info"
 version = "0.1.0"
-source = "git+https://github.com/paritytech/cumulus?branch=polkadot-v0.9.20#4bbedb30b1478494b410477498bd0a2221177a11"
+source = "git+https://github.com/purestake/cumulus?branch=girazoki-xcm-call-polkadot-changes#4bbedb30b1478494b410477498bd0a2221177a11"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -5928,9 +5962,9 @@ dependencies = [
  "parachain-template-runtime",
  "parity-scale-codec",
  "polkadot-cli",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-service",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-service 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "polkadot-test-service",
  "sc-basic-authorship",
  "sc-chain-spec",
@@ -5995,11 +6029,11 @@ dependencies = [
  "pallet-timestamp",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
- "pallet-xcm",
+ "pallet-xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "parachain-info",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-runtime-common",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "scale-info",
  "serde",
  "smallvec",
@@ -6015,9 +6049,9 @@ dependencies = [
  "sp-transaction-pool",
  "sp-version",
  "substrate-wasm-builder",
- "xcm",
- "xcm-builder",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-builder 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6378,16 +6412,44 @@ checksum = "e8d0eef3571242013a0d5dc84861c3ae4a652e56e12adf8bdc26ff5f8cb34c94"
 [[package]]
 name = "polkadot-approval-distribution"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-approval-distribution"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "futures 0.3.21",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-availability-bitfield-distribution"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6396,11 +6458,34 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "futures 0.3.21",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
- "tracing-gum",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-availability-distribution"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "derive_more",
+ "fatality",
+ "futures 0.3.21",
+ "lru 0.7.5",
+ "parity-scale-codec",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "sp-core",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6413,17 +6498,38 @@ dependencies = [
  "futures 0.3.21",
  "lru 0.7.5",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "sp-core",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-availability-recovery"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "fatality",
+ "futures 0.3.21",
+ "lru 0.7.5",
+ "parity-scale-codec",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "sc-network",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6435,32 +6541,32 @@ dependencies = [
  "futures 0.3.21",
  "lru 0.7.5",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "sc-network",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "polkadot-cli"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "clap",
  "frame-benchmarking-cli",
  "futures 0.3.21",
  "log",
- "polkadot-client",
- "polkadot-node-core-pvf",
- "polkadot-node-metrics",
+ "polkadot-client 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-pvf 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-metrics 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "polkadot-performance-test",
- "polkadot-service",
+ "polkadot-service 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "sc-cli",
  "sc-service",
  "sc-tracing",
@@ -6469,6 +6575,46 @@ dependencies = [
  "substrate-build-script-utils",
  "thiserror",
  "try-runtime-cli",
+]
+
+[[package]]
+name = "polkadot-client"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "beefy-primitives",
+ "frame-benchmarking",
+ "frame-benchmarking-cli",
+ "frame-system",
+ "frame-system-rpc-runtime-api",
+ "pallet-transaction-payment",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-parachains-inherent 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-client-api",
+ "sc-consensus",
+ "sc-executor",
+ "sc-service",
+ "sp-api",
+ "sp-authority-discovery",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-babe",
+ "sp-core",
+ "sp-finality-grandpa",
+ "sp-inherents",
+ "sp-keyring",
+ "sp-mmr-primitives",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-storage",
+ "sp-timestamp",
+ "sp-transaction-pool",
 ]
 
 [[package]]
@@ -6483,11 +6629,11 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
- "polkadot-core-primitives",
- "polkadot-node-core-parachains-inherent",
- "polkadot-primitives",
- "polkadot-runtime",
- "polkadot-runtime-common",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-parachains-inherent 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-consensus",
  "sc-executor",
@@ -6514,22 +6660,56 @@ dependencies = [
 [[package]]
 name = "polkadot-collator-protocol"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "always-assert",
+ "fatality",
+ "futures 0.3.21",
+ "futures-timer",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-core",
+ "sp-keystore",
+ "sp-runtime",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-collator-protocol"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "always-assert",
  "fatality",
  "futures 0.3.21",
  "futures-timer",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-core",
  "sp-keystore",
  "sp-runtime",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-core-primitives"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "parity-scale-codec",
+ "parity-util-mem",
+ "scale-info",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
@@ -6548,6 +6728,29 @@ dependencies = [
 [[package]]
 name = "polkadot-dispute-distribution"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "derive_more",
+ "fatality",
+ "futures 0.3.21",
+ "lru 0.7.5",
+ "parity-scale-codec",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-network",
+ "sp-application-crypto",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-dispute-distribution"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "derive_more",
@@ -6555,17 +6758,31 @@ dependencies = [
  "futures 0.3.21",
  "lru 0.7.5",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-network",
  "sp-application-crypto",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-erasure-coding"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "parity-scale-codec",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "reed-solomon-novelpoly",
+ "sp-core",
+ "sp-trie",
+ "thiserror",
 ]
 
 [[package]]
@@ -6574,8 +6791,8 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "reed-solomon-novelpoly",
  "sp-core",
  "sp-trie",
@@ -6585,21 +6802,60 @@ dependencies = [
 [[package]]
 name = "polkadot-gossip-support"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "futures 0.3.21",
  "futures-timer",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "sc-network",
  "sp-application-crypto",
  "sp-core",
  "sp-keystore",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-gossip-support"
+version = "0.9.20"
+source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+dependencies = [
+ "futures 0.3.21",
+ "futures-timer",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "sc-network",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-keystore",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-network-bridge"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-network",
+ "sp-consensus",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6611,14 +6867,32 @@ dependencies = [
  "futures 0.3.21",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-network",
  "sp-consensus",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-collation-generation"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-core",
+ "sp-maybe-compressed-blob",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6628,15 +6902,44 @@ source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#5681
 dependencies = [
  "futures 0.3.21",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-core",
  "sp-maybe-compressed-blob",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-approval-voting"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitvec",
+ "derive_more",
+ "futures 0.3.21",
+ "futures-timer",
+ "kvdb",
+ "lru 0.7.5",
+ "merlin",
+ "parity-scale-codec",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-keystore",
+ "schnorrkel",
+ "sp-application-crypto",
+ "sp-consensus",
+ "sp-consensus-slots",
+ "sp-runtime",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6652,12 +6955,12 @@ dependencies = [
  "lru 0.7.5",
  "merlin",
  "parity-scale-codec",
- "polkadot-node-jaeger",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-keystore",
  "schnorrkel",
  "sp-application-crypto",
@@ -6665,7 +6968,27 @@ dependencies = [
  "sp-consensus-slots",
  "sp-runtime",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-av-store"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitvec",
+ "futures 0.3.21",
+ "futures-timer",
+ "kvdb",
+ "parity-scale-codec",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6678,14 +7001,32 @@ dependencies = [
  "futures-timer",
  "kvdb",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-backing"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitvec",
+ "futures 0.3.21",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-statement-table 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6695,15 +7036,30 @@ source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#5681
 dependencies = [
  "bitvec",
  "futures 0.3.21",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
- "polkadot-statement-table",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-statement-table 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-bitfield-signing"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "wasm-timer",
 ]
 
 [[package]]
@@ -6712,13 +7068,31 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "futures 0.3.21",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "wasm-timer",
+]
+
+[[package]]
+name = "polkadot-node-core-candidate-validation"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "polkadot-node-core-pvf 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-maybe-compressed-blob",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6729,14 +7103,29 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "parity-scale-codec",
- "polkadot-node-core-pvf",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-parachain",
- "polkadot-primitives",
+ "polkadot-node-core-pvf 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-maybe-compressed-blob",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-chain-api"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-client-api",
+ "sc-consensus-babe",
+ "sp-blockchain",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6745,13 +7134,30 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "futures 0.3.21",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sc-consensus-babe",
  "sp-blockchain",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-chain-selection"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "futures-timer",
+ "kvdb",
+ "parity-scale-codec",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6763,12 +7169,31 @@ dependencies = [
  "futures-timer",
  "kvdb",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-dispute-coordinator"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "fatality",
+ "futures 0.3.21",
+ "kvdb",
+ "lru 0.7.5",
+ "parity-scale-codec",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6781,13 +7206,30 @@ dependencies = [
  "kvdb",
  "lru 0.7.5",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-parachains-inherent"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "futures 0.3.21",
+ "futures-timer",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-blockchain",
+ "sp-inherents",
+ "sp-runtime",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6798,13 +7240,30 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "futures-timer",
- "polkadot-node-subsystem",
- "polkadot-primitives",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-blockchain",
  "sp-inherents",
  "sp-runtime",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-provisioner"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitvec",
+ "futures 0.3.21",
+ "futures-timer",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6815,13 +7274,43 @@ dependencies = [
  "bitvec",
  "futures 0.3.21",
  "futures-timer",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-pvf"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "always-assert",
+ "assert_matches",
+ "async-process",
+ "async-std",
+ "futures 0.3.21",
+ "futures-timer",
+ "parity-scale-codec",
+ "pin-project 1.0.10",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "sc-executor",
+ "sc-executor-common",
+ "sc-executor-wasmtime",
+ "slotmap",
+ "sp-core",
+ "sp-externalities",
+ "sp-io",
+ "sp-maybe-compressed-blob",
+ "sp-tracing",
+ "sp-wasm-interface",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6837,9 +7326,9 @@ dependencies = [
  "futures-timer",
  "parity-scale-codec",
  "pin-project 1.0.10",
- "polkadot-core-primitives",
- "polkadot-node-subsystem-util",
- "polkadot-parachain",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "sc-executor",
  "sc-executor-common",
@@ -6851,7 +7340,23 @@ dependencies = [
  "sp-maybe-compressed-blob",
  "sp-tracing",
  "sp-wasm-interface",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-pvf-checker"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6860,14 +7365,32 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "futures 0.3.21",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-core-runtime-api"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "memory-lru",
+ "parity-util-mem",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-api",
+ "sp-authority-discovery",
+ "sp-consensus-babe",
+ "sp-core",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6878,14 +7401,32 @@ dependencies = [
  "futures 0.3.21",
  "memory-lru",
  "parity-util-mem",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-api",
  "sp-authority-discovery",
  "sp-consensus-babe",
  "sp-core",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-jaeger"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-std",
+ "lazy_static",
+ "log",
+ "mick-jaeger",
+ "parity-scale-codec",
+ "parking_lot 0.12.0",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-network",
+ "sp-core",
+ "thiserror",
 ]
 
 [[package]]
@@ -6899,11 +7440,30 @@ dependencies = [
  "mick-jaeger",
  "parity-scale-codec",
  "parking_lot 0.12.0",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-network",
  "sp-core",
  "thiserror",
+]
+
+[[package]]
+name = "polkadot-node-metrics"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bs58",
+ "futures 0.3.21",
+ "futures-timer",
+ "log",
+ "metered-channel 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-cli",
+ "sc-service",
+ "sc-tracing",
+ "substrate-prometheus-endpoint",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -6915,14 +7475,32 @@ dependencies = [
  "futures 0.3.21",
  "futures-timer",
  "log",
- "metered-channel",
+ "metered-channel 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "parity-scale-codec",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-cli",
  "sc-service",
  "sc-tracing",
  "substrate-prometheus-endpoint",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-network-protocol"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "fatality",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-authority-discovery",
+ "sc-network",
+ "strum 0.24.0",
+ "thiserror",
 ]
 
 [[package]]
@@ -6934,13 +7512,35 @@ dependencies = [
  "fatality",
  "futures 0.3.21",
  "parity-scale-codec",
- "polkadot-node-jaeger",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-authority-discovery",
  "sc-network",
  "strum 0.24.0",
  "thiserror",
+]
+
+[[package]]
+name = "polkadot-node-primitives"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bounded-vec",
+ "futures 0.3.21",
+ "parity-scale-codec",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "schnorrkel",
+ "serde",
+ "sp-application-crypto",
+ "sp-consensus-babe",
+ "sp-consensus-vrf",
+ "sp-core",
+ "sp-keystore",
+ "sp-maybe-compressed-blob",
+ "thiserror",
+ "zstd",
 ]
 
 [[package]]
@@ -6951,8 +7551,8 @@ dependencies = [
  "bounded-vec",
  "futures 0.3.21",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-primitives",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "schnorrkel",
  "serde",
  "sp-application-crypto",
@@ -6968,11 +7568,40 @@ dependencies = [
 [[package]]
 name = "polkadot-node-subsystem"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-types 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-node-subsystem"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
- "polkadot-node-jaeger",
- "polkadot-node-subsystem-types",
- "polkadot-overseer",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-types 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-node-subsystem-types"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "derive_more",
+ "futures 0.3.21",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer-gen 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-statement-table 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-network",
+ "smallvec",
+ "substrate-prometheus-endpoint",
+ "thiserror",
 ]
 
 [[package]]
@@ -6982,16 +7611,49 @@ source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#5681
 dependencies = [
  "derive_more",
  "futures 0.3.21",
- "polkadot-node-jaeger",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-overseer-gen",
- "polkadot-primitives",
- "polkadot-statement-table",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer-gen 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-statement-table 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-network",
  "smallvec",
  "substrate-prometheus-endpoint",
  "thiserror",
+]
+
+[[package]]
+name = "polkadot-node-subsystem-util"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "derive_more",
+ "fatality",
+ "futures 0.3.21",
+ "itertools",
+ "kvdb",
+ "lru 0.7.5",
+ "metered-channel 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "parity-db",
+ "parity-scale-codec",
+ "parity-util-mem",
+ "parking_lot 0.11.2",
+ "pin-project 1.0.10",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-metrics 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-keystore",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7006,25 +7668,46 @@ dependencies = [
  "itertools",
  "kvdb",
  "lru 0.7.5",
- "metered-channel",
+ "metered-channel 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "parity-db",
  "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.11.2",
  "pin-project 1.0.10",
- "polkadot-node-jaeger",
- "polkadot-node-metrics",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-overseer",
- "polkadot-primitives",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-metrics 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "sp-application-crypto",
  "sp-core",
  "sp-keystore",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-overseer"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "futures 0.3.21",
+ "futures-timer",
+ "lru 0.7.5",
+ "parity-util-mem",
+ "parking_lot 0.12.0",
+ "polkadot-node-metrics 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-types 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer-gen 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sc-client-api",
+ "sp-api",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7037,15 +7720,32 @@ dependencies = [
  "lru 0.7.5",
  "parity-util-mem",
  "parking_lot 0.12.0",
- "polkadot-node-metrics",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem-types",
- "polkadot-overseer-gen",
- "polkadot-primitives",
+ "polkadot-node-metrics 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-types 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer-gen 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sc-client-api",
  "sp-api",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-overseer-gen"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "async-trait",
+ "futures 0.3.21",
+ "futures-timer",
+ "metered-channel 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "pin-project 1.0.10",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer-gen-proc-macro 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7056,13 +7756,25 @@ dependencies = [
  "async-trait",
  "futures 0.3.21",
  "futures-timer",
- "metered-channel",
+ "metered-channel 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "pin-project 1.0.10",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-overseer-gen-proc-macro",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer-gen-proc-macro 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-overseer-gen-proc-macro"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "expander 0.0.6",
+ "proc-macro-crate 1.1.3",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -7080,13 +7792,30 @@ dependencies = [
 [[package]]
 name = "polkadot-parachain"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "derive_more",
+ "frame-support",
+ "parity-scale-codec",
+ "parity-util-mem",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "scale-info",
+ "serde",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "polkadot-parachain"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "derive_more",
  "frame-support",
  "parity-scale-codec",
  "parity-util-mem",
- "polkadot-core-primitives",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "scale-info",
  "serde",
  "sp-core",
@@ -7097,16 +7826,46 @@ dependencies = [
 [[package]]
 name = "polkadot-performance-test"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "env_logger 0.9.0",
  "kusama-runtime",
  "log",
- "polkadot-erasure-coding",
- "polkadot-node-core-pvf",
- "polkadot-node-primitives",
+ "polkadot-erasure-coding 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-pvf 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "quote",
  "thiserror",
+]
+
+[[package]]
+name = "polkadot-primitives"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitvec",
+ "frame-system",
+ "hex-literal",
+ "parity-scale-codec",
+ "parity-util-mem",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "scale-info",
+ "serde",
+ "sp-api",
+ "sp-application-crypto",
+ "sp-arithmetic",
+ "sp-authority-discovery",
+ "sp-consensus-slots",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+ "sp-trie",
+ "sp-version",
 ]
 
 [[package]]
@@ -7119,8 +7878,8 @@ dependencies = [
  "hex-literal",
  "parity-scale-codec",
  "parity-util-mem",
- "polkadot-core-primitives",
- "polkadot-parachain",
+ "polkadot-core-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "scale-info",
  "serde",
  "sp-api",
@@ -7142,14 +7901,14 @@ dependencies = [
 [[package]]
 name = "polkadot-rpc"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "beefy-gadget",
  "beefy-gadget-rpc",
  "jsonrpc-core",
  "pallet-mmr-rpc",
  "pallet-transaction-payment-rpc",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "sc-chain-spec",
  "sc-client-api",
  "sc-consensus-babe",
@@ -7169,6 +7928,118 @@ dependencies = [
  "sp-runtime",
  "substrate-frame-rpc-system",
  "substrate-state-trie-migration-rpc",
+]
+
+[[package]]
+name = "polkadot-rpc"
+version = "0.9.20"
+source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+dependencies = [
+ "beefy-gadget",
+ "beefy-gadget-rpc",
+ "jsonrpc-core",
+ "pallet-mmr-rpc",
+ "pallet-transaction-payment-rpc",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "sc-chain-spec",
+ "sc-client-api",
+ "sc-consensus-babe",
+ "sc-consensus-babe-rpc",
+ "sc-consensus-epochs",
+ "sc-finality-grandpa",
+ "sc-finality-grandpa-rpc",
+ "sc-rpc",
+ "sc-sync-state-rpc",
+ "sc-transaction-pool-api",
+ "sp-api",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-babe",
+ "sp-keystore",
+ "sp-runtime",
+ "substrate-frame-rpc-system",
+ "substrate-state-trie-migration-rpc",
+]
+
+[[package]]
+name = "polkadot-runtime"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "beefy-primitives",
+ "bitvec",
+ "frame-election-provider-support",
+ "frame-executive",
+ "frame-support",
+ "frame-system",
+ "frame-system-rpc-runtime-api",
+ "frame-try-runtime",
+ "log",
+ "pallet-authority-discovery",
+ "pallet-authorship",
+ "pallet-babe",
+ "pallet-bags-list",
+ "pallet-balances",
+ "pallet-bounties",
+ "pallet-child-bounties",
+ "pallet-collective",
+ "pallet-democracy",
+ "pallet-election-provider-multi-phase",
+ "pallet-elections-phragmen",
+ "pallet-grandpa",
+ "pallet-identity",
+ "pallet-im-online",
+ "pallet-indices",
+ "pallet-membership",
+ "pallet-multisig",
+ "pallet-nicks",
+ "pallet-offences",
+ "pallet-preimage",
+ "pallet-proxy",
+ "pallet-scheduler",
+ "pallet-session",
+ "pallet-staking",
+ "pallet-staking-reward-curve",
+ "pallet-timestamp",
+ "pallet-tips",
+ "pallet-transaction-payment",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "pallet-treasury",
+ "pallet-utility",
+ "pallet-vesting",
+ "pallet-xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-constants 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rustc-hex",
+ "scale-info",
+ "serde",
+ "serde_derive",
+ "smallvec",
+ "sp-api",
+ "sp-authority-discovery",
+ "sp-block-builder",
+ "sp-consensus-babe",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-mmr-primitives",
+ "sp-npos-elections",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-staking",
+ "sp-std",
+ "sp-transaction-pool",
+ "sp-version",
+ "static_assertions",
+ "substrate-wasm-builder",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-builder 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7217,12 +8088,12 @@ dependencies = [
  "pallet-treasury",
  "pallet-utility",
  "pallet-vesting",
- "pallet-xcm",
+ "pallet-xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-constants",
- "polkadot-runtime-parachains",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-constants 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -7246,9 +8117,54 @@ dependencies = [
  "sp-version",
  "static_assertions",
  "substrate-wasm-builder",
- "xcm",
- "xcm-builder",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-builder 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-runtime-common"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "beefy-primitives",
+ "bitvec",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "impl-trait-for-tuples",
+ "libsecp256k1",
+ "log",
+ "pallet-authorship",
+ "pallet-bags-list",
+ "pallet-balances",
+ "pallet-beefy-mmr",
+ "pallet-election-provider-multi-phase",
+ "pallet-session",
+ "pallet-staking",
+ "pallet-timestamp",
+ "pallet-transaction-payment",
+ "pallet-treasury",
+ "pallet-vesting",
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rustc-hex",
+ "scale-info",
+ "serde",
+ "serde_derive",
+ "slot-range-helper 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-api",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-npos-elections",
+ "sp-runtime",
+ "sp-session",
+ "sp-staking",
+ "sp-std",
+ "static_assertions",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7276,13 +8192,13 @@ dependencies = [
  "pallet-treasury",
  "pallet-vesting",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-parachains",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rustc-hex",
  "scale-info",
  "serde",
  "serde_derive",
- "slot-range-helper",
+ "slot-range-helper 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-api",
  "sp-core",
  "sp-inherents",
@@ -7293,7 +8209,19 @@ dependencies = [
  "sp-staking",
  "sp-std",
  "static_assertions",
- "xcm",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-runtime-constants"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "frame-support",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "smallvec",
+ "sp-runtime",
 ]
 
 [[package]]
@@ -7302,10 +8230,22 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "frame-support",
- "polkadot-primitives",
- "polkadot-runtime-common",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "smallvec",
  "sp-runtime",
+]
+
+[[package]]
+name = "polkadot-runtime-metrics"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bs58",
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-std",
+ "sp-tracing",
 ]
 
 [[package]]
@@ -7315,9 +8255,49 @@ source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#5681
 dependencies = [
  "bs58",
  "parity-scale-codec",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-std",
  "sp-tracing",
+]
+
+[[package]]
+name = "polkadot-runtime-parachains"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "bitflags",
+ "bitvec",
+ "derive_more",
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-authority-discovery",
+ "pallet-authorship",
+ "pallet-babe",
+ "pallet-balances",
+ "pallet-session",
+ "pallet-staking",
+ "pallet-timestamp",
+ "pallet-vesting",
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-metrics 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rustc-hex",
+ "scale-info",
+ "serde",
+ "sp-api",
+ "sp-core",
+ "sp-inherents",
+ "sp-io",
+ "sp-keystore",
+ "sp-runtime",
+ "sp-session",
+ "sp-staking",
+ "sp-std",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7340,8 +8320,8 @@ dependencies = [
  "pallet-timestamp",
  "pallet-vesting",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-metrics",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-metrics 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "rustc-hex",
@@ -7356,14 +8336,14 @@ dependencies = [
  "sp-session",
  "sp-staking",
  "sp-std",
- "xcm",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
 ]
 
 [[package]]
 name = "polkadot-service"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "async-trait",
  "beefy-gadget",
@@ -7379,40 +8359,40 @@ dependencies = [
  "pallet-staking",
  "pallet-transaction-payment-rpc-runtime-api",
  "parity-db",
- "polkadot-approval-distribution",
- "polkadot-availability-bitfield-distribution",
- "polkadot-availability-distribution",
- "polkadot-availability-recovery",
- "polkadot-client",
- "polkadot-collator-protocol",
- "polkadot-dispute-distribution",
- "polkadot-gossip-support",
- "polkadot-network-bridge",
- "polkadot-node-collation-generation",
- "polkadot-node-core-approval-voting",
- "polkadot-node-core-av-store",
- "polkadot-node-core-backing",
- "polkadot-node-core-bitfield-signing",
- "polkadot-node-core-candidate-validation",
- "polkadot-node-core-chain-api",
- "polkadot-node-core-chain-selection",
- "polkadot-node-core-dispute-coordinator",
- "polkadot-node-core-parachains-inherent",
- "polkadot-node-core-provisioner",
- "polkadot-node-core-pvf-checker",
- "polkadot-node-core-runtime-api",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-rpc",
- "polkadot-runtime",
- "polkadot-runtime-constants",
- "polkadot-runtime-parachains",
- "polkadot-statement-distribution",
+ "polkadot-approval-distribution 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-availability-bitfield-distribution 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-availability-distribution 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-availability-recovery 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-client 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-collator-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-dispute-distribution 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-gossip-support 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-network-bridge 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-collation-generation 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-approval-voting 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-av-store 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-backing 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-bitfield-signing 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-candidate-validation 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-chain-api 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-chain-selection 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-dispute-coordinator 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-parachains-inherent 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-provisioner 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-pvf-checker 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-core-runtime-api 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-rpc 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-constants 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-statement-distribution 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "sc-authority-discovery",
  "sc-basic-authorship",
  "sc-block-builder",
@@ -7454,7 +8434,125 @@ dependencies = [
  "sp-trie",
  "substrate-prometheus-endpoint",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "polkadot-service"
+version = "0.9.20"
+source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+dependencies = [
+ "async-trait",
+ "beefy-gadget",
+ "beefy-primitives",
+ "frame-system-rpc-runtime-api",
+ "futures 0.3.21",
+ "hex-literal",
+ "kvdb",
+ "kvdb-rocksdb",
+ "lru 0.7.5",
+ "pallet-babe",
+ "pallet-im-online",
+ "pallet-staking",
+ "pallet-transaction-payment-rpc-runtime-api",
+ "parity-db",
+ "polkadot-approval-distribution 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-availability-bitfield-distribution 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-availability-distribution 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-availability-recovery 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-client 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-collator-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-dispute-distribution 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-gossip-support 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-network-bridge 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-collation-generation 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-approval-voting 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-av-store 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-backing 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-bitfield-signing 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-candidate-validation 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-chain-api 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-chain-selection 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-dispute-coordinator 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-parachains-inherent 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-provisioner 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-pvf-checker 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-core-runtime-api 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-rpc 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-constants 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-statement-distribution 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "sc-authority-discovery",
+ "sc-basic-authorship",
+ "sc-block-builder",
+ "sc-chain-spec",
+ "sc-client-api",
+ "sc-client-db",
+ "sc-consensus",
+ "sc-consensus-babe",
+ "sc-consensus-slots",
+ "sc-consensus-uncles",
+ "sc-executor",
+ "sc-finality-grandpa",
+ "sc-keystore",
+ "sc-network",
+ "sc-offchain",
+ "sc-service",
+ "sc-sync-state-rpc",
+ "sc-telemetry",
+ "sc-transaction-pool",
+ "serde",
+ "sp-api",
+ "sp-authority-discovery",
+ "sp-block-builder",
+ "sp-blockchain",
+ "sp-consensus",
+ "sp-consensus-babe",
+ "sp-core",
+ "sp-finality-grandpa",
+ "sp-inherents",
+ "sp-io",
+ "sp-keystore",
+ "sp-offchain",
+ "sp-runtime",
+ "sp-session",
+ "sp-state-machine",
+ "sp-storage",
+ "sp-timestamp",
+ "sp-transaction-pool",
+ "sp-trie",
+ "substrate-prometheus-endpoint",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-statement-distribution"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "arrayvec 0.5.2",
+ "fatality",
+ "futures 0.3.21",
+ "indexmap",
+ "parity-scale-codec",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-keystore",
+ "sp-staking",
+ "thiserror",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -7467,15 +8565,25 @@ dependencies = [
  "futures 0.3.21",
  "indexmap",
  "parity-scale-codec",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "polkadot-node-network-protocol 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-node-subsystem-util 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-keystore",
  "sp-staking",
  "thiserror",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "polkadot-statement-table"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "parity-scale-codec",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "sp-core",
 ]
 
 [[package]]
@@ -7484,14 +8592,14 @@ version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "parity-scale-codec",
- "polkadot-primitives",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "sp-core",
 ]
 
 [[package]]
 name = "polkadot-test-runtime"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "beefy-primitives",
  "bitvec",
@@ -7517,12 +8625,12 @@ dependencies = [
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
  "pallet-vesting",
- "pallet-xcm",
+ "pallet-xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -7545,15 +8653,15 @@ dependencies = [
  "sp-version",
  "substrate-wasm-builder",
  "test-runtime-constants",
- "xcm",
- "xcm-builder",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-builder 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
 name = "polkadot-test-service"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "frame-benchmarking",
  "frame-system",
@@ -7563,15 +8671,15 @@ dependencies = [
  "pallet-balances",
  "pallet-staking",
  "pallet-transaction-payment",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-overseer",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-rpc",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
- "polkadot-service",
+ "polkadot-node-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-node-subsystem 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-overseer 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-rpc 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-parachains 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-service 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "polkadot-test-runtime",
  "rand 0.8.5",
  "sc-authority-discovery",
@@ -7601,7 +8709,7 @@ dependencies = [
  "tempfile",
  "test-runtime-constants",
  "tokio",
- "tracing-gum",
+ "tracing-gum 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -9740,6 +10848,18 @@ checksum = "9def91fd1e018fe007022791f865d0ccc9b3a0d5001e01aabb8b40e46000afb5"
 [[package]]
 name = "slot-range-helper"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "enumn",
+ "parity-scale-codec",
+ "paste",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "slot-range-helper"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "enumn",
@@ -10864,11 +11984,11 @@ dependencies = [
 [[package]]
 name = "test-runtime-constants"
 version = "0.9.20"
-source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
 dependencies = [
  "frame-support",
- "polkadot-primitives",
- "polkadot-runtime-common",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-runtime-common 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
  "smallvec",
  "sp-runtime",
 ]
@@ -11145,12 +12265,35 @@ dependencies = [
 [[package]]
 name = "tracing-gum"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "tracing",
+ "tracing-gum-proc-macro 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "tracing-gum"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
- "polkadot-node-jaeger",
- "polkadot-primitives",
+ "polkadot-node-jaeger 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "polkadot-primitives 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "tracing",
- "tracing-gum-proc-macro",
+ "tracing-gum-proc-macro 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "tracing-gum-proc-macro"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "expander 0.0.6",
+ "proc-macro-crate 1.1.3",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -12053,6 +13196,21 @@ dependencies = [
 [[package]]
 name = "xcm"
 version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "derivative",
+ "impl-trait-for-tuples",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-io",
+ "xcm-procedural 0.1.0 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+]
+
+[[package]]
+name = "xcm"
+version = "0.9.20"
 source = "git+https://github.com/paritytech/polkadot?branch=release-v0.9.20#568169b41aea59a54ab8cfa23c31e84a26708280"
 dependencies = [
  "derivative",
@@ -12060,7 +13218,28 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "scale-info",
- "xcm-procedural",
+ "xcm-procedural 0.1.0 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "xcm-builder"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "impl-trait-for-tuples",
+ "log",
+ "pallet-transaction-payment",
+ "parity-scale-codec",
+ "polkadot-parachain 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "scale-info",
+ "sp-arithmetic",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
+ "xcm-executor 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -12073,14 +13252,31 @@ dependencies = [
  "log",
  "pallet-transaction-payment",
  "parity-scale-codec",
- "polkadot-parachain",
+ "polkadot-parachain 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
  "scale-info",
  "sp-arithmetic",
  "sp-io",
  "sp-runtime",
  "sp-std",
- "xcm",
- "xcm-executor",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+ "xcm-executor 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "xcm-executor"
+version = "0.9.20"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "frame-support",
+ "impl-trait-for-tuples",
+ "log",
+ "parity-scale-codec",
+ "sp-arithmetic",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+ "xcm 0.9.20 (git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes)",
 ]
 
 [[package]]
@@ -12097,7 +13293,18 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
- "xcm",
+ "xcm 0.9.20 (git+https://github.com/paritytech/polkadot?branch=release-v0.9.20)",
+]
+
+[[package]]
+name = "xcm-procedural"
+version = "0.1.0"
+source = "git+https://github.com/purestake/polkadot?branch=girazoki-xcm-call-polkadot-changes#41dbae9d64f04838a4f9c8ee484608136df3428f"
+dependencies = [
+ "Inflector",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
