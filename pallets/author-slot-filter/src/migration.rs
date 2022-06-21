@@ -63,7 +63,7 @@ where
 	#[cfg(feature = "try-runtime")]
 	fn post_upgrade() -> Result<(), &'static str> {
 		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count");
-		let actual = <Pallet<T>>::eligible_count();
+		let actual = Some(<Pallet<T>>::eligible_count());
 
 		assert_eq!(expected, actual);
 
