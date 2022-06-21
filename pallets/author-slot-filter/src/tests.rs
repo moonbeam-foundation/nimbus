@@ -41,8 +41,7 @@ fn test_migration_works_for_converting_existing_eligible_ratio_to_eligible_count
 	new_test_ext().execute_with(|| {
 		let input_eligible_ratio = Percent::from_percent(50);
 		let total_author_count = mock::Authors::get().len();
-		let eligible_author_count =
-			input_eligible_ratio.mul_ceil(total_author_count) as u32;
+		let eligible_author_count = input_eligible_ratio.mul_ceil(total_author_count) as u32;
 		let expected_eligible_count = NonZeroU32::new_unchecked(eligible_author_count);
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
