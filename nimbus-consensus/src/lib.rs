@@ -52,7 +52,7 @@ pub use manual_seal::NimbusManualSealConsensusDataProvider;
 const LOG_TARGET: &str = "filtering-consensus";
 
 /// The implementation of the relay-chain provided consensus for parachains.
-pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
+pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
 	para_id: ParaId,
 	proposer_factory: Arc<Mutex<PF>>,
 	create_inherent_data_providers: Arc<CIDP>,
@@ -60,10 +60,15 @@ pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
+	inherent_digest_provider: Arc<DP>,
 	_phantom: PhantomData<B>,
 }
 
-impl<B, PF, BI, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
+pub trait DigestItemProvider<Id> {
+	fn provide_digest_item(&self, id: Id) -> Option<sp_runtime::generic::DigestItem>;
+}
+
+impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
 	fn clone(&self) -> Self {
 		Self {
 			para_id: self.para_id,
@@ -73,18 +78,20 @@ impl<B, PF, BI, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, ParaClien
 			parachain_client: self.parachain_client.clone(),
 			keystore: self.keystore.clone(),
 			skip_prediction: self.skip_prediction,
+			inherent_digest_provider: self.inherent_digest_provider.clone(),
 			_phantom: PhantomData,
 		}
 	}
 }
 
-impl<B, PF, BI, ParaClient, CIDP> NimbusConsensus<B, PF, BI, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP, DP> NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	PF: 'static,
 	BI: 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	DP: 'static + DigestItemProvider<NimbusId>,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn build(
@@ -96,7 +103,8 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
-		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP>,
+			inherent_digest_provider,
+		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP>,
 	) -> Box<dyn ParachainConsensus<B>>
 	where
 		Self: ParachainConsensus<B>,
@@ -111,6 +119,7 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
+			inherent_digest_provider: Arc::new(inherent_digest_provider),
 			_phantom: PhantomData,
 		})
 	}
@@ -290,8 +299,8 @@ where
 }
 
 #[async_trait::async_trait]
-impl<B, PF, BI, ParaClient, CIDP> ParachainConsensus<B>
-	for NimbusConsensus<B, PF, BI, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP, DP> ParachainConsensus<B>
+	for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	BI: BlockImport<B> + Send + Sync + 'static,
@@ -307,6 +316,7 @@ where
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	DP: 'static + DigestItemProvider<NimbusId> + Send + Sync,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -376,9 +386,14 @@ where
 			)
 			.await?;
 
-		let inherent_digests = sp_runtime::generic::Digest {
-			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
+		let maybe_digest_item = self
+			.inherent_digest_provider
+			.provide_digest_item(nimbus_id.clone());
+		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)];
+		if let Some(digest_item) = maybe_digest_item {
+			logs.push(digest_item);
 		};
+		let inherent_digests = sp_runtime::generic::Digest { logs };
 
 		let Proposal {
 			block,
@@ -453,7 +468,7 @@ where
 ///
 /// I briefly tried the async keystore approach, but decided to go sync so I can copy
 /// code from Aura. Maybe after it is working, Jeremy can help me go async.
-pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP> {
+pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP> {
 	pub para_id: ParaId,
 	pub proposer_factory: PF,
 	pub create_inherent_data_providers: CIDP,
@@ -461,4 +476,5 @@ pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP> {
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
+	pub inherent_digest_provider: DP,
 }
