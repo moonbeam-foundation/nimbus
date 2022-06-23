@@ -37,9 +37,9 @@ pub use digests::CompatibleDigestItem;
 pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
 
 /// Input NimbusId and returns the additional inherent digests
-pub trait InherentDigestsProvider<Id, BlockHash> {
+pub trait DigestsProvider<Id, BlockHash> {
 	type Digests: IntoIterator<Item = DigestItem>;
-	fn provide_inherent_digests(&self, id: Id, parent: BlockHash) -> Self::Digests;
+	fn provide_digests(&self, id: Id, parent: BlockHash) -> Self::Digests;
 }
 
 impl<Id, BlockHash> InherentDigestsProvider<Id, BlockHash> for () {
