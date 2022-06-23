@@ -383,11 +383,14 @@ where
 			)
 			.await?;
 
-		let maybe_digest_provider = self.additional_digests_provider.as_ref();
 		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
-		if let Some(digest_provider) = maybe_digest_provider {
-			logs.append(&mut digest_provider.provide_inherent_digests(nimbus_id));
-		};
+		for digest in self
+			.additional_digests_provider
+			.provide_inherent_digests(nimbus_id)
+			.into_iter()
+		{
+			logs.push(digest);
+		}
 		let inherent_digests = sp_runtime::generic::Digest { logs };
 
 		let Proposal {
