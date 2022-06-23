@@ -36,27 +36,26 @@ pub use digests::CompatibleDigestItem;
 
 pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
 
-/// Input NimbusId and returns the additional inherent digests
 pub trait DigestsProvider<Id, BlockHash> {
 	type Digests: IntoIterator<Item = DigestItem>;
 	fn provide_digests(&self, id: Id, parent: BlockHash) -> Self::Digests;
 }
 
-impl<Id, BlockHash> InherentDigestsProvider<Id, BlockHash> for () {
+impl<Id, BlockHash> DigestsProvider<Id, BlockHash> for () {
 	type Digests = [DigestItem; 0];
-	fn provide_inherent_digests(&self, _id: Id, _parent: BlockHash) -> Self::Digests {
+	fn provide_digests(&self, _id: Id, _parent: BlockHash) -> Self::Digests {
 		[]
 	}
 }
 
-impl<F, Id, BlockHash, D> InherentDigestsProvider<Id, BlockHash> for F
+impl<F, Id, BlockHash, D> DigestsProvider<Id, BlockHash> for F
 where
 	F: Fn(Id, BlockHash) -> D,
 	D: IntoIterator<Item = DigestItem>,
 {
 	type Digests = D;
 
-	fn provide_inherent_digests(&self, id: Id, parent: BlockHash) -> Self::Digests {
+	fn provide_digests(&self, id: Id, parent: BlockHash) -> Self::Digests {
 		(*self)(id, parent)
 	}
 }
