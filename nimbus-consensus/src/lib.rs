@@ -53,7 +53,7 @@ pub use manual_seal::NimbusManualSealConsensusDataProvider;
 const LOG_TARGET: &str = "filtering-consensus";
 
 /// The implementation of the relay-chain provided consensus for parachains.
-pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
+pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP = ()> {
 	para_id: ParaId,
 	proposer_factory: Arc<Mutex<PF>>,
 	create_inherent_data_providers: Arc<CIDP>,
