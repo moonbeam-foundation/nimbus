@@ -61,7 +61,7 @@ pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
-	additional_digests_provider: Option<Arc<DP>>,
+	additional_digests_provider: Arc<DP>,
 	_phantom: PhantomData<B>,
 }
 
@@ -116,7 +116,7 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
-			additional_digests_provider: additional_digests_provider.map(|x| Arc::new(x)),
+			additional_digests_provider: Arc::new(additional_digests_provider),
 			_phantom: PhantomData,
 		})
 	}
@@ -471,5 +471,5 @@ pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP> {
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
-	pub additional_digests_provider: Option<DP>,
+	pub additional_digests_provider: DP,
 }

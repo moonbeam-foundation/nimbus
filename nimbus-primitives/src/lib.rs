@@ -38,11 +38,13 @@ pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
 
 /// Input NimbusId and returns the additional inherent digests
 pub trait InherentDigestsProvider<Id> {
-	fn provide_inherent_digests(&self, id: Id) -> Vec<DigestItem>;
+	type Digests: IntoIterator<Item = DigestItem>;
+	fn provide_inherent_digests(&self, id: Id) -> Self::Digests;
 }
 
 impl<Id> InherentDigestsProvider<Id> for () {
-	fn provide_inherent_digests(&self, _id: Id) -> Vec<DigestItem> {
+	type Digests = Vec<DigestItem>;
+	fn provide_inherent_digests(&self, _id: Id) -> Self::Digests {
 		Vec::new()
 	}
 }
