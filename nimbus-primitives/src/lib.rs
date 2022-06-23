@@ -22,6 +22,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 use sp_application_crypto::KeyTypeId;
+use sp_runtime::generic::DigestItem;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 #[cfg(feature = "runtime-benchmarks")]
@@ -34,6 +35,17 @@ mod inherents;
 pub use digests::CompatibleDigestItem;
 
 pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
+
+/// Input NimbusId and returns the additional inherent digests
+pub trait InherentDigestsProvider<Id> {
+	fn provide_inherent_digests(&self, id: Id) -> Vec<DigestItem>;
+}
+
+impl<Id> InherentDigestsProvider<Id> for () {
+	fn provide_inherent_digests(&self, _id: Id) -> Vec<DigestItem> {
+		Vec::new()
+	}
+}
 
 /// The given account ID is the author of the current block.
 pub trait EventHandler<Author> {

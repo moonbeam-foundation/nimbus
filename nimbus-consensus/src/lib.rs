@@ -27,7 +27,8 @@ use cumulus_primitives_core::{relay_chain::v2::Hash as PHash, ParaId, PersistedV
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
 use nimbus_primitives::{
-	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
+	AuthorFilterAPI, CompatibleDigestItem, InherentDigestsProvider, NimbusApi, NimbusId,
+	NIMBUS_KEY_ID,
 };
 use parking_lot::Mutex;
 use sc_consensus::{BlockImport, BlockImportParams};
@@ -60,12 +61,8 @@ pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
-	inherent_digest_provider: Arc<DP>,
+	additional_digests_provider: Option<Arc<DP>>,
 	_phantom: PhantomData<B>,
-}
-
-pub trait DigestItemProvider<Id> {
-	fn provide_digest_item(&self, id: Id) -> Option<sp_runtime::generic::DigestItem>;
 }
 
 impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
@@ -78,7 +75,7 @@ impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaC
 			parachain_client: self.parachain_client.clone(),
 			keystore: self.keystore.clone(),
 			skip_prediction: self.skip_prediction,
-			inherent_digest_provider: self.inherent_digest_provider.clone(),
+			additional_digests_provider: self.additional_digests_provider.clone(),
 			_phantom: PhantomData,
 		}
 	}
@@ -91,7 +88,7 @@ where
 	BI: 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: 'static + DigestItemProvider<NimbusId>,
+	DP: InherentDigestsProvider<NimbusId> + 'static,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn build(
@@ -103,7 +100,7 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
-			inherent_digest_provider,
+			additional_digests_provider,
 		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP>,
 	) -> Box<dyn ParachainConsensus<B>>
 	where
@@ -119,7 +116,7 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
-			inherent_digest_provider: Arc::new(inherent_digest_provider),
+			additional_digests_provider: additional_digests_provider.map(|x| Arc::new(x)),
 			_phantom: PhantomData,
 		})
 	}
@@ -316,7 +313,7 @@ where
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: 'static + DigestItemProvider<NimbusId> + Send + Sync,
+	DP: InherentDigestsProvider<NimbusId> + 'static + Send + Sync,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -386,12 +383,10 @@ where
 			)
 			.await?;
 
-		let maybe_digest_item = self
-			.inherent_digest_provider
-			.provide_digest_item(nimbus_id.clone());
-		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)];
-		if let Some(digest_item) = maybe_digest_item {
-			logs.push(digest_item);
+		let maybe_digest_provider = self.additional_digests_provider.as_ref();
+		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+		if let Some(digest_provider) = maybe_digest_provider {
+			logs.append(&mut digest_provider.provide_inherent_digests(nimbus_id));
 		};
 		let inherent_digests = sp_runtime::generic::Digest { logs };
 
@@ -476,5 +471,5 @@ pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP> {
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
-	pub inherent_digest_provider: DP,
+	pub additional_digests_provider: Option<DP>,
 }
