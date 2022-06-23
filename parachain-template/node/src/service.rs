@@ -449,6 +449,7 @@ pub async fn start_parachain_node(
 						Ok((time, parachain_inherent, nimbus_inherent))
 					}
 				},
+				additional_digests_provider: None,
 			}))
 		},
 	)
