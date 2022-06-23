@@ -43,9 +43,9 @@ pub trait InherentDigestsProvider<Id> {
 }
 
 impl<Id> InherentDigestsProvider<Id> for () {
-	type Digests = Vec<DigestItem>;
+	type Digests = [DigestItem; 0];
 	fn provide_inherent_digests(&self, _id: Id) -> Self::Digests {
-		Vec::new()
+		[]
 	}
 }
 
