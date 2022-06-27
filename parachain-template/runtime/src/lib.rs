@@ -488,7 +488,6 @@ impl Config for XcmConfig {
 	type AssetTrap = PolkadotXcm;
 	type AssetClaims = PolkadotXcm;
 	type SubscriptionService = PolkadotXcm;
-	type CallDispatcher = Call;
 }
 
 parameter_types! {
