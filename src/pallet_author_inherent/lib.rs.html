@@ -248,6 +248,11 @@
 <span id="248">248</span>
 <span id="249">249</span>
 <span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -288,6 +293,11 @@
 <span class="kw">mod</span> <span class="ident">benchmarks</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">weights</span>;
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">mock</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span>;
 
 <span class="attribute">#[<span class="ident">frame_support::pallet</span>]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pallet</span> {
@@ -375,7 +385,7 @@
 		<span class="doccomment">/// but before transactions are executed.</span>
 		<span class="comment">// This should go into on_post_inherents when it is ready https://github.com/paritytech/substrate/pull/10128</span>
 		<span class="comment">// TODO better weight. For now we just set a somewhat conservative fudge factor</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::kick_off_authorship_validation</span>())]</span>
+		<span class="attribute">#[<span class="ident">pallet::weight</span>((<span class="ident">T::WeightInfo::kick_off_authorship_validation</span>(), <span class="ident">DispatchClass::Mandatory</span>))]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">kick_off_authorship_validation</span>(<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
 			<span class="ident">ensure_none</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 
