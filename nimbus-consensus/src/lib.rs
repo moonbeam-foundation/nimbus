@@ -87,7 +87,7 @@ where
 	BI: 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash, ParaClient, SyncCryptoStorePtr> + 'static,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn build(
@@ -312,7 +312,7 @@ where
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static + Send + Sync,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash, ParaClient, SyncCryptoStorePtr> + 'static + Send + Sync,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -383,9 +383,10 @@ where
 			.await?;
 
 		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+		let runtime_api_client = self.parachain_client.as_ref().clone();
 		logs.extend(
 			self.additional_digests_provider
-				.provide_digests(nimbus_id, parent.hash()),
+				.provide_digests(nimbus_id, parent.hash(), *runtime_api_client, *&self.keystore),
 		);
 		let inherent_digests = sp_runtime::generic::Digest { logs };
 

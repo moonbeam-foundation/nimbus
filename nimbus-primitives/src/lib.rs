@@ -36,27 +36,48 @@ pub use digests::CompatibleDigestItem;
 
 pub use inherents::{InherentDataProvider, INHERENT_IDENTIFIER};
 
-pub trait DigestsProvider<Id, BlockHash> {
+pub trait DigestsProvider<Id, BlockHash, RuntimeApi, KeyStore> {
 	type Digests: IntoIterator<Item = DigestItem>;
-	fn provide_digests(&self, id: Id, parent: BlockHash) -> Self::Digests;
+	fn provide_digests(
+		&self,
+		id: Id,
+		parent: BlockHash,
+		runtime_api: RuntimeApi,
+		keystore: KeyStore,
+	) -> Self::Digests;
 }
 
-impl<Id, BlockHash> DigestsProvider<Id, BlockHash> for () {
+impl<Id, BlockHash, RuntimeApi, KeyStore> DigestsProvider<Id, BlockHash, RuntimeApi, KeyStore>
+	for ()
+{
 	type Digests = [DigestItem; 0];
-	fn provide_digests(&self, _id: Id, _parent: BlockHash) -> Self::Digests {
+	fn provide_digests(
+		&self,
+		_id: Id,
+		_parent: BlockHash,
+		_runtime_api: RuntimeApi,
+		_key_store: KeyStore,
+	) -> Self::Digests {
 		[]
 	}
 }
 
-impl<F, Id, BlockHash, D> DigestsProvider<Id, BlockHash> for F
+impl<F, Id, BlockHash, RuntimeApi, KeyStore, D> DigestsProvider<Id, BlockHash, RuntimeApi, KeyStore>
+	for F
 where
-	F: Fn(Id, BlockHash) -> D,
+	F: Fn(Id, BlockHash, RuntimeApi, KeyStore) -> D,
 	D: IntoIterator<Item = DigestItem>,
 {
 	type Digests = D;
 
-	fn provide_digests(&self, id: Id, parent: BlockHash) -> Self::Digests {
-		(*self)(id, parent)
+	fn provide_digests(
+		&self,
+		id: Id,
+		parent: BlockHash,
+		runtime_api: RuntimeApi,
+		key_store: KeyStore,
+	) -> Self::Digests {
+		(*self)(id, parent, runtime_api, key_store)
 	}
 }
 
