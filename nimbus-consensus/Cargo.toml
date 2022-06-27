@@ -20,12 +20,12 @@ sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkad
 substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.23" }
 
 # Polkadot dependencies
-polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.23" , default-features = false }
+polkadot-client = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.23" , default-features = false }
 
 # Cumulus dependencies
-cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
-cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
+cumulus-client-consensus-common = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.23"  }
+cumulus-primitives-core = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.23"  }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.23"  }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../nimbus-primitives" }
