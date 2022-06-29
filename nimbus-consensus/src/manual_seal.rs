@@ -50,7 +50,7 @@ where
 	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: NimbusApi<B>,
 	C::Api: AuthorFilterAPI<B, NimbusId>,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + Send + Sync,
 {
 	type Transaction = TransactionFor<C, B>;
 
