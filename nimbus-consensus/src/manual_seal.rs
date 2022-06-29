@@ -80,10 +80,12 @@ where
 				let nimbus_id = NimbusId::from_slice(&key.1).map_err(|_| {
 					Error::StringError(String::from("invalid nimbus id (wrong length)"))
 				})?;
-
-				Ok(Digest {
-					logs: vec![DigestItem::nimbus_pre_digest(nimbus_id)],
-				})
+				let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+				logs.extend(
+					self.additional_digests_provider
+						.provide_digests(nimbus_id, parent.hash()),
+				);
+				Ok(Digest { logs })
 			}
 			None => Err(Error::StringError(String::from(
 				"no nimbus keys available to manual seal",
