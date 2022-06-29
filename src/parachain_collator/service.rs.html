@@ -586,6 +586,7 @@
 <span id="586">586</span>
 <span id="587">587</span>
 <span id="588">588</span>
+<span id="589">589</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.</span>
 
 <span class="comment">// std</span>
@@ -1132,6 +1133,7 @@
 			<span class="ident">consensus_data_provider</span>: <span class="prelude-val">Some</span>(<span class="ident">Box::new</span>(<span class="ident">NimbusManualSealConsensusDataProvider</span> {
 				<span class="ident">keystore</span>: <span class="ident">keystore_container</span>.<span class="ident">sync_keystore</span>(),
 				<span class="ident">client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
+				<span class="ident">additional_digests_provider</span>: (),
 			})),
 			<span class="ident">create_inherent_data_providers</span>: <span class="kw">move</span> <span class="op">|</span><span class="ident">block</span>, <span class="ident">_extra_args</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">downward_xcm_receiver</span> <span class="op">=</span> <span class="ident">downward_xcm_receiver</span>.<span class="ident">clone</span>();
