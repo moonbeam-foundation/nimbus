@@ -34,22 +34,34 @@ use sp_runtime::{
 	DigestItem,
 };
 
+pub trait DigestVerifier<Id, BlockHash> {
+	fn verify_digest(&self, id: Id, parent: BlockHash) -> bool;
+}
+
+impl<Id, BlockHash> DigestVerifier<Id, BlockHash> for () {
+	fn verify_digest(&self, _id: Id, _parent: BlockHash) -> bool {
+		true
+	}
+}
+
 /// The Nimbus verifier strips the seal digest, and checks that it is a valid signature by
 /// the same key that was injected into the runtime and noted in the Seal digest.
 /// From Nimbu's perspective any block that faithfully reports its authorship to the runtime
 /// is valid. The intention is that the runtime itself may then put further restrictions on
 /// the identity of the author.
-struct Verifier<Client, Block, CIDP> {
+struct Verifier<Client, Block, CIDP, V = ()> {
 	client: Arc<Client>,
 	create_inherent_data_providers: CIDP,
+	additional_digest_verifiers: V,
 	_marker: PhantomData<Block>,
 }
 
 #[async_trait::async_trait]
-impl<Client, Block, CIDP> VerifierT<Block> for Verifier<Client, Block, CIDP>
+impl<Client, Block, CIDP, V> VerifierT<Block> for Verifier<Client, Block, CIDP, V>
 where
 	Block: BlockT,
 	Client: ProvideRuntimeApi<Block> + Send + Sync,
+	V: DigestVerifier<NimbusId, <Block as BlockT>::Hash> + Send + Sync,
 	<Client as ProvideRuntimeApi<Block>>::Api: BlockBuilderApi<Block>,
 	CIDP: CreateInherentDataProviders<Block, ()>,
 {
@@ -113,13 +125,12 @@ where
 			"🪲 Claimed Author according to verifier is {:?}", claimed_author
 		);
 
+		let author_id = NimbusId::from_slice(&claimed_author)
+			.map_err(|_| "Invalid Nimbus ID (wrong length)")?;
+
 		// Verify the signature
-		let valid_signature = NimbusPair::verify(
-			&signature,
-			block_params.header.hash(),
-			&NimbusId::from_slice(&claimed_author)
-				.map_err(|_| "Invalid Nimbus ID (wrong length)")?,
-		);
+		let valid_signature =
+			NimbusPair::verify(&signature, block_params.header.hash(), &author_id);
 
 		debug!(
 			target: crate::LOG_TARGET,
@@ -128,6 +139,14 @@ where
 
 		if !valid_signature {
 			return Err("Block signature invalid".into());
+		}
+
+		// Additional verifiers
+		if !self
+			.additional_digest_verifiers
+			.verify_digest(author_id, *block_params.header.parent_hash())
+		{
+			return Err("Additional verification invalid".into());
 		}
 
 		// This part copied from RelayChainConsensus. I guess this is the inherent checking.
@@ -186,10 +205,11 @@ where
 }
 
 /// Start an import queue for a Cumulus collator that does not uses any special authoring logic.
-pub fn import_queue<Client, Block: BlockT, I, CIDP>(
+pub fn import_queue<Client, Block: BlockT, I, CIDP, V>(
 	client: Arc<Client>,
 	block_import: I,
 	create_inherent_data_providers: CIDP,
+	additional_digest_verifiers: V,
 	spawner: &impl sp_core::traits::SpawnEssentialNamed,
 	registry: Option<&substrate_prometheus_endpoint::Registry>,
 	parachain: bool,
@@ -197,6 +217,7 @@ pub fn import_queue<Client, Block: BlockT, I, CIDP>(
 where
 	I: BlockImport<Block, Error = ConsensusError> + Send + Sync + 'static,
 	I::Transaction: Send,
+	V: DigestVerifier<NimbusId, <Block as BlockT>::Hash> + Send + Sync + 'static,
 	Client: ProvideRuntimeApi<Block> + Send + Sync + 'static,
 	<Client as ProvideRuntimeApi<Block>>::Api: BlockBuilderApi<Block>,
 	CIDP: CreateInherentDataProviders<Block, ()> + 'static,
@@ -204,6 +225,7 @@ where
 	let verifier = Verifier {
 		client,
 		create_inherent_data_providers,
+		additional_digest_verifiers,
 		_marker: PhantomData,
 	};
 
