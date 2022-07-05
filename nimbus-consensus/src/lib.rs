@@ -1,4 +1,4 @@
-// Copyright 2019-2021 PureStake Inc.
+// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
 // Nimbus is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ use cumulus_primitives_core::{relay_chain::v2::Hash as PHash, ParaId, PersistedV
 pub use import_queue::import_queue;
 use log::{debug, info, warn};
 use nimbus_primitives::{
-	AuthorFilterAPI, CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_KEY_ID,
+	AuthorFilterAPI, CompatibleDigestItem, DigestsProvider, NimbusApi, NimbusId, NIMBUS_KEY_ID,
 };
 use parking_lot::Mutex;
 use sc_consensus::{BlockImport, BlockImportParams};
@@ -52,7 +52,7 @@ pub use manual_seal::NimbusManualSealConsensusDataProvider;
 const LOG_TARGET: &str = "filtering-consensus";
 
 /// The implementation of the relay-chain provided consensus for parachains.
-pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
+pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP = ()> {
 	para_id: ParaId,
 	proposer_factory: Arc<Mutex<PF>>,
 	create_inherent_data_providers: Arc<CIDP>,
@@ -60,10 +60,11 @@ pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
+	additional_digests_provider: Arc<DP>,
 	_phantom: PhantomData<B>,
 }
 
-impl<B, PF, BI, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP> {
+impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
 	fn clone(&self) -> Self {
 		Self {
 			para_id: self.para_id,
@@ -73,18 +74,20 @@ impl<B, PF, BI, ParaClient, CIDP> Clone for NimbusConsensus<B, PF, BI, ParaClien
 			parachain_client: self.parachain_client.clone(),
 			keystore: self.keystore.clone(),
 			skip_prediction: self.skip_prediction,
+			additional_digests_provider: self.additional_digests_provider.clone(),
 			_phantom: PhantomData,
 		}
 	}
 }
 
-impl<B, PF, BI, ParaClient, CIDP> NimbusConsensus<B, PF, BI, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP, DP> NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	PF: 'static,
 	BI: 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn build(
@@ -96,7 +99,8 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
-		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP>,
+			additional_digests_provider,
+		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP>,
 	) -> Box<dyn ParachainConsensus<B>>
 	where
 		Self: ParachainConsensus<B>,
@@ -111,6 +115,7 @@ where
 			parachain_client,
 			keystore,
 			skip_prediction,
+			additional_digests_provider: Arc::new(additional_digests_provider),
 			_phantom: PhantomData,
 		})
 	}
@@ -218,7 +223,7 @@ where
 			// There are two versions of the author filter, so we do that dynamically also.
 			let api_version = client
 				.runtime_api()
-				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(at)
+				.api_version::<dyn AuthorFilterAPI<B, NimbusId>>(&at)
 				.expect("Runtime api access to not error.")
 				.expect("Should be able to detect author filter version");
 
@@ -229,7 +234,7 @@ where
 				#[allow(deprecated)]
 				client
 					.runtime_api()
-					.can_author_before_version_2(at, nimbus_id, slot_number)
+					.can_author_before_version_2(&at, nimbus_id, slot_number)
 					.expect("Author API version 2 should not return error")
 			}
 		}
@@ -282,6 +287,7 @@ where
 	debug!(target: LOG_TARGET, "The signature is \n{:?}", raw_sig);
 
 	let signature = raw_sig
+		.clone()
 		.try_into()
 		.expect("signature bytes produced by keystore should be right length");
 
@@ -289,8 +295,8 @@ where
 }
 
 #[async_trait::async_trait]
-impl<B, PF, BI, ParaClient, CIDP> ParachainConsensus<B>
-	for NimbusConsensus<B, PF, BI, ParaClient, CIDP>
+impl<B, PF, BI, ParaClient, CIDP, DP> ParachainConsensus<B>
+	for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	BI: BlockImport<B> + Send + Sync + 'static,
@@ -306,6 +312,7 @@ where
 	ParaClient::Api: AuthorFilterAPI<B, NimbusId>,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static + Send + Sync,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -353,7 +360,7 @@ where
 			}
 		};
 
-		let proposer_future = self.proposer_factory.lock().init(parent);
+		let proposer_future = self.proposer_factory.lock().init(&parent);
 
 		let proposer = proposer_future
 			.await
@@ -369,15 +376,18 @@ where
 		let inherent_data = self
 			.inherent_data(
 				parent.hash(),
-				validation_data,
+				&validation_data,
 				relay_parent,
 				nimbus_id.clone(),
 			)
 			.await?;
 
-		let inherent_digests = sp_runtime::generic::Digest {
-			logs: vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id)],
-		};
+		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+		logs.extend(
+			self.additional_digests_provider
+				.provide_digests(nimbus_id, parent.hash()),
+		);
+		let inherent_digests = sp_runtime::generic::Digest { logs };
 
 		let Proposal {
 			block,
@@ -452,7 +462,7 @@ where
 ///
 /// I briefly tried the async keystore approach, but decided to go sync so I can copy
 /// code from Aura. Maybe after it is working, Jeremy can help me go async.
-pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP> {
+pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP> {
 	pub para_id: ParaId,
 	pub proposer_factory: PF,
 	pub create_inherent_data_providers: CIDP,
@@ -460,4 +470,5 @@ pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP> {
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
+	pub additional_digests_provider: DP,
 }

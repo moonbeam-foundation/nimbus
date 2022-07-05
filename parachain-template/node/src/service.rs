@@ -450,6 +450,7 @@ pub async fn start_parachain_node(
 						Ok((time, parachain_inherent, nimbus_inherent))
 					}
 				},
+				additional_digests_provider: (),
 			}))
 		},
 	)
@@ -544,6 +545,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			consensus_data_provider: Some(Box::new(NimbusManualSealConsensusDataProvider {
 				keystore: keystore_container.sync_keystore(),
 				client: client.clone(),
+				additional_digests_provider: (),
 			})),
 			create_inherent_data_providers: move |block, _extra_args| {
 				let downward_xcm_receiver = downward_xcm_receiver.clone();
