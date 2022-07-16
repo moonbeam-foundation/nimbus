@@ -41,12 +41,11 @@ fn test_migration_works_for_converting_existing_eligible_ratio_to_eligible_count
 	new_test_ext().execute_with(|| {
 		let input_eligible_ratio = Percent::from_percent(50);
 		let total_author_count = mock::Authors::get().len();
-		let eligible_author_count =
-			input_eligible_ratio.clone().mul_ceil(total_author_count) as u32;
+		let eligible_author_count = input_eligible_ratio.mul_ceil(total_author_count) as u32;
 		let expected_eligible_count = NonZeroU32::new_unchecked(eligible_author_count);
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
-		<EligibleRatio<Test>>::put(input_eligible_ratio.clone());
+		<EligibleRatio<Test>>::put(input_eligible_ratio);
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
 		assert_eq!(expected_weight, actual_weight);
@@ -66,7 +65,7 @@ fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_e
 		let expected_eligible_count = EligibilityValue::default();
 		let expected_weight = TestDbWeight::get().write + TestDbWeight::get().read;
 
-		<EligibleRatio<Test>>::put(input_eligible_ratio.clone());
+		<EligibleRatio<Test>>::put(input_eligible_ratio);
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
 		assert_eq!(expected_weight, actual_weight);

@@ -111,14 +111,14 @@ pub mod pallet {
 			let digest = <frame_system::Pallet<T>>::digest();
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			Self::find_author(pre_runtime_digests).map(|author_account| {
+			if let Some(author_account) = Self::find_author(pre_runtime_digests) {
 				// Store the author so we can confirm eligibility after the inherents have executed
 				<Author<T>>::put(&author_account);
 
 				//TODO, should we reuse the same trait that Pallet Authorship uses?
 				// Notify any other pallets that are listening (eg rewards) about the author
 				T::EventHandler::note_author(author_account);
-			});
+			}
 
 			T::DbWeight::get().write * 2
 		}
@@ -208,7 +208,7 @@ pub mod pallet {
 	/// can ask this pallet directly. It will do the mapping for you.
 	impl<T: Config> CanAuthor<NimbusId> for Pallet<T> {
 		fn can_author(author: &NimbusId, slot: &u32) -> bool {
-			let account = match T::AccountLookup::lookup_account(&author) {
+			let account = match T::AccountLookup::lookup_account(author) {
 				Some(account) => account,
 				// Authors whose account lookups fail will not be eligible
 				None => {

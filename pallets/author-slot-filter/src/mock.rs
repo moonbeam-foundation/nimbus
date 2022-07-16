@@ -20,7 +20,6 @@ use frame_support::sp_io;
 use frame_support::traits::ConstU32;
 use frame_support::weights::RuntimeDbWeight;
 use frame_support_test::TestRandomness;
-use frame_system;
 use sp_core::H256;
 use sp_runtime::{
 	testing::Header,
