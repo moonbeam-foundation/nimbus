@@ -23,9 +23,9 @@ substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate
 polkadot-client = { git = "https://github.com/purestake/polkadot", branch = "moonbeam-polkadot-v0.9.23" , default-features = false }
 
 # Cumulus dependencies
-cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
-cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
-cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "moonbeam-polkadot-v0.9.23"  }
+cumulus-client-consensus-common = { git = "https://github.com/purestake/cumulus", branch = "girazoki-investigation"  }
+cumulus-primitives-core = { git = "https://github.com/purestake/cumulus", branch = "girazoki-investigation"  }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/purestake/cumulus", branch = "girazoki-investigation"  }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../nimbus-primitives" }
