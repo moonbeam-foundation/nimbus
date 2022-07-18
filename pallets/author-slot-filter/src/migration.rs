@@ -41,7 +41,7 @@ where
 		let old_value = <Pallet<T>>::eligible_ratio();
 		let total_authors = <T as Config>::PotentialAuthors::get().len();
 		let new_value = percent_of_num(old_value, total_authors as u32);
-		let new_value = NonZeroU32::new(new_value).unwrap_or(EligibilityValue::default());
+		let new_value = NonZeroU32::new(new_value).unwrap_or_else(EligibilityValue::default);
 		<EligibleCount<T>>::put(new_value);
 
 		T::DbWeight::get().reads_writes(1, 1)
@@ -53,7 +53,7 @@ where
 
 		let total_authors = <T as Config>::PotentialAuthors::get().len();
 		let new_value = percent_of_num(old_value, total_authors as u32);
-		let expected_value = NonZeroU32::new(new_value).unwrap_or(EligibilityValue::default());
+		let expected_value = NonZeroU32::new(new_value).unwrap_or_else(EligibilityValue::default);
 
 		Self::set_temp_storage(expected_value, "expected_eligible_count");
 
@@ -62,7 +62,8 @@ where
 
 	#[cfg(feature = "try-runtime")]
 	fn post_upgrade() -> Result<(), &'static str> {
-		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count");
+		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count")
+			.expect("value must exist");
 		let actual = Some(<Pallet<T>>::eligible_count());
 
 		assert_eq!(expected, actual);

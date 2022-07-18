@@ -47,21 +47,21 @@ pub enum Subcommand {
 #[derive(Debug, Parser)]
 pub struct ExportGenesisStateCommand {
 	/// Output file name or stdout if unspecified.
-	#[clap(parse(from_os_str))]
+	#[clap(value_parser)]
 	pub output: Option<PathBuf>,
 
 	/// Id of the parachain this state is for.
 	///
 	/// Default: 100
-	#[clap(long, conflicts_with = "chain")]
+	#[clap(long, conflicts_with = "chain", value_parser)]
 	pub parachain_id: Option<u32>,
 
 	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long)]
+	#[clap(short, long, value_parser)]
 	pub raw: bool,
 
 	/// The name of the chain for that the genesis state should be exported.
-	#[clap(long, conflicts_with = "parachain-id")]
+	#[clap(long, conflicts_with = "parachain-id", value_parser)]
 	pub chain: Option<String>,
 }
 
@@ -69,15 +69,15 @@ pub struct ExportGenesisStateCommand {
 #[derive(Debug, Parser)]
 pub struct ExportGenesisWasmCommand {
 	/// Output file name or stdout if unspecified.
-	#[clap(parse(from_os_str))]
+	#[clap(value_parser)]
 	pub output: Option<PathBuf>,
 
 	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long)]
+	#[clap(short, long, value_parser)]
 	pub raw: bool,
 
 	/// The name of the chain for that the genesis wasm file should be exported.
-	#[clap(long)]
+	#[clap(long, value_parser)]
 	pub chain: Option<String>,
 }
 
@@ -93,7 +93,7 @@ pub struct Cli {
 	pub run: cumulus_client_cli::RunCmd,
 
 	/// Relaychain arguments
-	#[clap(raw = true)]
+	#[clap(raw = true, value_parser)]
 	pub relay_chain_args: Vec<String>,
 }
 
