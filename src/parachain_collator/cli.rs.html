@@ -177,21 +177,21 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Parser</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportGenesisStateCommand</span> {
 	<span class="doccomment">/// Output file name or stdout if unspecified.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
 
 	<span class="doccomment">/// Id of the parachain this state is for.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Default: 100</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">conflicts_with</span> <span class="op">=</span> <span class="string">&quot;chain&quot;</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">conflicts_with</span> <span class="op">=</span> <span class="string">&quot;chain&quot;</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">parachain_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
 
 	<span class="doccomment">/// Write output in binary. Default is to write in hex.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">short</span>, <span class="ident">long</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">short</span>, <span class="ident">long</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">raw</span>: <span class="ident">bool</span>,
 
 	<span class="doccomment">/// The name of the chain for that the genesis state should be exported.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">conflicts_with</span> <span class="op">=</span> <span class="string">&quot;parachain-id&quot;</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">conflicts_with</span> <span class="op">=</span> <span class="string">&quot;parachain-id&quot;</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">chain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
@@ -199,15 +199,15 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Parser</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExportGenesisWasmCommand</span> {
 	<span class="doccomment">/// Output file name or stdout if unspecified.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">parse</span>(<span class="ident">from_os_str</span>))]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
 
 	<span class="doccomment">/// Write output in binary. Default is to write in hex.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">short</span>, <span class="ident">long</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">short</span>, <span class="ident">long</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">raw</span>: <span class="ident">bool</span>,
 
 	<span class="doccomment">/// The name of the chain for that the genesis wasm file should be exported.</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">chain</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
@@ -223,7 +223,7 @@
 	<span class="kw">pub</span> <span class="ident">run</span>: <span class="ident">cumulus_client_cli::RunCmd</span>,
 
 	<span class="doccomment">/// Relaychain arguments</span>
-	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">raw</span> <span class="op">=</span> <span class="bool-val">true</span>)]</span>
+	<span class="attribute">#[<span class="ident">clap</span>(<span class="ident">raw</span> <span class="op">=</span> <span class="bool-val">true</span>, <span class="ident">value_parser</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">relay_chain_args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 

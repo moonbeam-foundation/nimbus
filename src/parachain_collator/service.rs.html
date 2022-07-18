@@ -587,6 +587,7 @@
 <span id="587">587</span>
 <span id="588">588</span>
 <span id="589">589</span>
+<span id="590">590</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.</span>
 
 <span class="comment">// std</span>
@@ -779,6 +780,7 @@
 			<span class="ident">parachain_config</span>,
 			<span class="ident">telemetry_worker_handle</span>,
 			<span class="ident">task_manager</span>,
+			<span class="prelude-val">None</span>,
 		),
 	}
 }
@@ -818,7 +820,7 @@
 	<span class="ident">Executor</span>: <span class="ident">sc_executor::NativeExecutionDispatch</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">RB</span>: <span class="ident">Fn</span>(
 			<span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">TFullClient</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">RuntimeApi</span>, <span class="ident">Executor</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-		) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">jsonrpc_core::IoHandler</span><span class="op">&lt;</span><span class="ident">sc_rpc::Metadata</span><span class="op">&gt;</span>, <span class="ident">sc_service::Error</span><span class="op">&gt;</span>
+		) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">jsonrpsee::RpcModule</span><span class="op">&lt;</span>()<span class="op">&gt;</span>, <span class="ident">sc_service::Error</span><span class="op">&gt;</span>
 		<span class="op">+</span> <span class="ident">Send</span>
 		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">BIC</span>: <span class="ident">FnOnce</span>(
@@ -895,12 +897,12 @@
 				<span class="ident">deny_unsafe</span>,
 			};
 
-			<span class="prelude-val">Ok</span>(<span class="ident"><span class="kw">crate</span>::rpc::create_full</span>(<span class="ident">deps</span>))
+			<span class="ident"><span class="kw">crate</span>::rpc::create_full</span>(<span class="ident">deps</span>).<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
 		})
 	};
 
 	<span class="ident">sc_service::spawn_tasks</span>(<span class="ident">sc_service::SpawnTasksParams</span> {
-		<span class="ident">rpc_extensions_builder</span>,
+		<span class="ident">rpc_builder</span>: <span class="ident">rpc_extensions_builder</span>,
 		<span class="ident">client</span>: <span class="ident">client</span>.<span class="ident">clone</span>(),
 		<span class="ident">transaction_pool</span>: <span class="ident">transaction_pool</span>.<span class="ident">clone</span>(),
 		<span class="ident">task_manager</span>: <span class="kw-2">&amp;mut</span> <span class="ident">task_manager</span>,
@@ -984,7 +986,7 @@
 		<span class="ident">polkadot_config</span>,
 		<span class="ident">collator_options</span>,
 		<span class="ident">id</span>,
-		<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(<span class="ident">Default::default</span>()),
+		<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Ok</span>(<span class="ident">jsonrpsee::RpcModule::new</span>(())),
 		<span class="op">|</span><span class="ident">client</span>,
 		 <span class="ident">prometheus_registry</span>,
 		 <span class="ident">telemetry</span>,
@@ -1092,7 +1094,7 @@
 				<span class="ident">deny_unsafe</span>,
 			};
 
-			<span class="prelude-val">Ok</span>(<span class="ident"><span class="kw">crate</span>::rpc::create_full</span>(<span class="ident">deps</span>))
+			<span class="ident"><span class="kw">crate</span>::rpc::create_full</span>(<span class="ident">deps</span>).<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
 		})
 	};
 
@@ -1102,7 +1104,7 @@
 		<span class="ident">keystore</span>: <span class="ident">keystore_container</span>.<span class="ident">sync_keystore</span>(),
 		<span class="ident">task_manager</span>: <span class="kw-2">&amp;mut</span> <span class="ident">task_manager</span>,
 		<span class="ident">transaction_pool</span>: <span class="ident">transaction_pool</span>.<span class="ident">clone</span>(),
-		<span class="ident">rpc_extensions_builder</span>,
+		<span class="ident">rpc_builder</span>: <span class="ident">rpc_extensions_builder</span>,
 		<span class="ident">backend</span>,
 		<span class="ident">system_rpc_tx</span>,
 		<span class="ident">config</span>,

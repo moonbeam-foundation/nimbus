@@ -60,11 +60,6 @@
 <span id="60">60</span>
 <span id="61">61</span>
 <span id="62">62</span>
-<span id="63">63</span>
-<span id="64">64</span>
-<span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
 </pre><pre class="rust"><code><span class="doccomment">//! A collection of node-specific RPC methods.</span>
 <span class="doccomment">//! Substrate provides the `sc-rpc` crate, which defines the core RPC layer</span>
 <span class="doccomment">//! used by Substrate nodes. This file extends those RPC definitions with</span>
@@ -74,6 +69,8 @@
 
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
+<span class="kw">use</span> <span class="ident">jsonrpsee::RpcModule</span>;
+
 <span class="kw">use</span> <span class="ident">parachain_template_runtime</span>::{<span class="ident">opaque::Block</span>, <span class="ident">AccountId</span>, <span class="ident">Balance</span>, <span class="ident">Index</span> <span class="kw">as</span> <span class="ident">Nonce</span>};
 
 <span class="kw">use</span> <span class="ident">sc_client_api::AuxStore</span>;
@@ -82,9 +79,6 @@
 <span class="kw">use</span> <span class="ident">sp_api::ProvideRuntimeApi</span>;
 <span class="kw">use</span> <span class="ident">sp_block_builder::BlockBuilder</span>;
 <span class="kw">use</span> <span class="ident">sp_blockchain</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">BlockChainError</span>, <span class="ident">HeaderBackend</span>, <span class="ident">HeaderMetadata</span>};
-
-<span class="doccomment">/// A type representing all RPC extensions.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RpcExtension</span> <span class="op">=</span> <span class="ident">jsonrpc_core::IoHandler</span><span class="op">&lt;</span><span class="ident">sc_rpc::Metadata</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// Full client dependencies</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FullDeps</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span> {
@@ -97,7 +91,9 @@
 }
 
 <span class="doccomment">/// Instantiate all RPC extensions.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_full</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span>(<span class="ident">deps</span>: <span class="ident">FullDeps</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span>) -&gt; <span class="ident">RpcExtension</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_full</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span>(
+	<span class="ident">deps</span>: <span class="ident">FullDeps</span><span class="op">&lt;</span><span class="ident">C</span>, <span class="ident">P</span><span class="op">&gt;</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">RpcModule</span><span class="op">&lt;</span>()<span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">std::error::Error</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">C</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>
 		<span class="op">+</span> <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>
@@ -111,26 +107,20 @@
 	<span class="ident">C::Api</span>: <span class="ident">BlockBuilder</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">P</span>: <span class="ident">TransactionPool</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
-	<span class="kw">use</span> <span class="ident">pallet_transaction_payment_rpc</span>::{<span class="ident">TransactionPayment</span>, <span class="ident">TransactionPaymentApi</span>};
-	<span class="kw">use</span> <span class="ident">substrate_frame_rpc_system</span>::{<span class="ident">FullSystem</span>, <span class="ident">SystemApi</span>};
+	<span class="kw">use</span> <span class="ident">pallet_transaction_payment_rpc</span>::{<span class="ident">TransactionPayment</span>, <span class="ident">TransactionPaymentApiServer</span>};
+	<span class="kw">use</span> <span class="ident">substrate_frame_rpc_system</span>::{<span class="ident">System</span>, <span class="ident">SystemApiServer</span>};
 
-	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">jsonrpc_core::IoHandler::default</span>();
+	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">io</span> <span class="op">=</span> <span class="ident">RpcModule::new</span>(());
 	<span class="kw">let</span> <span class="ident">FullDeps</span> {
 		<span class="ident">client</span>,
 		<span class="ident">pool</span>,
 		<span class="ident">deny_unsafe</span>,
 	} <span class="op">=</span> <span class="ident">deps</span>;
 
-	<span class="ident">io</span>.<span class="ident">extend_with</span>(<span class="ident">SystemApi::to_delegate</span>(<span class="ident">FullSystem::new</span>(
-		<span class="ident">client</span>.<span class="ident">clone</span>(),
-		<span class="ident">pool</span>,
-		<span class="ident">deny_unsafe</span>,
-	)));
-	<span class="ident">io</span>.<span class="ident">extend_with</span>(<span class="ident">TransactionPaymentApi::to_delegate</span>(<span class="ident">TransactionPayment::new</span>(
-		<span class="ident">client</span>,
-	)));
+	<span class="ident">io</span>.<span class="ident">merge</span>(<span class="ident">System::new</span>(<span class="ident">client</span>.<span class="ident">clone</span>(), <span class="ident">pool</span>, <span class="ident">deny_unsafe</span>).<span class="ident">into_rpc</span>())<span class="question-mark">?</span>;
+	<span class="ident">io</span>.<span class="ident">merge</span>(<span class="ident">TransactionPayment::new</span>(<span class="ident">client</span>.<span class="ident">clone</span>()).<span class="ident">into_rpc</span>())<span class="question-mark">?</span>;
 
-	<span class="ident">io</span>
+	<span class="prelude-val">Ok</span>(<span class="ident">io</span>)
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="parachain_collator" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
