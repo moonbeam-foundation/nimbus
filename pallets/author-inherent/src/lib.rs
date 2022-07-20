@@ -114,10 +114,6 @@ pub mod pallet {
 			if let Some(author_account) = Self::find_author(pre_runtime_digests) {
 				// Store the author so we can confirm eligibility after the inherents have executed
 				<Author<T>>::put(&author_account);
-
-				//TODO, should we reuse the same trait that Pallet Authorship uses?
-				// Notify any other pallets that are listening (eg rewards) about the author
-				T::EventHandler::note_author(author_account);
 			}
 
 			T::DbWeight::get().write * 2
@@ -148,6 +144,10 @@ pub mod pallet {
 				T::CanAuthor::can_author(&author, &slot),
 				"Block invalid, supplied author is not eligible."
 			);
+
+			//TODO, should we reuse the same trait that Pallet Authorship uses?
+			// Notify any other pallets that are listening (eg rewards) about the author
+			T::EventHandler::note_author(author);
 
 			// Once that is validated, update the stored slot number
 			HighestSlotSeen::<T>::put(slot);
