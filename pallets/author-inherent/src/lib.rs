@@ -104,19 +104,16 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
-			// Start by clearing out the previous block's author
-			<Author<T>>::kill();
-
-			// Now extract the author from the digest
+			// Extract the author from the digest
 			let digest = <frame_system::Pallet<T>>::digest();
 
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			if let Some(author_account) = Self::find_author(pre_runtime_digests) {
-				// Store the author so we can confirm eligibility after the inherents have executed
-				<Author<T>>::put(&author_account);
-			}
+			let author_account = Self::find_author(pre_runtime_digests)
+				.expect("Block invalid, no authorship information supplied in pre-runtime digest.");
+			// Store the author so we can confirm eligibility after the inherents have executed
+			<Author<T>>::put(&author_account);
 
-			T::DbWeight::get().write * 2
+			T::DbWeight::get().write
 		}
 	}
 
