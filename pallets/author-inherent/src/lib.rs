@@ -22,7 +22,7 @@
 
 use frame_support::traits::FindAuthor;
 use nimbus_primitives::{
-	AccountLookup, CanAuthor, EventHandler, NimbusId, SlotBeacon, INHERENT_IDENTIFIER,
+	AccountLookup, CanAuthor, GetAuthor, NimbusId, SlotBeacon, INHERENT_IDENTIFIER,
 	NIMBUS_ENGINE_ID,
 };
 use parity_scale_codec::{Decode, Encode};
@@ -61,9 +61,6 @@ pub mod pallet {
 		/// Block authoring behavior with an AccoutId for rewards or slashing. If you do not need to
 		/// hold an AccountID responsible for authoring use `()` which acts as an identity mapping.
 		type AccountLookup: AccountLookup<Self::AccountId>;
-
-		/// Other pallets that want to be informed about block authorship
-		type EventHandler: EventHandler<Self::AccountId>;
 
 		/// The final word on whether the reported author can author at this height.
 		/// This will be used when executing the inherent. This check is often stricter than the
@@ -104,23 +101,15 @@ pub mod pallet {
 	#[pallet::hooks]
 	impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
 		fn on_initialize(_: T::BlockNumber) -> Weight {
-			// Start by clearing out the previous block's author
-			<Author<T>>::kill();
-
 			// Now extract the author from the digest
 			let digest = <frame_system::Pallet<T>>::digest();
-
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			if let Some(author_account) = Self::find_author(pre_runtime_digests) {
-				// Store the author so we can confirm eligibility after the inherents have executed
-				<Author<T>>::put(&author_account);
+			let author_account = Self::find_author(pre_runtime_digests)
+				.expect("Block invalid, no authorship information supplied in preruntime digest.");
+			// Store the author so we can confirm eligibility after the inherents have executed
+			<Author<T>>::put(&author_account);
 
-				//TODO, should we reuse the same trait that Pallet Authorship uses?
-				// Notify any other pallets that are listening (eg rewards) about the author
-				T::EventHandler::note_author(author_account);
-			}
-
-			T::DbWeight::get().write * 2
+			T::DbWeight::get().write
 		}
 	}
 
@@ -201,6 +190,12 @@ pub mod pallet {
 			}
 
 			None
+		}
+	}
+
+	impl<T: Config> GetAuthor<T::AccountId> for Pallet<T> {
+		fn get_author() -> T::AccountId {
+			Author::<T>::get().expect("Block author not inserted into Author Inherent Pallet")
 		}
 	}
 

@@ -84,7 +84,6 @@ impl nimbus_primitives::SlotBeacon for DummyBeacon {
 
 impl pallet_testing::Config for Test {
 	type AccountLookup = ();
-	type EventHandler = ();
 	type CanAuthor = ();
 	type SlotBeacon = DummyBeacon;
 	type WeightInfo = ();
