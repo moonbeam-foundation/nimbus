@@ -1,18 +1,8 @@
-use crate::chain_spec;
-use clap::Parser;
 use std::path::PathBuf;
 
 /// Sub-commands supported by the collator.
-#[derive(Debug, Parser)]
+#[derive(Debug, clap::Subcommand)]
 pub enum Subcommand {
-	/// Export the genesis state of the parachain.
-	#[clap(name = "export-genesis-state")]
-	ExportGenesisState(ExportGenesisStateCommand),
-
-	/// Export the genesis wasm of the parachain.
-	#[clap(name = "export-genesis-wasm")]
-	ExportGenesisWasm(ExportGenesisWasmCommand),
-
 	/// Build a chain specification.
 	BuildSpec(sc_cli::BuildSpecCmd),
 
@@ -28,11 +18,17 @@ pub enum Subcommand {
 	/// Import blocks.
 	ImportBlocks(sc_cli::ImportBlocksCmd),
 
+	/// Revert the chain to a previous state.
+	Revert(sc_cli::RevertCmd),
+
 	/// Remove the whole chain.
 	PurgeChain(cumulus_client_cli::PurgeChainCmd),
 
-	/// Revert the chain to a previous state.
-	Revert(sc_cli::RevertCmd),
+	/// Export the genesis state of the parachain.
+	ExportGenesisState(cumulus_client_cli::ExportGenesisStateCommand),
+
+	/// Export the genesis wasm of the parachain.
+	ExportGenesisWasm(cumulus_client_cli::ExportGenesisWasmCommand),
 
 	/// Run Instant Seal
 	RunInstantSeal(sc_cli::RunCmd),
@@ -43,45 +39,7 @@ pub enum Subcommand {
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 }
 
-/// Command for exporting the genesis state of the parachain
-#[derive(Debug, Parser)]
-pub struct ExportGenesisStateCommand {
-	/// Output file name or stdout if unspecified.
-	#[clap(value_parser)]
-	pub output: Option<PathBuf>,
-
-	/// Id of the parachain this state is for.
-	///
-	/// Default: 100
-	#[clap(long, conflicts_with = "chain", value_parser)]
-	pub parachain_id: Option<u32>,
-
-	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long, value_parser)]
-	pub raw: bool,
-
-	/// The name of the chain for that the genesis state should be exported.
-	#[clap(long, conflicts_with = "parachain-id", value_parser)]
-	pub chain: Option<String>,
-}
-
-/// Command for exporting the genesis wasm file.
-#[derive(Debug, Parser)]
-pub struct ExportGenesisWasmCommand {
-	/// Output file name or stdout if unspecified.
-	#[clap(value_parser)]
-	pub output: Option<PathBuf>,
-
-	/// Write output in binary. Default is to write in hex.
-	#[clap(short, long, value_parser)]
-	pub raw: bool,
-
-	/// The name of the chain for that the genesis wasm file should be exported.
-	#[clap(long, value_parser)]
-	pub chain: Option<String>,
-}
-
-#[derive(Debug, Parser)]
+#[derive(Debug, clap::Parser)]
 #[clap(propagate_version = true)]
 #[clap(args_conflicts_with_subcommands = true)]
 #[clap(subcommand_negates_reqs = true)]
@@ -115,7 +73,7 @@ impl RelayChainCli {
 		para_config: &sc_service::Configuration,
 		relay_chain_args: impl Iterator<Item = &'a String>,
 	) -> Self {
-		let extension = chain_spec::Extensions::try_get(&*para_config.chain_spec);
+		let extension = crate::chain_spec::Extensions::try_get(&*para_config.chain_spec);
 		let chain_id = extension.map(|e| e.relay_chain.clone());
 		let base_path = para_config
 			.base_path
@@ -124,7 +82,7 @@ impl RelayChainCli {
 		Self {
 			base_path,
 			chain_id,
-			base: polkadot_cli::RunCmd::parse_from(relay_chain_args),
+			base: clap::Parser::parse_from(relay_chain_args),
 		}
 	}
 }
