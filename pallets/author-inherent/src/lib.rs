@@ -20,10 +20,9 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_support::traits::FindAuthor;
+use frame_support::traits::{FindAuthor, Get};
 use nimbus_primitives::{
-	AccountLookup, CanAuthor, GetAuthor, NimbusId, SlotBeacon, INHERENT_IDENTIFIER,
-	NIMBUS_ENGINE_ID,
+	AccountLookup, CanAuthor, NimbusId, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID,
 };
 use parity_scale_codec::{Decode, Encode};
 use sp_inherents::{InherentIdentifier, IsFatalError};
@@ -132,7 +131,7 @@ pub mod pallet {
 
 			// Now check that the author is valid in this slot
 			assert!(
-				T::CanAuthor::can_author(&Self::get_author(), &slot),
+				T::CanAuthor::can_author(&Self::get(), &slot),
 				"Block invalid, supplied author is not eligible."
 			);
 
@@ -191,8 +190,8 @@ pub mod pallet {
 		}
 	}
 
-	impl<T: Config> GetAuthor<T::AccountId> for Pallet<T> {
-		fn get_author() -> T::AccountId {
+	impl<T: Config> Get<T::AccountId> for Pallet<T> {
+		fn get() -> T::AccountId {
 			Author::<T>::get().expect("Block author not inserted into Author Inherent Pallet")
 		}
 	}

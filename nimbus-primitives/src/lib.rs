@@ -60,11 +60,6 @@ where
 	}
 }
 
-/// Return current block author without passing any input
-pub trait GetAuthor<AccountId> {
-	fn get_author() -> AccountId;
-}
-
 /// The given account ID is the author of the current block.
 pub trait EventHandler<Author> {
 	//TODO should we be tking ownership here?
