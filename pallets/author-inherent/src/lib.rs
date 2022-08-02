@@ -103,10 +103,10 @@ pub mod pallet {
 			// Now extract the author from the digest
 			let digest = <frame_system::Pallet<T>>::digest();
 			let pre_runtime_digests = digest.logs.iter().filter_map(|d| d.as_pre_runtime());
-			let author_account = Self::find_author(pre_runtime_digests)
-				.expect("Block invalid, no authorship information supplied in preruntime digest.");
-			// Store the author so we can confirm eligibility after the inherents have executed
-			<Author<T>>::put(&author_account);
+			if let Some(author) = Self::find_author(pre_runtime_digests) {
+				// Store the author so we can confirm eligibility after the inherents have executed
+				<Author<T>>::put(&author);
+			}
 
 			T::DbWeight::get().write
 		}
