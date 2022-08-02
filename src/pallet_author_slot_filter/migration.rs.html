@@ -169,7 +169,7 @@
 	<span class="kw">fn</span> <span class="ident">post_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_temp_storage</span>::<span class="op">&lt;</span><span class="ident">NonZeroU32</span><span class="op">&gt;</span>(<span class="string">&quot;expected_eligible_count&quot;</span>)
 			.<span class="ident">expect</span>(<span class="string">&quot;value must exist&quot;</span>);
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_count</span>());
+		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_count</span>();
 
 		<span class="macro">assert_eq!</span>(<span class="ident">expected</span>, <span class="ident">actual</span>);
 
