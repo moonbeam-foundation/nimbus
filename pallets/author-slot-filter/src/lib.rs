@@ -94,17 +94,17 @@ pub mod pallet {
 			// A context identifier for grabbing the randomness. Consists of three parts
 			// - The constant string *b"filter" - to identify this pallet
 			// - The index `i` when we're selecting the ith eligible author
-			// we take the last 2 bytes of index.to_be_bytes
+			// we take the first 2 bytes of index.to_be_bytes
 			// we take the first 4 bytes of seed.to_be_bytes
 			// - The relay parent block number so that the eligible authors at the next height
 			//   change. Avoids liveness attacks from colluding minorities of active authors.
 			// Third one may not be necessary once we leverage the relay chain's randomness.
-			let mut last_two_bytes_of_index = &i.to_be_bytes()[7..];
-			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[0..4];
+			let mut first_two_bytes_of_index = &i.to_be_bytes()[..2];
+			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[..4];
 			let mut constant_string: [u8; 6] = [b'f', b'i', b'l', b't', b'e', b'r'];
 			let mut subject: [u8; 12] = [0u8; 12];
 			subject.copy_from_slice(&mut constant_string);
-			subject.copy_from_slice(&mut last_two_bytes_of_index);
+			subject.copy_from_slice(&mut first_two_bytes_of_index);
 			subject.copy_from_slice(&mut first_four_bytes_of_seed);
 			let (randomness, _) = T::RandomnessSource::random(&subject);
 			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
