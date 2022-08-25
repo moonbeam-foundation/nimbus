@@ -92,13 +92,9 @@ pub mod pallet {
 
 		for i in 0..num_eligible {
 			// A context identifier for grabbing the randomness. Consists of three parts
-			// - The constant string *b"filter" - to identify this pallet
-			// - The index `i` when we're selecting the ith eligible author
-			// we take the first 2 bytes of index.to_be_bytes
-			// we take the first 4 bytes of seed.to_be_bytes
-			// - The relay parent block number so that the eligible authors at the next height
-			//   change. Avoids liveness attacks from colluding minorities of active authors.
-			// Third one may not be necessary once we leverage the relay chain's randomness.
+			// 1. Constant string *b"filter" - to identify this pallet
+			// 2. First 2 bytes of index.to_be_bytes when selecting the ith eligible author
+			// 3. First 4 bytes of seed.to_be_bytes
 			let mut first_two_bytes_of_index = &i.to_be_bytes()[..2];
 			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[..4];
 			let mut constant_string: [u8; 6] = [b'f', b'i', b'l', b't', b'e', b'r'];
