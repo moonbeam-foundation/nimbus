@@ -99,9 +99,9 @@ pub mod pallet {
 			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[..4];
 			let mut constant_string: [u8; 6] = [b'f', b'i', b'l', b't', b'e', b'r'];
 			let mut subject: [u8; 12] = [0u8; 12];
-			subject.copy_from_slice(&mut constant_string);
-			subject.copy_from_slice(&mut first_two_bytes_of_index);
-			subject.copy_from_slice(&mut first_four_bytes_of_seed);
+			subject[..6].copy_from_slice(&mut constant_string);
+			subject[6..8].copy_from_slice(&mut first_two_bytes_of_index);
+			subject[8..].copy_from_slice(&mut first_four_bytes_of_seed);
 			let (randomness, _) = T::RandomnessSource::random(&subject);
 			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
 
