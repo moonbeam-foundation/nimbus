@@ -1267,7 +1267,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-cli"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "clap",
  "parity-scale-codec",
@@ -1282,7 +1282,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-collator"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-client-consensus-common",
  "cumulus-client-network",
@@ -1306,7 +1306,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-consensus-common"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "cumulus-relay-chain-interface",
@@ -1327,7 +1327,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-network"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "cumulus-relay-chain-interface",
@@ -1352,7 +1352,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-pov-recovery"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "cumulus-relay-chain-interface",
@@ -1376,7 +1376,7 @@ dependencies = [
 [[package]]
 name = "cumulus-client-service"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-client-cli",
  "cumulus-client-collator",
@@ -1404,7 +1404,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-dmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1422,7 +1422,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-pallet-parachain-system-proc-macro",
  "cumulus-primitives-core",
@@ -1452,7 +1452,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-parachain-system-proc-macro"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -1463,7 +1463,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcm"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1480,7 +1480,7 @@ dependencies = [
 [[package]]
 name = "cumulus-pallet-xcmp-queue"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1498,7 +1498,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-core"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "frame-support",
  "parity-scale-codec",
@@ -1514,7 +1514,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-parachain-inherent"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1537,7 +1537,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-timestamp"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "futures 0.3.21",
@@ -1550,7 +1550,7 @@ dependencies = [
 [[package]]
 name = "cumulus-primitives-utility"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
@@ -1567,7 +1567,7 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-inprocess-interface"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1597,7 +1597,7 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-interface"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "cumulus-primitives-core",
@@ -1620,7 +1620,7 @@ dependencies = [
 [[package]]
 name = "cumulus-relay-chain-rpc-interface"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "async-trait",
  "backoff",
@@ -1646,7 +1646,7 @@ dependencies = [
 [[package]]
 name = "cumulus-test-relay-sproof-builder"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "parity-scale-codec",
@@ -5131,7 +5131,7 @@ dependencies = [
 [[package]]
 name = "pallet-collator-selection"
 version = "3.0.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -5732,7 +5732,7 @@ dependencies = [
 [[package]]
 name = "parachain-info"
 version = "0.1.0"
-source = "git+https://github.com/purestake/cumulus?branch=moonbeam-polkadot-v0.9.26#daa4452ec06c947ed7336ac132d26f6c44a00b65"
+source = "git+https://github.com/purestake/cumulus?branch=amar-mock-randomness-in-sproof#d5c532341cca7b330d0d31c8365224050f9ea9ec"
 dependencies = [
  "cumulus-primitives-core",
  "frame-support",
