@@ -17,6 +17,7 @@ log = { version = "0.4.17", default-features = false }
 scale-info = { version = "2.0.0", default-features = false, features = [ "derive" ] }
 serde = { version = "1.0.119", optional = true, features = [ "derive" ] }
 smallvec = "1.6.1"
+hex-literal = "0.3.4"
 
 # Local Dependencies
 pallet-template = { path = "../pallets/template", default-features = false }
@@ -62,6 +63,7 @@ cumulus-primitives-timestamp = { git = "https://github.com/paritytech/cumulus", 
 cumulus-primitives-utility = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.26", default-features = false }
 pallet-collator-selection = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.26", default-features = false }
 parachain-info = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.26", default-features = false }
+cumulus-pallet-session-benchmarking = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.26", default-features = false }
 
 # Nimbus Dependencies
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
@@ -131,6 +133,7 @@ std = [
 ]
 
 runtime-benchmarks = [
+	"cumulus-pallet-session-benchmarking/runtime-benchmarks",
 	"frame-benchmarking",
 	"frame-support/runtime-benchmarks",
 	"frame-system-benchmarking",
