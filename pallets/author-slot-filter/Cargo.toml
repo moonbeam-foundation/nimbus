@@ -6,23 +6,23 @@ edition = "2021"
 version = "0.9.0"
 
 [dependencies]
-frame-support = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-frame-system = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
+frame-support = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-system = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 log = { version = "0.4.17", default-features = false }
 nimbus-primitives = { path = "../../nimbus-primitives", default-features = false }
 parity-scale-codec = { version = "3.0.0", default-features = false, features = [ "derive" ] }
 scale-info = { version = "2.0.0", default-features = false, features = [ "derive" ] }
 serde = { version = "1.0.101", default-features = false, features = [ "derive" ] }
-sp-core = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-std = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
+sp-core = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-runtime = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-std = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 # Benchmarks
-frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", optional = true, default-features = false }
+frame-benchmarking = { git = "https://github.com/PureStake/substrate", optional = true, default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 [dev-dependencies]
-frame-support-test = { version = "3.0.0", git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26" }
-sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26"}
+frame-support-test = { version = "3.0.0", git = "https://github.com/PureStake/substrate", branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-io = { git = "https://github.com/PureStake/substrate", branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 [features]
 default = [ "std" ]

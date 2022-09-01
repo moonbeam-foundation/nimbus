@@ -24,34 +24,34 @@ pallet-template = { path = "../pallets/template", default-features = false }
 
 # Substrate Dependencies
 ## Substrate Primitive Dependencies
-sp-api = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-core = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-inherents = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-offchain = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-session = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-std = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-transaction-pool = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-sp-version = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
+sp-api = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-block-builder = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-core = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-inherents = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-io = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-offchain = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-runtime = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-session = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-std = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-transaction-pool = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+sp-version = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 ## Substrate FRAME Dependencies
-frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", optional = true, default-features = false }
-frame-executive = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-frame-support = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-frame-system = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-frame-system-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", optional = true, default-features = false }
-frame-system-rpc-runtime-api = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
+frame-benchmarking = { git = "https://github.com/PureStake/substrate", optional = true, default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-executive = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-support = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-system = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-system-benchmarking = { git = "https://github.com/PureStake/substrate", optional = true, default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+frame-system-rpc-runtime-api = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 ## Substrate Pallet Dependencies
-pallet-balances = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-randomness-collective-flip = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-session = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-sudo = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-timestamp = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-transaction-payment = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
-pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", default-features = false }
+pallet-balances = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-randomness-collective-flip = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-session = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-sudo = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-timestamp = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-transaction-payment = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
+pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/PureStake/substrate", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 # Cumulus dependencies
 cumulus-pallet-dmp-queue = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.26", default-features = false }
@@ -72,15 +72,15 @@ pallet-author-slot-filter = { path = "../../pallets/author-slot-filter", default
 
 
 # Polkadot Dependencies
-pallet-xcm = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
-polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
-polkadot-runtime-common = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
-xcm = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
-xcm-builder = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
-xcm-executor = { git = "https://github.com/paritytech/polkadot", branch = "release-v0.9.26", default-features = false }
+pallet-xcm = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
+polkadot-parachain = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
+polkadot-runtime-common = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
+xcm = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
+xcm-builder = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
+xcm-executor = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "notlesh-add-digest-to-benchmark-overhead-companion" }
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26" }
+substrate-wasm-builder = { git = "https://github.com/PureStake/substrate", branch = "notlesh-add-digest-to-benchmark-overhead" }
 
 [features]
 default = [
