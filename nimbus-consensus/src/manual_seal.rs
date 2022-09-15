@@ -1,4 +1,4 @@
-// Copyright 2019-2021 PureStake Inc.
+// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
 // Nimbus is free software: you can redistribute it and/or modify
@@ -17,31 +17,36 @@
 use cumulus_primitives_parachain_inherent::{
 	ParachainInherentData, INHERENT_IDENTIFIER as PARACHAIN_INHERENT_IDENTIFIER,
 };
-use nimbus_primitives::{CompatibleDigestItem, NimbusApi, NimbusId, NIMBUS_ENGINE_ID};
+use nimbus_primitives::{
+	CompatibleDigestItem, DigestsProvider, NimbusApi, NimbusId, NIMBUS_ENGINE_ID,
+};
 use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{BlockT, HeaderT, ProvideRuntimeApi, TransactionFor};
-use sp_core::crypto::Public;
+use sp_application_crypto::ByteArray;
 use sp_inherents::InherentData;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::{Digest, DigestItem};
 use std::sync::Arc;
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
-pub struct NimbusManualSealConsensusDataProvider<C> {
+pub struct NimbusManualSealConsensusDataProvider<C, DP = ()> {
 	/// Shared reference to keystore
 	pub keystore: SyncCryptoStorePtr,
 
 	/// Shared reference to the client
 	pub client: Arc<C>,
 	// Could have a skip_prediction field here if it becomes desireable
+	/// Additional digests provider
+	pub additional_digests_provider: DP,
 }
 
-impl<B, C> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider<C>
+impl<B, C, DP> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider<C, DP>
 where
 	B: BlockT,
 	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: NimbusApi<B>,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + Send + Sync,
 {
 	type Transaction = TransactionFor<C, B>;
 
@@ -67,9 +72,17 @@ where
 
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
-			Some(key) => Ok(Digest {
-				logs: vec![DigestItem::nimbus_pre_digest(NimbusId::from_slice(&key.1))],
-			}),
+			Some(key) => {
+				let nimbus_id = NimbusId::from_slice(&key.1).map_err(|_| {
+					Error::StringError(String::from("invalid nimbus id (wrong length)"))
+				})?;
+				let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+				logs.extend(
+					self.additional_digests_provider
+						.provide_digests(nimbus_id, parent.hash()),
+				);
+				Ok(Digest { logs })
+			}
 			None => Err(Error::StringError(String::from(
 				"no nimbus keys available to manual seal",
 			))),
@@ -100,7 +113,8 @@ where
 			})
 			.expect("Expected one pre-runtime digest that contains author id bytes");
 
-		let nimbus_public = NimbusId::from_slice(&claimed_author);
+		let nimbus_public = NimbusId::from_slice(&claimed_author)
+			.map_err(|_| Error::StringError(String::from("invalid nimbus id (wrong length)")))?;
 
 		let sig_digest =
 			crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.into());

@@ -1,4 +1,4 @@
-// Copyright 2019-2021 PureStake Inc.
+// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
 // Nimbus is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ use sp_api::{BlockT, HeaderT};
 // For some reason I can't get these logs to actually print
 use log::debug;
 use nimbus_primitives::{digests::CompatibleDigestItem, NimbusId, NIMBUS_ENGINE_ID};
-use sp_application_crypto::Public as _;
+use sp_application_crypto::ByteArray;
 use sp_runtime::{generic::DigestItem, RuntimeAppPublic};
 
 /// Block executive to be used by relay chain validators when validating parachain blocks built
@@ -82,8 +82,9 @@ where
 		debug!(target: "executive", "🪲 Claimed Author according to executive is {:?}", claimed_author);
 
 		// Verify the signature
-		let valid_signature =
-			NimbusId::from_slice(&claimed_author).verify(&header.hash(), &signature);
+		let valid_signature = NimbusId::from_slice(&claimed_author)
+			.expect("Expected claimed author to be a valid NimbusId.")
+			.verify(&header.hash(), &signature);
 
 		debug!(target: "executive", "🪲 Valid signature? {:?}", valid_signature);
 

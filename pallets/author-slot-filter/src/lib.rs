@@ -1,4 +1,4 @@
-// Copyright 2019-2021 PureStake Inc.
+// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
 // Nimbus is free software: you can redistribute it and/or modify
@@ -56,6 +56,7 @@ pub mod pallet {
 
 	/// The Author Filter pallet
 	#[pallet::pallet]
+	#[pallet::without_storage_info]
 	pub struct Pallet<T>(PhantomData<T>);
 
 	/// Configuration trait of this pallet.
@@ -91,12 +92,16 @@ pub mod pallet {
 
 		for i in 0..num_eligible {
 			// A context identifier for grabbing the randomness. Consists of three parts
-			// - The constant string *b"filter" - to identify this pallet
-			// - The index `i` when we're selecting the ith eligible author
-			// - The relay parent block number so that the eligible authors at the next height
-			//   change. Avoids liveness attacks from colluding minorities of active authors.
-			// Third one may not be necessary once we leverage the relay chain's randomness.
-			let subject: [u8; 8] = [b'f', b'i', b'l', b't', b'e', b'r', i as u8, *seed as u8];
+			// 1. Constant string *b"filter" - to identify this pallet
+			// 2. First 2 bytes of index.to_be_bytes when selecting the ith eligible author
+			// 3. First 4 bytes of seed.to_be_bytes
+			let mut first_two_bytes_of_index = &i.to_be_bytes()[..2];
+			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[..4];
+			let mut constant_string: [u8; 6] = [b'f', b'i', b'l', b't', b'e', b'r'];
+			let mut subject: [u8; 12] = [0u8; 12];
+			subject[..6].copy_from_slice(&mut constant_string);
+			subject[6..8].copy_from_slice(&mut first_two_bytes_of_index);
+			subject[8..].copy_from_slice(&mut first_four_bytes_of_seed);
 			let (randomness, _) = T::RandomnessSource::random(&subject);
 			debug!(target: "author-filter", "🎲Randomness sample {}: {:?}", i, &randomness);
 
@@ -136,6 +141,12 @@ pub mod pallet {
 
 			eligible.contains(author)
 		}
+		#[cfg(feature = "runtime-benchmarks")]
+		fn get_authors(slot: &u32) -> Vec<T::AccountId> {
+			// Compute pseudo-random subset of potential authors
+			let (eligible, _) = compute_pseudo_random_subset::<T>(T::PotentialAuthors::get(), slot);
+			eligible
+		}
 	}
 
 	#[pallet::call]
@@ -166,7 +177,7 @@ pub mod pallet {
 
 	#[pallet::storage]
 	#[pallet::getter(fn eligible_ratio)]
-	#[deprecated]
+	#[deprecated(note = "use `pallet::EligibleCount` instead")]
 	pub type EligibleRatio<T: Config> = StorageValue<_, Percent, ValueQuery, Half<T>>;
 
 	// Default value for the `EligibleRatio` is one half.

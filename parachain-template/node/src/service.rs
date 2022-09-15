@@ -1,7 +1,7 @@
 //! Service and ServiceFactory implementation. Specialized wrapper over substrate service.
 
 // std
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 // Local Runtime Types
 use parachain_template_runtime::{
@@ -9,17 +9,25 @@ use parachain_template_runtime::{
 };
 
 use nimbus_consensus::{
-	build_nimbus_consensus, BuildNimbusConsensusParams, NimbusManualSealConsensusDataProvider,
+	BuildNimbusConsensusParams, NimbusConsensus, NimbusManualSealConsensusDataProvider,
 };
 
 // Cumulus Imports
+use cumulus_client_cli::CollatorOptions;
 use cumulus_client_consensus_common::ParachainConsensus;
-use cumulus_client_network::build_block_announce_validator;
+use cumulus_client_network::BlockAnnounceValidator;
 use cumulus_client_service::{
 	prepare_node_config, start_collator, start_full_node, StartCollatorParams, StartFullNodeParams,
 };
 use cumulus_primitives_core::ParaId;
-use cumulus_primitives_parachain_inherent::MockValidationDataInherentDataProvider;
+use cumulus_primitives_parachain_inherent::{
+	MockValidationDataInherentDataProvider, MockXcmConfig,
+};
+use cumulus_relay_chain_inprocess_interface::build_inprocess_relay_chain;
+use cumulus_relay_chain_interface::{RelayChainError, RelayChainInterface, RelayChainResult};
+use cumulus_relay_chain_rpc_interface::RelayChainRPCInterface;
+
+use polkadot_service::CollatorPair;
 
 // Substrate Imports
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
@@ -103,6 +111,7 @@ where
 		config.wasm_method,
 		config.default_heap_pages,
 		config.max_runtime_instances,
+		config.runtime_cache_size,
 	);
 
 	let (client, backend, keystore_container, task_manager) =
@@ -161,6 +170,31 @@ where
 	Ok(params)
 }
 
+async fn build_relay_chain_interface(
+	polkadot_config: Configuration,
+	parachain_config: &Configuration,
+	telemetry_worker_handle: Option<TelemetryWorkerHandle>,
+	task_manager: &mut TaskManager,
+	collator_options: CollatorOptions,
+) -> RelayChainResult<(
+	Arc<(dyn RelayChainInterface + 'static)>,
+	Option<CollatorPair>,
+)> {
+	match collator_options.relay_chain_rpc_url {
+		Some(relay_chain_url) => Ok((
+			Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>,
+			None,
+		)),
+		None => build_inprocess_relay_chain(
+			polkadot_config,
+			parachain_config,
+			telemetry_worker_handle,
+			task_manager,
+			None,
+		),
+	}
+}
+
 /// Start a node with the given parachain `Configuration` and relay chain `Configuration`.
 ///
 /// This is the actual implementation that is abstract over the executor and the runtime api.
@@ -168,6 +202,7 @@ where
 async fn start_node_impl<RuntimeApi, Executor, RB, BIC>(
 	parachain_config: Configuration,
 	polkadot_config: Configuration,
+	collator_options: CollatorOptions,
 	id: ParaId,
 	_rpc_ext_builder: RB,
 	build_consensus: BIC,
@@ -195,7 +230,7 @@ where
 	Executor: sc_executor::NativeExecutionDispatch + 'static,
 	RB: Fn(
 			Arc<TFullClient<Block, RuntimeApi, Executor>>,
-		) -> Result<jsonrpc_core::IoHandler<sc_rpc::Metadata>, sc_service::Error>
+		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
 		+ Send
 		+ 'static,
 	BIC: FnOnce(
@@ -203,7 +238,7 @@ where
 		Option<&Registry>,
 		Option<TelemetryHandle>,
 		&TaskManager,
-		&polkadot_service::NewFull<polkadot_service::Client>,
+		Arc<dyn RelayChainInterface>,
 		Arc<
 			sc_transaction_pool::FullPool<
 				Block,
@@ -224,27 +259,29 @@ where
 	let params = new_partial::<RuntimeApi, Executor>(&parachain_config, true)?;
 	let (mut telemetry, telemetry_worker_handle) = params.other;
 
-	let relay_chain_full_node =
-		cumulus_client_service::build_polkadot_full_node(polkadot_config, telemetry_worker_handle)
-			.map_err(|e| match e {
-				polkadot_service::Error::Sub(x) => x,
-				s => format!("{}", s).into(),
-			})?;
-
 	let client = params.client.clone();
 	let backend = params.backend.clone();
-	let block_announce_validator = build_block_announce_validator(
-		relay_chain_full_node.client.clone(),
-		id,
-		Box::new(relay_chain_full_node.network.clone()),
-		relay_chain_full_node.backend.clone(),
-	);
+	let mut task_manager = params.task_manager;
+
+	let (relay_chain_interface, collator_key) = build_relay_chain_interface(
+		polkadot_config,
+		&parachain_config,
+		telemetry_worker_handle,
+		&mut task_manager,
+		collator_options.clone(),
+	)
+	.await
+	.map_err(|e| match e {
+		RelayChainError::ServiceError(polkadot_service::Error::Sub(x)) => x,
+		s => s.to_string().into(),
+	})?;
+
+	let block_announce_validator = BlockAnnounceValidator::new(relay_chain_interface.clone(), id);
 
 	let force_authoring = parachain_config.force_authoring;
 	let validator = parachain_config.role.is_authority();
 	let prometheus_registry = parachain_config.prometheus_registry().cloned();
 	let transaction_pool = params.transaction_pool.clone();
-	let mut task_manager = params.task_manager;
 	let import_queue = cumulus_client_service::SharedImportQueue::new(params.import_queue);
 	let (network, system_rpc_tx, start_network) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
@@ -253,7 +290,9 @@ where
 			transaction_pool: transaction_pool.clone(),
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue: import_queue.clone(),
-			block_announce_validator_builder: Some(Box::new(|_| block_announce_validator)),
+			block_announce_validator_builder: Some(Box::new(|_| {
+				Box::new(block_announce_validator)
+			})),
 			warp_sync: None,
 		})?;
 
@@ -268,12 +307,12 @@ where
 				deny_unsafe,
 			};
 
-			Ok(crate::rpc::create_full(deps))
+			crate::rpc::create_full(deps).map_err(Into::into)
 		})
 	};
 
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
-		rpc_extensions_builder,
+		rpc_builder: rpc_extensions_builder,
 		client: client.clone(),
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
@@ -290,13 +329,15 @@ where
 		Arc::new(move |hash, data| network.announce_block(hash, data))
 	};
 
+	let relay_chain_slot_duration = Duration::from_secs(6);
+
 	if validator {
 		let parachain_consensus = build_consensus(
 			client.clone(),
 			prometheus_registry.as_ref(),
 			telemetry.as_ref().map(|t| t.handle()),
 			&task_manager,
-			&relay_chain_full_node,
+			relay_chain_interface.clone(),
 			transaction_pool,
 			network,
 			params.keystore_container.sync_keystore(),
@@ -311,10 +352,12 @@ where
 			announce_block,
 			client: client.clone(),
 			task_manager: &mut task_manager,
-			relay_chain_full_node,
+			relay_chain_interface,
 			spawner,
 			parachain_consensus,
 			import_queue,
+			collator_key: collator_key.expect("Command line arguments do not allow this. qed"),
+			relay_chain_slot_duration,
 		};
 
 		start_collator(params).await?;
@@ -324,7 +367,10 @@ where
 			announce_block,
 			task_manager: &mut task_manager,
 			para_id: id,
-			relay_chain_full_node,
+			relay_chain_interface,
+			relay_chain_slot_duration,
+			import_queue,
+			collator_options,
 		};
 
 		start_full_node(params)?;
@@ -339,6 +385,7 @@ where
 pub async fn start_parachain_node(
 	parachain_config: Configuration,
 	polkadot_config: Configuration,
+	collator_options: CollatorOptions,
 	id: ParaId,
 ) -> sc_service::error::Result<(
 	TaskManager,
@@ -347,13 +394,14 @@ pub async fn start_parachain_node(
 	start_node_impl::<RuntimeApi, TemplateRuntimeExecutor, _, _>(
 		parachain_config,
 		polkadot_config,
+		collator_options,
 		id,
-		|_| Ok(Default::default()),
+		|_| Ok(jsonrpsee::RpcModule::new(())),
 		|client,
 		 prometheus_registry,
 		 telemetry,
 		 task_manager,
-		 relay_chain_node,
+		 relay_chain_interface,
 		 transaction_pool,
 		 _sync_oracle,
 		 keystore,
@@ -366,27 +414,29 @@ pub async fn start_parachain_node(
 				telemetry.clone(),
 			);
 
-			let relay_chain_backend = relay_chain_node.backend.clone();
-			let relay_chain_client = relay_chain_node.client.clone();
-			Ok(build_nimbus_consensus(BuildNimbusConsensusParams {
+			Ok(NimbusConsensus::build(BuildNimbusConsensusParams {
 				para_id: id,
 				proposer_factory,
 				block_import: client.clone(),
-				relay_chain_client: relay_chain_node.client.clone(),
-				relay_chain_backend: relay_chain_node.backend.clone(),
 				parachain_client: client.clone(),
 				keystore,
 				skip_prediction: force_authoring,
-				create_inherent_data_providers: move |_, (relay_parent, validation_data)| {
-					let parachain_inherent =
-								cumulus_primitives_parachain_inherent::ParachainInherentData::create_at_with_client(
-									relay_parent,
-									&relay_chain_client,
-									&*relay_chain_backend,
-									&validation_data,
-									id,
-								);
+				create_inherent_data_providers: move |_,
+				                                      (
+					relay_parent,
+					validation_data,
+					_author_id,
+				)| {
+					let relay_chain_interface = relay_chain_interface.clone();
 					async move {
+						let parachain_inherent =
+							cumulus_primitives_parachain_inherent::ParachainInherentData::create_at(
+								relay_parent,
+								&relay_chain_interface,
+								&validation_data,
+								id,
+							).await;
+
 						let time = sp_timestamp::InherentDataProvider::from_system_time();
 
 						let parachain_inherent = parachain_inherent.ok_or_else(|| {
@@ -400,6 +450,7 @@ pub async fn start_parachain_node(
 						Ok((time, parachain_inherent, nimbus_inherent))
 					}
 				},
+				additional_digests_provider: (),
 			}))
 		},
 	)
@@ -453,7 +504,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 				deny_unsafe,
 			};
 
-			Ok(crate::rpc::create_full(deps))
+			crate::rpc::create_full(deps).map_err(Into::into)
 		})
 	};
 
@@ -463,7 +514,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		keystore: keystore_container.sync_keystore(),
 		task_manager: &mut task_manager,
 		transaction_pool: transaction_pool.clone(),
-		rpc_extensions_builder,
+		rpc_builder: rpc_extensions_builder,
 		backend,
 		system_rpc_tx,
 		config,
@@ -479,6 +530,12 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			telemetry.as_ref().map(|t| t.handle()),
 		);
 
+		let client_set_aside_for_cidp = client.clone();
+
+		// Create channels for mocked XCM messages.
+		let (_downward_xcm_sender, downward_xcm_receiver) = flume::bounded::<Vec<u8>>(100);
+		let (_hrmp_xcm_sender, hrmp_xcm_receiver) = flume::bounded::<(ParaId, Vec<u8>)>(100);
+
 		let authorship_future = run_instant_seal(InstantSealParams {
 			block_import: client.clone(),
 			env: proposer,
@@ -488,8 +545,14 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			consensus_data_provider: Some(Box::new(NimbusManualSealConsensusDataProvider {
 				keystore: keystore_container.sync_keystore(),
 				client: client.clone(),
+				additional_digests_provider: (),
 			})),
-			create_inherent_data_providers: |_block, _extra_args| {
+			create_inherent_data_providers: move |block, _extra_args| {
+				let downward_xcm_receiver = downward_xcm_receiver.clone();
+				let hrmp_xcm_receiver = hrmp_xcm_receiver.clone();
+
+				let client_for_xcm = client_set_aside_for_cidp.clone();
+
 				async move {
 					let time = sp_timestamp::InherentDataProvider::from_system_time();
 
@@ -500,6 +563,14 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 						current_para_block: 0,
 						relay_offset: 0,
 						relay_blocks_per_para_block: 0,
+						xcm_config: MockXcmConfig::new(
+							&*client_for_xcm,
+							block,
+							Default::default(),
+							Default::default(),
+						),
+						raw_downward_messages: downward_xcm_receiver.drain().collect(),
+						raw_horizontal_messages: hrmp_xcm_receiver.drain().collect(),
 					};
 
 					Ok((time, mocked_parachain))

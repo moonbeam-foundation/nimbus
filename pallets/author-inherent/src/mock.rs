@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Nimbus.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate as pallet_testing;
+use crate::{self as pallet_testing, AccountLookup, NimbusId};
 use frame_support::parameter_types;
-use frame_support::sp_io;
 use frame_support::traits::ConstU32;
 use frame_support::weights::RuntimeDbWeight;
-use frame_support_test::TestRandomness;
+use frame_system;
 use sp_core::H256;
 use sp_runtime::{
 	testing::Header,
@@ -36,7 +35,7 @@ frame_support::construct_runtime!(
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
-		AuthorSlotFilter: pallet_testing::{Pallet, Call, Storage, Event},
+		AuthorInherent: pallet_testing::{Pallet, Call, Storage},
 	}
 );
 
@@ -76,10 +75,32 @@ impl frame_system::Config for Test {
 	type MaxConsumers = ConstU32<16>;
 }
 
+pub struct DummyBeacon {}
+impl nimbus_primitives::SlotBeacon for DummyBeacon {
+	fn slot() -> u32 {
+		0
+	}
+}
+
+pub const ALICE: u64 = 1;
+pub const ALICE_NIMBUS: [u8; 32] = [1; 32];
+pub struct MockAccountLookup;
+impl AccountLookup<u64> for MockAccountLookup {
+	fn lookup_account(nimbus_id: &NimbusId) -> Option<u64> {
+		let nimbus_id_bytes: &[u8] = nimbus_id.as_ref();
+
+		if nimbus_id_bytes == &ALICE_NIMBUS {
+			Some(ALICE)
+		} else {
+			None
+		}
+	}
+}
+
 impl pallet_testing::Config for Test {
-	type Event = Event;
-	type RandomnessSource = TestRandomness<Self>;
-	type PotentialAuthors = Authors;
+	type AccountLookup = MockAccountLookup;
+	type CanAuthor = ();
+	type SlotBeacon = DummyBeacon;
 	type WeightInfo = ();
 }
 
