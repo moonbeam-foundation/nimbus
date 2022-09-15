@@ -672,8 +672,8 @@
 	</span><span class="kw">if </span>maybe_key.is_none() {
 		<span class="macro">info!</span>(
 			target: LOG_TARGET,
-			<span class="string">&quot;🔮 Skipping candidate production because we are not eligible&quot;
-		</span>);
+			<span class="string">&quot;🔮 Skipping candidate production because we are not eligible for slot {}&quot;</span>, slot_number
+		);
 	}
 
 	maybe_key
