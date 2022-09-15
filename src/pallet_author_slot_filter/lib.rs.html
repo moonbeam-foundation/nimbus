@@ -222,6 +222,10 @@
 <span id="222">222</span>
 <span id="223">223</span>
 <span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.</span>
 <span class="comment">// This file is part of Nimbus.</span>
 
@@ -316,12 +320,16 @@
 
 		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">num_eligible</span> {
 			<span class="comment">// A context identifier for grabbing the randomness. Consists of three parts</span>
-			<span class="comment">// - The constant string *b&quot;filter&quot; - to identify this pallet</span>
-			<span class="comment">// - The index `i` when we&#39;re selecting the ith eligible author</span>
-			<span class="comment">// - The relay parent block number so that the eligible authors at the next height</span>
-			<span class="comment">//   change. Avoids liveness attacks from colluding minorities of active authors.</span>
-			<span class="comment">// Third one may not be necessary once we leverage the relay chain&#39;s randomness.</span>
-			<span class="kw">let</span> <span class="ident">subject</span>: [<span class="ident">u8</span>; <span class="number">8</span>] <span class="op">=</span> [<span class="string">b&#39;f&#39;</span>, <span class="string">b&#39;i&#39;</span>, <span class="string">b&#39;l&#39;</span>, <span class="string">b&#39;t&#39;</span>, <span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;r&#39;</span>, <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u8</span>, <span class="kw-2">*</span><span class="ident">seed</span> <span class="kw">as</span> <span class="ident">u8</span>];
+			<span class="comment">// 1. Constant string *b&quot;filter&quot; - to identify this pallet</span>
+			<span class="comment">// 2. First 2 bytes of index.to_be_bytes when selecting the ith eligible author</span>
+			<span class="comment">// 3. First 4 bytes of seed.to_be_bytes</span>
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">first_two_bytes_of_index</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">i</span>.<span class="ident">to_be_bytes</span>()[..<span class="number">2</span>];
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">first_four_bytes_of_seed</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">seed</span>.<span class="ident">to_be_bytes</span>()[..<span class="number">4</span>];
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">constant_string</span>: [<span class="ident">u8</span>; <span class="number">6</span>] <span class="op">=</span> [<span class="string">b&#39;f&#39;</span>, <span class="string">b&#39;i&#39;</span>, <span class="string">b&#39;l&#39;</span>, <span class="string">b&#39;t&#39;</span>, <span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;r&#39;</span>];
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">subject</span>: [<span class="ident">u8</span>; <span class="number">12</span>] <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">12</span>];
+			<span class="ident">subject</span>[..<span class="number">6</span>].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">constant_string</span>);
+			<span class="ident">subject</span>[<span class="number">6</span>..<span class="number">8</span>].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">first_two_bytes_of_index</span>);
+			<span class="ident">subject</span>[<span class="number">8</span>..].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">first_four_bytes_of_seed</span>);
 			<span class="kw">let</span> (<span class="ident">randomness</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">T::RandomnessSource::random</span>(<span class="kw-2">&amp;</span><span class="ident">subject</span>);
 			<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;author-filter&quot;</span>, <span class="string">&quot;🎲Randomness sample {}: {:?}&quot;</span>, <span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">randomness</span>);
 
