@@ -22,6 +22,8 @@ jobs:
       # https://github.com/actions-rs/toolchain/issues/126#issuecomment-782989659
       - name: Setup Rust toolchain
         run: rustup show
+      - name: Enable check Cargo.toml files format with toml_sort
+        run: chmod u+x ./scripts/check-cargo-toml-files-format.sh
       - name: Check Cargo.toml files format with toml_sort
         run: ./scripts/check-cargo-toml-files-format.sh
 
