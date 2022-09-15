@@ -229,7 +229,8 @@ where
 	if maybe_key.is_none() {
 		info!(
 			target: LOG_TARGET,
-			"🔮 Skipping candidate production because we are not eligible"
+			"🔮 Skipping candidate production because we are not eligible for slot {}",
+			slot_number
 		);
 	}
 
