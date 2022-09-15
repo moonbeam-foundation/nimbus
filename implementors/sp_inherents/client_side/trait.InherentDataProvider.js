@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["nimbus_primitives"] = [{"text":"impl InherentDataProvider for <a class=\"struct\" href=\"nimbus_primitives/struct.InherentDataProvider.html\" title=\"struct nimbus_primitives::InherentDataProvider\">InherentDataProvider</a>","synthetic":false,"types":["nimbus_primitives::inherents::InherentDataProvider"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"nimbus_primitives":[["impl InherentDataProvider for <a class=\"struct\" href=\"nimbus_primitives/struct.InherentDataProvider.html\" title=\"struct nimbus_primitives::InherentDataProvider\">InherentDataProvider</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

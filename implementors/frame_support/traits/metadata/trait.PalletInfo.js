@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["parachain_template_runtime"] = [{"text":"impl PalletInfo for <a class=\"struct\" href=\"parachain_template_runtime/struct.PalletInfo.html\" title=\"struct parachain_template_runtime::PalletInfo\">PalletInfo</a>","synthetic":false,"types":["parachain_template_runtime::PalletInfo"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"parachain_template_runtime":[["impl PalletInfo for <a class=\"struct\" href=\"parachain_template_runtime/struct.PalletInfo.html\" title=\"struct parachain_template_runtime::PalletInfo\">PalletInfo</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

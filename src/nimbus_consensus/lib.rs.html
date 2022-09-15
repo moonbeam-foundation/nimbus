@@ -1,102 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `nimbus-consensus&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../nimbus_consensus/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `nimbus-consensus/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../nimbus_consensus/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../nimbus_consensus/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../nimbus_consensus/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -441,512 +441,448 @@
 <span id="441">441</span>
 <span id="442">442</span>
 <span id="443">443</span>
-<span id="444">444</span>
-<span id="445">445</span>
-<span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
-<span id="453">453</span>
-<span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
-<span id="459">459</span>
-<span id="460">460</span>
-<span id="461">461</span>
-<span id="462">462</span>
-<span id="463">463</span>
-<span id="464">464</span>
-<span id="465">465</span>
-<span id="466">466</span>
-<span id="467">467</span>
-<span id="468">468</span>
-<span id="469">469</span>
-<span id="470">470</span>
-<span id="471">471</span>
-<span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.</span>
-<span class="comment">// This file is part of Nimbus.</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.
+// This file is part of Nimbus.
 
-<span class="comment">// Nimbus is free software: you can redistribute it and/or modify</span>
-<span class="comment">// it under the terms of the GNU General Public License as published by</span>
-<span class="comment">// the Free Software Foundation, either version 3 of the License, or</span>
-<span class="comment">// (at your option) any later version.</span>
+// Nimbus is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 
-<span class="comment">// Nimbus is distributed in the hope that it will be useful,</span>
-<span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="comment">// GNU General Public License for more details.</span>
+// Nimbus is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-<span class="comment">// You should have received a copy of the GNU General Public License</span>
-<span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+// You should have received a copy of the GNU General Public License
+// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
-<span class="doccomment">//! The nimbus consensus client-side worker</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! It queries the in-runtime filter to determine whether any keys</span>
-<span class="doccomment">//! stored in its keystore are eligible to author at this slot. If it has an eligible</span>
-<span class="doccomment">//! key it authors.</span>
+</span><span class="doccomment">//! The nimbus consensus client-side worker
+//!
+//! It queries the in-runtime filter to determine whether any keys
+//! stored in its keystore are eligible to author at this slot. If it has an eligible
+//! key it authors.
 
-<span class="kw">use</span> <span class="ident">cumulus_client_consensus_common</span>::{
-	<span class="ident">ParachainBlockImport</span>, <span class="ident">ParachainCandidate</span>, <span class="ident">ParachainConsensus</span>,
+</span><span class="kw">use </span>cumulus_client_consensus_common::{
+	ParachainBlockImport, ParachainCandidate, ParachainConsensus,
 };
-<span class="kw">use</span> <span class="ident">cumulus_primitives_core</span>::{<span class="ident">relay_chain::v2::Hash</span> <span class="kw">as</span> <span class="ident">PHash</span>, <span class="ident">ParaId</span>, <span class="ident">PersistedValidationData</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">import_queue::import_queue</span>;
-<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">debug</span>, <span class="ident">info</span>, <span class="ident">warn</span>};
-<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{
-	<span class="ident">AuthorFilterAPI</span>, <span class="ident">CompatibleDigestItem</span>, <span class="ident">DigestsProvider</span>, <span class="ident">NimbusApi</span>, <span class="ident">NimbusId</span>, <span class="ident">NIMBUS_KEY_ID</span>,
+<span class="kw">use </span>cumulus_primitives_core::{relay_chain::v2::Hash <span class="kw">as </span>PHash, ParaId, PersistedValidationData};
+<span class="kw">pub use </span>import_queue::import_queue;
+<span class="kw">use </span>log::{debug, info, warn};
+<span class="kw">use </span>nimbus_primitives::{
+	CompatibleDigestItem, DigestsProvider, NimbusApi, NimbusId, NIMBUS_KEY_ID,
 };
-<span class="kw">use</span> <span class="ident">parking_lot::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImport</span>, <span class="ident">BlockImportParams</span>};
-<span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ApiExt</span>, <span class="ident">BlockId</span>, <span class="ident">ProvideRuntimeApi</span>};
-<span class="kw">use</span> <span class="ident">sp_application_crypto</span>::{<span class="ident">ByteArray</span>, <span class="ident">CryptoTypePublicPair</span>};
-<span class="kw">use</span> <span class="ident">sp_consensus</span>::{
-	<span class="ident">BlockOrigin</span>, <span class="ident">EnableProofRecording</span>, <span class="ident">Environment</span>, <span class="ident">ProofRecording</span>, <span class="ident">Proposal</span>, <span class="ident">Proposer</span>,
+<span class="kw">use </span>parking_lot::Mutex;
+<span class="kw">use </span>sc_consensus::{BlockImport, BlockImportParams};
+<span class="kw">use </span>sp_api::{BlockId, ProvideRuntimeApi};
+<span class="kw">use </span>sp_application_crypto::{ByteArray, CryptoTypePublicPair};
+<span class="kw">use </span>sp_consensus::{
+	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
-<span class="kw">use</span> <span class="ident">sp_inherents</span>::{<span class="ident">CreateInherentDataProviders</span>, <span class="ident">InherentData</span>, <span class="ident">InherentDataProvider</span>};
-<span class="kw">use</span> <span class="ident">sp_keystore</span>::{<span class="ident">SyncCryptoStore</span>, <span class="ident">SyncCryptoStorePtr</span>};
-<span class="kw">use</span> <span class="ident">sp_runtime</span>::{
-	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="ident">HeaderT</span>},
-	<span class="ident">DigestItem</span>,
+<span class="kw">use </span>sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
+<span class="kw">use </span>sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
+<span class="kw">use </span>sp_runtime::{
+	traits::{Block <span class="kw">as </span>BlockT, Header <span class="kw">as </span>HeaderT},
+	DigestItem,
 };
-<span class="kw">use</span> <span class="ident">std::convert::TryInto</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">sync::Arc</span>, <span class="ident">time::Duration</span>};
-<span class="kw">use</span> <span class="ident">tracing::error</span>;
-<span class="kw">mod</span> <span class="ident">import_queue</span>;
-<span class="kw">mod</span> <span class="ident">manual_seal</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">manual_seal::NimbusManualSealConsensusDataProvider</span>;
+<span class="kw">use </span>std::convert::TryInto;
+<span class="kw">use </span>std::{marker::PhantomData, sync::Arc, time::Duration};
+<span class="kw">use </span>tracing::error;
+<span class="kw">mod </span>import_queue;
+<span class="kw">mod </span>manual_seal;
+<span class="kw">pub use </span>manual_seal::NimbusManualSealConsensusDataProvider;
 
-<span class="kw">const</span> <span class="ident">LOG_TARGET</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;filtering-consensus&quot;</span>;
+<span class="kw">const </span>LOG_TARGET: <span class="kw-2">&amp;</span>str = <span class="string">&quot;filtering-consensus&quot;</span>;
 
-<span class="doccomment">/// The implementation of the relay-chain provided consensus for parachains.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span> <span class="op">=</span> ()<span class="op">&gt;</span> {
-	<span class="ident">para_id</span>: <span class="ident">ParaId</span>,
-	<span class="ident">proposer_factory</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">PF</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-	<span class="ident">create_inherent_data_providers</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">CIDP</span><span class="op">&gt;</span>,
-	<span class="ident">block_import</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">futures::lock::Mutex</span><span class="op">&lt;</span><span class="ident">ParachainBlockImport</span><span class="op">&lt;</span><span class="ident">BI</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-	<span class="ident">parachain_client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ParaClient</span><span class="op">&gt;</span>,
-	<span class="ident">keystore</span>: <span class="ident">SyncCryptoStorePtr</span>,
-	<span class="ident">skip_prediction</span>: <span class="ident">bool</span>,
-	<span class="ident">additional_digests_provider</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">DP</span><span class="op">&gt;</span>,
-	<span class="ident">_phantom</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
+<span class="doccomment">/// The implementation of the relay-chain provided consensus for parachains.
+</span><span class="kw">pub struct </span>NimbusConsensus&lt;B, PF, BI, ParaClient, CIDP, DP = ()&gt; {
+	para_id: ParaId,
+	proposer_factory: Arc&lt;Mutex&lt;PF&gt;&gt;,
+	create_inherent_data_providers: Arc&lt;CIDP&gt;,
+	block_import: Arc&lt;futures::lock::Mutex&lt;ParachainBlockImport&lt;BI&gt;&gt;&gt;,
+	parachain_client: Arc&lt;ParaClient&gt;,
+	keystore: SyncCryptoStorePtr,
+	skip_prediction: bool,
+	additional_digests_provider: Arc&lt;DP&gt;,
+	_phantom: PhantomData&lt;B&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span> {
-	<span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> {
-			<span class="ident">para_id</span>: <span class="self">self</span>.<span class="ident">para_id</span>,
-			<span class="ident">proposer_factory</span>: <span class="self">self</span>.<span class="ident">proposer_factory</span>.<span class="ident">clone</span>(),
-			<span class="ident">create_inherent_data_providers</span>: <span class="self">self</span>.<span class="ident">create_inherent_data_providers</span>.<span class="ident">clone</span>(),
-			<span class="ident">block_import</span>: <span class="self">self</span>.<span class="ident">block_import</span>.<span class="ident">clone</span>(),
-			<span class="ident">parachain_client</span>: <span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">clone</span>(),
-			<span class="ident">keystore</span>: <span class="self">self</span>.<span class="ident">keystore</span>.<span class="ident">clone</span>(),
-			<span class="ident">skip_prediction</span>: <span class="self">self</span>.<span class="ident">skip_prediction</span>,
-			<span class="ident">additional_digests_provider</span>: <span class="self">self</span>.<span class="ident">additional_digests_provider</span>.<span class="ident">clone</span>(),
-			<span class="ident">_phantom</span>: <span class="ident">PhantomData</span>,
+<span class="kw">impl</span>&lt;B, PF, BI, ParaClient, CIDP, DP&gt; Clone <span class="kw">for </span>NimbusConsensus&lt;B, PF, BI, ParaClient, CIDP, DP&gt; {
+	<span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+		<span class="self">Self </span>{
+			para_id: <span class="self">self</span>.para_id,
+			proposer_factory: <span class="self">self</span>.proposer_factory.clone(),
+			create_inherent_data_providers: <span class="self">self</span>.create_inherent_data_providers.clone(),
+			block_import: <span class="self">self</span>.block_import.clone(),
+			parachain_client: <span class="self">self</span>.parachain_client.clone(),
+			keystore: <span class="self">self</span>.keystore.clone(),
+			skip_prediction: <span class="self">self</span>.skip_prediction,
+			additional_digests_provider: <span class="self">self</span>.additional_digests_provider.clone(),
+			_phantom: PhantomData,
 		}
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-	<span class="ident">B</span>: <span class="ident">BlockT</span>,
-	<span class="ident">PF</span>: <span class="lifetime">&#39;static</span>,
-	<span class="ident">BI</span>: <span class="lifetime">&#39;static</span>,
-	<span class="ident">ParaClient</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="ident">CIDP</span>: <span class="ident">CreateInherentDataProviders</span><span class="op">&lt;</span><span class="ident">B</span>, (<span class="ident">PHash</span>, <span class="ident">PersistedValidationData</span>, <span class="ident">NimbusId</span>)<span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="ident">DP</span>: <span class="ident">DigestsProvider</span><span class="op">&lt;</span><span class="ident">NimbusId</span>, <span class="op">&lt;</span><span class="ident">B</span> <span class="kw">as</span> <span class="ident">BlockT</span><span class="op">&gt;</span><span class="ident">::Hash</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+<span class="kw">impl</span>&lt;B, PF, BI, ParaClient, CIDP, DP&gt; NimbusConsensus&lt;B, PF, BI, ParaClient, CIDP, DP&gt;
+<span class="kw">where
+	</span>B: BlockT,
+	PF: <span class="lifetime">&#39;static</span>,
+	BI: <span class="lifetime">&#39;static</span>,
+	ParaClient: ProvideRuntimeApi&lt;B&gt; + <span class="lifetime">&#39;static</span>,
+	CIDP: CreateInherentDataProviders&lt;B, (PHash, PersistedValidationData, NimbusId)&gt; + <span class="lifetime">&#39;static</span>,
+	DP: DigestsProvider&lt;NimbusId, &lt;B <span class="kw">as </span>BlockT&gt;::Hash&gt; + <span class="lifetime">&#39;static</span>,
 {
-	<span class="doccomment">/// Create a new instance of nimbus consensus.</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(
-		<span class="ident">BuildNimbusConsensusParams</span> {
-			<span class="ident">para_id</span>,
-			<span class="ident">proposer_factory</span>,
-			<span class="ident">create_inherent_data_providers</span>,
-			<span class="ident">block_import</span>,
-			<span class="ident">parachain_client</span>,
-			<span class="ident">keystore</span>,
-			<span class="ident">skip_prediction</span>,
-			<span class="ident">additional_digests_provider</span>,
-		}: <span class="ident">BuildNimbusConsensusParams</span><span class="op">&lt;</span><span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span>,
-	) -&gt; <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ParachainConsensus</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>
-	<span class="kw">where</span>
-		<span class="self">Self</span>: <span class="ident">ParachainConsensus</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
+	<span class="doccomment">/// Create a new instance of nimbus consensus.
+	</span><span class="kw">pub fn </span>build(
+		BuildNimbusConsensusParams {
+			para_id,
+			proposer_factory,
+			create_inherent_data_providers,
+			block_import,
+			parachain_client,
+			keystore,
+			skip_prediction,
+			additional_digests_provider,
+		}: BuildNimbusConsensusParams&lt;PF, BI, ParaClient, CIDP, DP&gt;,
+	) -&gt; Box&lt;<span class="kw">dyn </span>ParachainConsensus&lt;B&gt;&gt;
+	<span class="kw">where
+		</span><span class="self">Self</span>: ParachainConsensus&lt;B&gt;,
 	{
-		<span class="ident">Box::new</span>(<span class="self">Self</span> {
-			<span class="ident">para_id</span>,
-			<span class="ident">proposer_factory</span>: <span class="ident">Arc::new</span>(<span class="ident">Mutex::new</span>(<span class="ident">proposer_factory</span>)),
-			<span class="ident">create_inherent_data_providers</span>: <span class="ident">Arc::new</span>(<span class="ident">create_inherent_data_providers</span>),
-			<span class="ident">block_import</span>: <span class="ident">Arc::new</span>(<span class="ident">futures::lock::Mutex::new</span>(<span class="ident">ParachainBlockImport::new</span>(
-				<span class="ident">block_import</span>,
+		Box::new(<span class="self">Self </span>{
+			para_id,
+			proposer_factory: Arc::new(Mutex::new(proposer_factory)),
+			create_inherent_data_providers: Arc::new(create_inherent_data_providers),
+			block_import: Arc::new(futures::lock::Mutex::new(ParachainBlockImport::new(
+				block_import,
 			))),
-			<span class="ident">parachain_client</span>,
-			<span class="ident">keystore</span>,
-			<span class="ident">skip_prediction</span>,
-			<span class="ident">additional_digests_provider</span>: <span class="ident">Arc::new</span>(<span class="ident">additional_digests_provider</span>),
-			<span class="ident">_phantom</span>: <span class="ident">PhantomData</span>,
+			parachain_client,
+			keystore,
+			skip_prediction,
+			additional_digests_provider: Arc::new(additional_digests_provider),
+			_phantom: PhantomData,
 		})
 	}
 
-	<span class="comment">//TODO Could this be a provided implementation now that we have this async inherent stuff?</span>
-	<span class="doccomment">/// Create the data.</span>
-	<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">inherent_data</span>(
+	<span class="comment">//TODO Could this be a provided implementation now that we have this async inherent stuff?
+	</span><span class="doccomment">/// Create the data.
+	</span><span class="kw">async fn </span>inherent_data(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">parent</span>: <span class="ident">B::Hash</span>,
-		<span class="ident">validation_data</span>: <span class="kw-2">&amp;</span><span class="ident">PersistedValidationData</span>,
-		<span class="ident">relay_parent</span>: <span class="ident">PHash</span>,
-		<span class="ident">author_id</span>: <span class="ident">NimbusId</span>,
-	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InherentData</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="ident">inherent_data_providers</span> <span class="op">=</span> <span class="self">self</span>
-			.<span class="ident">create_inherent_data_providers</span>
-			.<span class="ident">create_inherent_data_providers</span>(
-				<span class="ident">parent</span>,
-				(<span class="ident">relay_parent</span>, <span class="ident">validation_data</span>.<span class="ident">clone</span>(), <span class="ident">author_id</span>),
+		parent: B::Hash,
+		validation_data: <span class="kw-2">&amp;</span>PersistedValidationData,
+		relay_parent: PHash,
+		author_id: NimbusId,
+	) -&gt; <span class="prelude-ty">Option</span>&lt;InherentData&gt; {
+		<span class="kw">let </span>inherent_data_providers = <span class="self">self
+			</span>.create_inherent_data_providers
+			.create_inherent_data_providers(
+				parent,
+				(relay_parent, validation_data.clone(), author_id),
 			)
-			.<span class="kw">await</span>
-			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+			.<span class="kw">await
+			</span>.map_err(|e| {
 				<span class="macro">tracing::error!</span>(
-					<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-					<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>,
+					target: LOG_TARGET,
+					error = <span class="question-mark">?</span>e,
 					<span class="string">&quot;Failed to create inherent data providers.&quot;</span>,
 				)
 			})
-			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			.ok()<span class="question-mark">?</span>;
 
-		<span class="ident">inherent_data_providers</span>
-			.<span class="ident">create_inherent_data</span>()
-			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> {
+		inherent_data_providers
+			.create_inherent_data()
+			.map_err(|e| {
 				<span class="macro">tracing::error!</span>(
-					<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-					<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>,
+					target: LOG_TARGET,
+					error = <span class="question-mark">?</span>e,
 					<span class="string">&quot;Failed to create inherent data.&quot;</span>,
 				)
 			})
-			.<span class="ident">ok</span>()
+			.ok()
 	}
 }
 
-<span class="doccomment">/// Grabs any available nimbus key from the keystore.</span>
-<span class="doccomment">/// This may be useful in situations where you expect exactly one key</span>
-<span class="doccomment">/// and intend to perform an operation with it regardless of whether it is</span>
-<span class="doccomment">/// expected to be eligible. Concretely, this is used in the consensus worker</span>
-<span class="doccomment">/// to implement the `skip_prediction` feature.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_available_key</span>(<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span> {
-	<span class="comment">// Get all the available keys</span>
-	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
-		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
+<span class="doccomment">/// Grabs any available nimbus key from the keystore.
+/// This may be useful in situations where you expect exactly one key
+/// and intend to perform an operation with it regardless of whether it is
+/// expected to be eligible. Concretely, this is used in the consensus worker
+/// to implement the `skip_prediction` feature.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>first_available_key(keystore: <span class="kw-2">&amp;</span><span class="kw">dyn </span>SyncCryptoStore) -&gt; <span class="prelude-ty">Option</span>&lt;CryptoTypePublicPair&gt; {
+	<span class="comment">// Get all the available keys
+	</span><span class="kw">let </span>available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+		.expect(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
 
-	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
-	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
+	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.
+	</span><span class="kw">if </span>available_keys.is_empty() {
 		<span class="macro">warn!</span>(
-			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>
-		);
-		<span class="kw">return</span> <span class="prelude-val">None</span>;
+			target: LOG_TARGET,
+			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;
+		</span>);
+		<span class="kw">return </span><span class="prelude-val">None</span>;
 	}
 
-	<span class="prelude-val">Some</span>(<span class="ident">available_keys</span>[<span class="number">0</span>].<span class="ident">clone</span>())
+	<span class="prelude-val">Some</span>(available_keys[<span class="number">0</span>].clone())
 }
 
-<span class="doccomment">/// Grab the first eligible nimbus key from the keystore</span>
-<span class="doccomment">/// If multiple keys are eligible this function still only returns one</span>
-<span class="doccomment">/// and makes no guarantees which one as that depends on the keystore&#39;s iterator behavior.</span>
-<span class="doccomment">/// This is the standard way of determining which key to author with.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">first_eligible_key</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span>, <span class="ident">C</span><span class="op">&gt;</span>(
-	<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
-	<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>,
-	<span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>,
-	<span class="ident">slot_number</span>: <span class="ident">u32</span>,
-) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CryptoTypePublicPair</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-	<span class="ident">C</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
-	<span class="ident">C::Api</span>: <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
-	<span class="ident">C::Api</span>: <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span>,
+<span class="doccomment">/// Grab the first eligible nimbus key from the keystore
+/// If multiple keys are eligible this function still only returns one
+/// and makes no guarantees which one as that depends on the keystore&#39;s iterator behavior.
+/// This is the standard way of determining which key to author with.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>first_eligible_key&lt;B: BlockT, C&gt;(
+	client: Arc&lt;C&gt;,
+	keystore: <span class="kw-2">&amp;</span><span class="kw">dyn </span>SyncCryptoStore,
+	parent: <span class="kw-2">&amp;</span>B::Header,
+	slot_number: u32,
+) -&gt; <span class="prelude-ty">Option</span>&lt;CryptoTypePublicPair&gt;
+<span class="kw">where
+	</span>C: ProvideRuntimeApi&lt;B&gt;,
+	C::Api: NimbusApi&lt;B&gt;,
 {
-	<span class="comment">// Get all the available keys</span>
-	<span class="kw">let</span> <span class="ident">available_keys</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::keys</span>(<span class="ident">keystore</span>, <span class="ident">NIMBUS_KEY_ID</span>)
-		.<span class="ident">expect</span>(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
+	<span class="comment">// Get all the available keys
+	</span><span class="kw">let </span>available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
+		.expect(<span class="string">&quot;keystore should return the keys it has&quot;</span>);
 
-	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.</span>
-	<span class="kw">if</span> <span class="ident">available_keys</span>.<span class="ident">is_empty</span>() {
+	<span class="comment">// Print a more helpful message than &quot;not eligible&quot; when there are no keys at all.
+	</span><span class="kw">if </span>available_keys.is_empty() {
 		<span class="macro">warn!</span>(
-			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;</span>
-		);
-		<span class="kw">return</span> <span class="prelude-val">None</span>;
+			target: LOG_TARGET,
+			<span class="string">&quot;🔏 No Nimbus keys available. We will not be able to author.&quot;
+		</span>);
+		<span class="kw">return </span><span class="prelude-val">None</span>;
 	}
-	<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
 
-	<span class="comment">// helper function for calling the various runtime apis and versions</span>
-	<span class="kw">let</span> <span class="ident">prediction_helper</span> <span class="op">=</span> <span class="op">|</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>: <span class="ident">NimbusId</span>, <span class="ident">slot</span>: <span class="ident">u32</span>, <span class="ident">parent</span><span class="op">|</span> -&gt; <span class="ident">bool</span> {
-		<span class="kw">let</span> <span class="ident">has_nimbus_api</span> <span class="op">=</span> <span class="ident">client</span>
-			.<span class="ident">runtime_api</span>()
-			.<span class="ident">has_api</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">at</span>)
-			.<span class="ident">expect</span>(<span class="string">&quot;should be able to dynamically detect the api&quot;</span>);
+	<span class="kw">let </span>at = BlockId::Hash(parent.hash());
 
-		<span class="kw">if</span> <span class="ident">has_nimbus_api</span> {
-			<span class="ident">NimbusApi::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;NimbusAPI should not return error&quot;</span>)
-		} <span class="kw">else</span> {
-			<span class="comment">// There are two versions of the author filter, so we do that dynamically also.</span>
-			<span class="kw">let</span> <span class="ident">api_version</span> <span class="op">=</span> <span class="ident">client</span>
-				.<span class="ident">runtime_api</span>()
-				.<span class="ident">api_version</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;Should be able to detect author filter version&quot;</span>);
-
-			<span class="kw">if</span> <span class="ident">api_version</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span> {
-				<span class="ident">AuthorFilterAPI::can_author</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>.<span class="ident">runtime_api</span>(), <span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot</span>, <span class="ident">parent</span>)
-					.<span class="ident">expect</span>(<span class="string">&quot;Author API should not return error&quot;</span>)
-			} <span class="kw">else</span> {
-				<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
-				<span class="ident">client</span>
-					.<span class="ident">runtime_api</span>()
-					.<span class="ident">can_author_before_version_2</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>, <span class="ident">nimbus_id</span>, <span class="ident">slot_number</span>)
-					.<span class="ident">expect</span>(<span class="string">&quot;Author API version 2 should not return error&quot;</span>)
-			}
-		}
-	};
-
-	<span class="comment">// Iterate keys until we find an eligible one, or run out of candidates.</span>
-	<span class="comment">// If we are skipping prediction, then we author with the first key we find.</span>
-	<span class="comment">// prediction skipping only really makes sense when there is a single key in the keystore.</span>
-	<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="ident">available_keys</span>.<span class="ident">into_iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">type_public_pair</span><span class="op">|</span> {
-		<span class="comment">// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue</span>
-		<span class="comment">// That I should be passing Vec&lt;u8&gt; across the wasm boundary?</span>
-		<span class="ident">prediction_helper</span>(
-			<span class="kw-2">&amp;</span><span class="ident">at</span>,
-			<span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>).<span class="ident">expect</span>(<span class="string">&quot;Provided keys should be valid&quot;</span>),
-			<span class="ident">slot_number</span>,
-			<span class="ident">parent</span>,
+	<span class="comment">// Iterate keys until we find an eligible one, or run out of candidates.
+	// If we are skipping prediction, then we author with the first key we find.
+	// prediction skipping only really makes sense when there is a single key in the keystore.
+	</span><span class="kw">let </span>maybe_key = available_keys.into_iter().find(|type_public_pair| {
+		<span class="comment">// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
+		// That I should be passing Vec&lt;u8&gt; across the wasm boundary?
+		</span>NimbusApi::can_author(
+			<span class="kw-2">&amp;*</span>client.runtime_api(),
+			<span class="kw-2">&amp;</span>at,
+			NimbusId::from_slice(<span class="kw-2">&amp;</span>type_public_pair.<span class="number">1</span>).expect(<span class="string">&quot;Provided keys should be valid&quot;</span>),
+			slot_number,
+			parent,
 		)
+		.expect(<span class="string">&quot;NimbusAPI should not return error&quot;</span>)
 	});
 
-	<span class="comment">// If there are no eligible keys, print the log, and exit early.</span>
-	<span class="kw">if</span> <span class="ident">maybe_key</span>.<span class="ident">is_none</span>() {
+	<span class="comment">// If there are no eligible keys, print the log, and exit early.
+	</span><span class="kw">if </span>maybe_key.is_none() {
 		<span class="macro">info!</span>(
-			<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-			<span class="string">&quot;🔮 Skipping candidate production because we are not eligible&quot;</span>
-		);
+			target: LOG_TARGET,
+			<span class="string">&quot;🔮 Skipping candidate production because we are not eligible&quot;
+		</span>);
 	}
 
-	<span class="ident">maybe_key</span>
+	maybe_key
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">seal_header</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(
-	<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>,
-	<span class="ident">keystore</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">SyncCryptoStore</span>,
-	<span class="ident">type_public_pair</span>: <span class="kw-2">&amp;</span><span class="ident">CryptoTypePublicPair</span>,
-) -&gt; <span class="ident">DigestItem</span>
-<span class="kw">where</span>
-	<span class="ident">B</span>: <span class="ident">BlockT</span>,
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>seal_header&lt;B&gt;(
+	header: <span class="kw-2">&amp;</span>B::Header,
+	keystore: <span class="kw-2">&amp;</span><span class="kw">dyn </span>SyncCryptoStore,
+	type_public_pair: <span class="kw-2">&amp;</span>CryptoTypePublicPair,
+) -&gt; DigestItem
+<span class="kw">where
+	</span>B: BlockT,
 {
-	<span class="kw">let</span> <span class="ident">pre_hash</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">hash</span>();
+	<span class="kw">let </span>pre_hash = header.hash();
 
-	<span class="kw">let</span> <span class="ident">raw_sig</span> <span class="op">=</span> <span class="ident">SyncCryptoStore::sign_with</span>(
-		<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">keystore</span>,
-		<span class="ident">NIMBUS_KEY_ID</span>,
-		<span class="ident">type_public_pair</span>,
-		<span class="ident">pre_hash</span>.<span class="ident">as_ref</span>(),
+	<span class="kw">let </span>raw_sig = SyncCryptoStore::sign_with(
+		<span class="kw-2">&amp;*</span>keystore,
+		NIMBUS_KEY_ID,
+		type_public_pair,
+		pre_hash.as_ref(),
 	)
-	.<span class="ident">expect</span>(<span class="string">&quot;Keystore should be able to sign&quot;</span>)
-	.<span class="ident">expect</span>(<span class="string">&quot;We already checked that the key was present&quot;</span>);
+	.expect(<span class="string">&quot;Keystore should be able to sign&quot;</span>)
+	.expect(<span class="string">&quot;We already checked that the key was present&quot;</span>);
 
-	<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;The signature is \n{:?}&quot;</span>, <span class="ident">raw_sig</span>);
+	<span class="macro">debug!</span>(target: LOG_TARGET, <span class="string">&quot;The signature is \n{:?}&quot;</span>, raw_sig);
 
-	<span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">raw_sig</span>
-		.<span class="ident">clone</span>()
-		.<span class="ident">try_into</span>()
-		.<span class="ident">expect</span>(<span class="string">&quot;signature bytes produced by keystore should be right length&quot;</span>);
+	<span class="kw">let </span>signature = raw_sig
+		.clone()
+		.try_into()
+		.expect(<span class="string">&quot;signature bytes produced by keystore should be right length&quot;</span>);
 
-	<span class="op">&lt;</span><span class="ident">DigestItem</span> <span class="kw">as</span> <span class="ident">CompatibleDigestItem</span><span class="op">&gt;</span><span class="ident">::nimbus_seal</span>(<span class="ident">signature</span>)
+	&lt;DigestItem <span class="kw">as </span>CompatibleDigestItem&gt;::nimbus_seal(signature)
 }
 
-<span class="attribute">#[<span class="ident">async_trait::async_trait</span>]</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span> <span class="ident">ParachainConsensus</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-	<span class="kw">for</span> <span class="ident">NimbusConsensus</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-	<span class="ident">B</span>: <span class="ident">BlockT</span>,
-	<span class="ident">BI</span>: <span class="ident">BlockImport</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="ident">PF</span>: <span class="ident">Environment</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="ident">PF::Proposer</span>: <span class="ident">Proposer</span><span class="op">&lt;</span>
-		<span class="ident">B</span>,
-		<span class="ident">Transaction</span> <span class="op">=</span> <span class="ident">BI::Transaction</span>,
-		<span class="ident">ProofRecording</span> <span class="op">=</span> <span class="ident">EnableProofRecording</span>,
-		<span class="ident">Proof</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">EnableProofRecording</span> <span class="kw">as</span> <span class="ident">ProofRecording</span><span class="op">&gt;</span><span class="ident">::Proof</span>,
-	<span class="op">&gt;</span>,
-	<span class="ident">ParaClient</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="comment">// We require the client to provide both runtime apis, but only one will be called</span>
-	<span class="ident">ParaClient::Api</span>: <span class="ident">AuthorFilterAPI</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">NimbusId</span><span class="op">&gt;</span>,
-	<span class="ident">ParaClient::Api</span>: <span class="ident">NimbusApi</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
-	<span class="ident">CIDP</span>: <span class="ident">CreateInherentDataProviders</span><span class="op">&lt;</span><span class="ident">B</span>, (<span class="ident">PHash</span>, <span class="ident">PersistedValidationData</span>, <span class="ident">NimbusId</span>)<span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-	<span class="ident">DP</span>: <span class="ident">DigestsProvider</span><span class="op">&lt;</span><span class="ident">NimbusId</span>, <span class="op">&lt;</span><span class="ident">B</span> <span class="kw">as</span> <span class="ident">BlockT</span><span class="op">&gt;</span><span class="ident">::Hash</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
+<span class="attribute">#[async_trait::async_trait]
+</span><span class="kw">impl</span>&lt;B, PF, BI, ParaClient, CIDP, DP&gt; ParachainConsensus&lt;B&gt;
+	<span class="kw">for </span>NimbusConsensus&lt;B, PF, BI, ParaClient, CIDP, DP&gt;
+<span class="kw">where
+	</span>B: BlockT,
+	BI: BlockImport&lt;B&gt; + Send + Sync + <span class="lifetime">&#39;static</span>,
+	PF: Environment&lt;B&gt; + Send + Sync + <span class="lifetime">&#39;static</span>,
+	PF::Proposer: Proposer&lt;
+		B,
+		Transaction = BI::Transaction,
+		ProofRecording = EnableProofRecording,
+		Proof = &lt;EnableProofRecording <span class="kw">as </span>ProofRecording&gt;::Proof,
+	&gt;,
+	ParaClient: ProvideRuntimeApi&lt;B&gt; + Send + Sync + <span class="lifetime">&#39;static</span>,
+	ParaClient::Api: NimbusApi&lt;B&gt;,
+	CIDP: CreateInherentDataProviders&lt;B, (PHash, PersistedValidationData, NimbusId)&gt; + <span class="lifetime">&#39;static</span>,
+	DP: DigestsProvider&lt;NimbusId, &lt;B <span class="kw">as </span>BlockT&gt;::Hash&gt; + <span class="lifetime">&#39;static </span>+ Send + Sync,
 {
-	<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">produce_candidate</span>(
-		<span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-		<span class="ident">parent</span>: <span class="kw-2">&amp;</span><span class="ident">B::Header</span>,
-		<span class="ident">relay_parent</span>: <span class="ident">PHash</span>,
-		<span class="ident">validation_data</span>: <span class="kw-2">&amp;</span><span class="ident">PersistedValidationData</span>,
-	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ParachainCandidate</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-		<span class="comment">// Determine if runtime change</span>
-		<span class="kw">let</span> <span class="ident">runtime_upgraded</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">parent</span>.<span class="ident">number</span>() <span class="op">&gt;</span> <span class="ident">sp_runtime::traits::Zero::zero</span>() {
-			<span class="kw">let</span> <span class="ident">at</span> <span class="op">=</span> <span class="ident">BlockId::Hash</span>(<span class="ident">parent</span>.<span class="ident">hash</span>());
-			<span class="kw">let</span> <span class="ident">parent_at</span> <span class="op">=</span> <span class="ident">BlockId</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="ident">::Hash</span>(<span class="kw-2">*</span><span class="ident">parent</span>.<span class="ident">parent_hash</span>());
-			<span class="kw">use</span> <span class="ident">sp_api::Core</span> <span class="kw">as</span> <span class="kw">_</span>;
-			<span class="kw">let</span> <span class="ident">previous_runtime_version</span>: <span class="ident">sp_api::RuntimeVersion</span> <span class="op">=</span> <span class="self">self</span>
-				.<span class="ident">parachain_client</span>
-				.<span class="ident">runtime_api</span>()
-				.<span class="ident">version</span>(<span class="kw-2">&amp;</span><span class="ident">parent_at</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>);
-			<span class="kw">let</span> <span class="ident">runtime_version</span>: <span class="ident">sp_api::RuntimeVersion</span> <span class="op">=</span> <span class="self">self</span>
-				.<span class="ident">parachain_client</span>
-				.<span class="ident">runtime_api</span>()
-				.<span class="ident">version</span>(<span class="kw-2">&amp;</span><span class="ident">at</span>)
-				.<span class="ident">expect</span>(<span class="string">&quot;Runtime api access to not error.&quot;</span>);
+	<span class="kw">async fn </span>produce_candidate(
+		<span class="kw-2">&amp;mut </span><span class="self">self</span>,
+		parent: <span class="kw-2">&amp;</span>B::Header,
+		relay_parent: PHash,
+		validation_data: <span class="kw-2">&amp;</span>PersistedValidationData,
+	) -&gt; <span class="prelude-ty">Option</span>&lt;ParachainCandidate&lt;B&gt;&gt; {
+		<span class="comment">// Determine if runtime change
+		</span><span class="kw">let </span>runtime_upgraded = <span class="kw">if </span><span class="kw-2">*</span>parent.number() &gt; sp_runtime::traits::Zero::zero() {
+			<span class="kw">let </span>at = BlockId::Hash(parent.hash());
+			<span class="kw">let </span>parent_at = BlockId::&lt;B&gt;::Hash(<span class="kw-2">*</span>parent.parent_hash());
+			<span class="kw">use </span>sp_api::Core <span class="kw">as _</span>;
+			<span class="kw">let </span>previous_runtime_version: sp_api::RuntimeVersion = <span class="self">self
+				</span>.parachain_client
+				.runtime_api()
+				.version(<span class="kw-2">&amp;</span>parent_at)
+				.expect(<span class="string">&quot;Runtime api access to not error.&quot;</span>);
+			<span class="kw">let </span>runtime_version: sp_api::RuntimeVersion = <span class="self">self
+				</span>.parachain_client
+				.runtime_api()
+				.version(<span class="kw-2">&amp;</span>at)
+				.expect(<span class="string">&quot;Runtime api access to not error.&quot;</span>);
 
-			<span class="ident">previous_runtime_version</span> <span class="op">!</span><span class="op">=</span> <span class="ident">runtime_version</span>
-		} <span class="kw">else</span> {
-			<span class="bool-val">false</span>
-		};
+			previous_runtime_version != runtime_version
+		} <span class="kw">else </span>{
+			<span class="bool-val">false
+		</span>};
 
-		<span class="kw">let</span> <span class="ident">maybe_key</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">skip_prediction</span> <span class="op">|</span><span class="op">|</span> <span class="ident">runtime_upgraded</span> {
-			<span class="ident">first_available_key</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>)
-		} <span class="kw">else</span> {
-			<span class="ident">first_eligible_key</span>::<span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">ParaClient</span><span class="op">&gt;</span>(
-				<span class="self">self</span>.<span class="ident">parachain_client</span>.<span class="ident">clone</span>(),
-				<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>,
-				<span class="ident">parent</span>,
-				<span class="ident">validation_data</span>.<span class="ident">relay_parent_number</span>,
+		<span class="kw">let </span>maybe_key = <span class="kw">if </span><span class="self">self</span>.skip_prediction || runtime_upgraded {
+			first_available_key(<span class="kw-2">&amp;*</span><span class="self">self</span>.keystore)
+		} <span class="kw">else </span>{
+			first_eligible_key::&lt;B, ParaClient&gt;(
+				<span class="self">self</span>.parachain_client.clone(),
+				<span class="kw-2">&amp;*</span><span class="self">self</span>.keystore,
+				parent,
+				validation_data.relay_parent_number,
 			)
 		};
 
-		<span class="comment">// If there are no eligible keys, print the log, and exit early.</span>
-		<span class="kw">let</span> <span class="ident">type_public_pair</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">maybe_key</span> {
-			<span class="prelude-val">Some</span>(<span class="ident">p</span>) =&gt; <span class="ident">p</span>,
-			<span class="prelude-val">None</span> =&gt; {
-				<span class="kw">return</span> <span class="prelude-val">None</span>;
+		<span class="comment">// If there are no eligible keys, print the log, and exit early.
+		</span><span class="kw">let </span>type_public_pair = <span class="kw">match </span>maybe_key {
+			<span class="prelude-val">Some</span>(p) =&gt; p,
+			<span class="prelude-val">None </span>=&gt; {
+				<span class="kw">return </span><span class="prelude-val">None</span>;
 			}
 		};
 
-		<span class="kw">let</span> <span class="ident">proposer_future</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">proposer_factory</span>.<span class="ident">lock</span>().<span class="ident">init</span>(<span class="kw-2">&amp;</span><span class="ident">parent</span>);
+		<span class="kw">let </span>proposer_future = <span class="self">self</span>.proposer_factory.lock().init(<span class="kw-2">&amp;</span>parent);
 
-		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">proposer_future</span>
-			.<span class="kw">await</span>
-			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>, <span class="string">&quot;Could not create proposer.&quot;</span>))
-			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
+		<span class="kw">let </span>proposer = proposer_future
+			.<span class="kw">await
+			</span>.map_err(|e| <span class="macro">error!</span>(target: LOG_TARGET, error = <span class="question-mark">?</span>e, <span class="string">&quot;Could not create proposer.&quot;</span>))
+			.ok()<span class="question-mark">?</span>;
 
-		<span class="kw">let</span> <span class="ident">nimbus_id</span> <span class="op">=</span> <span class="ident">NimbusId::from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>.<span class="number">1</span>)
-			.<span class="ident">map_err</span>(
-				<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>, <span class="string">&quot;Invalid Nimbus ID (wrong length).&quot;</span>),
+		<span class="kw">let </span>nimbus_id = NimbusId::from_slice(<span class="kw-2">&amp;</span>type_public_pair.<span class="number">1</span>)
+			.map_err(
+				|e| <span class="macro">error!</span>(target: LOG_TARGET, error = <span class="question-mark">?</span>e, <span class="string">&quot;Invalid Nimbus ID (wrong length).&quot;</span>),
 			)
-			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			.ok()<span class="question-mark">?</span>;
 
-		<span class="kw">let</span> <span class="ident">inherent_data</span> <span class="op">=</span> <span class="self">self</span>
-			.<span class="ident">inherent_data</span>(
-				<span class="ident">parent</span>.<span class="ident">hash</span>(),
-				<span class="kw-2">&amp;</span><span class="ident">validation_data</span>,
-				<span class="ident">relay_parent</span>,
-				<span class="ident">nimbus_id</span>.<span class="ident">clone</span>(),
+		<span class="kw">let </span>inherent_data = <span class="self">self
+			</span>.inherent_data(
+				parent.hash(),
+				<span class="kw-2">&amp;</span>validation_data,
+				relay_parent,
+				nimbus_id.clone(),
 			)
 			.<span class="kw">await</span><span class="question-mark">?</span>;
 
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">logs</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">CompatibleDigestItem::nimbus_pre_digest</span>(<span class="ident">nimbus_id</span>.<span class="ident">clone</span>())];
-		<span class="ident">logs</span>.<span class="ident">extend</span>(
-			<span class="self">self</span>.<span class="ident">additional_digests_provider</span>
-				.<span class="ident">provide_digests</span>(<span class="ident">nimbus_id</span>, <span class="ident">parent</span>.<span class="ident">hash</span>()),
+		<span class="kw">let </span><span class="kw-2">mut </span>logs = <span class="macro">vec!</span>[CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
+		logs.extend(
+			<span class="self">self</span>.additional_digests_provider
+				.provide_digests(nimbus_id, parent.hash()),
 		);
-		<span class="kw">let</span> <span class="ident">inherent_digests</span> <span class="op">=</span> <span class="ident">sp_runtime::generic::Digest</span> { <span class="ident">logs</span> };
+		<span class="kw">let </span>inherent_digests = sp_runtime::generic::Digest { logs };
 
-		<span class="kw">let</span> <span class="ident">Proposal</span> {
-			<span class="ident">block</span>,
-			<span class="ident">storage_changes</span>,
-			<span class="ident">proof</span>,
-		} <span class="op">=</span> <span class="ident">proposer</span>
-			.<span class="ident">propose</span>(
-				<span class="ident">inherent_data</span>,
-				<span class="ident">inherent_digests</span>,
-				<span class="comment">//TODO: Fix this.</span>
-				<span class="ident">Duration::from_millis</span>(<span class="number">500</span>),
-				<span class="comment">// Set the block limit to 50% of the maximum PoV size.</span>
-				<span class="comment">//</span>
-				<span class="comment">// TODO: If we got benchmarking that includes that encapsulates the proof size,</span>
-				<span class="comment">// we should be able to use the maximum pov size.</span>
-				<span class="prelude-val">Some</span>((<span class="ident">validation_data</span>.<span class="ident">max_pov_size</span> <span class="op">/</span> <span class="number">2</span>) <span class="kw">as</span> <span class="ident">usize</span>),
+		<span class="kw">let </span>Proposal {
+			block,
+			storage_changes,
+			proof,
+		} = proposer
+			.propose(
+				inherent_data,
+				inherent_digests,
+				<span class="comment">//TODO: Fix this.
+				</span>Duration::from_millis(<span class="number">500</span>),
+				<span class="comment">// Set the block limit to 50% of the maximum PoV size.
+				//
+				// TODO: If we got benchmarking that includes that encapsulates the proof size,
+				// we should be able to use the maximum pov size.
+				</span><span class="prelude-val">Some</span>((validation_data.max_pov_size / <span class="number">2</span>) <span class="kw">as </span>usize),
 			)
-			.<span class="kw">await</span>
-			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">error!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">e</span>, <span class="string">&quot;Proposing failed.&quot;</span>))
-			.<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			.<span class="kw">await
+			</span>.map_err(|e| <span class="macro">error!</span>(target: LOG_TARGET, error = <span class="question-mark">?</span>e, <span class="string">&quot;Proposing failed.&quot;</span>))
+			.ok()<span class="question-mark">?</span>;
 
-		<span class="kw">let</span> (<span class="ident">header</span>, <span class="ident">extrinsics</span>) <span class="op">=</span> <span class="ident">block</span>.<span class="ident">clone</span>().<span class="ident">deconstruct</span>();
+		<span class="kw">let </span>(header, extrinsics) = block.clone().deconstruct();
 
-		<span class="kw">let</span> <span class="ident">sig_digest</span> <span class="op">=</span> <span class="ident">seal_header</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">keystore</span>, <span class="kw-2">&amp;</span><span class="ident">type_public_pair</span>);
+		<span class="kw">let </span>sig_digest = seal_header::&lt;B&gt;(<span class="kw-2">&amp;</span>header, <span class="kw-2">&amp;*</span><span class="self">self</span>.keystore, <span class="kw-2">&amp;</span>type_public_pair);
 
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">block_import_params</span> <span class="op">=</span> <span class="ident">BlockImportParams::new</span>(<span class="ident">BlockOrigin::Own</span>, <span class="ident">header</span>.<span class="ident">clone</span>());
-		<span class="ident">block_import_params</span>.<span class="ident">post_digests</span>.<span class="ident">push</span>(<span class="ident">sig_digest</span>.<span class="ident">clone</span>());
-		<span class="ident">block_import_params</span>.<span class="ident">body</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">extrinsics</span>.<span class="ident">clone</span>());
-		<span class="ident">block_import_params</span>.<span class="ident">state_action</span> <span class="op">=</span> <span class="ident">sc_consensus::StateAction::ApplyChanges</span>(
-			<span class="ident">sc_consensus::StorageChanges::Changes</span>(<span class="ident">storage_changes</span>),
+		<span class="kw">let </span><span class="kw-2">mut </span>block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
+		block_import_params.post_digests.push(sig_digest.clone());
+		block_import_params.body = <span class="prelude-val">Some</span>(extrinsics.clone());
+		block_import_params.state_action = sc_consensus::StateAction::ApplyChanges(
+			sc_consensus::StorageChanges::Changes(storage_changes),
 		);
 
-		<span class="comment">// Print the same log line as slots (aura and babe)</span>
-		<span class="macro">info!</span>(
+		<span class="comment">// Print the same log line as slots (aura and babe)
+		</span><span class="macro">info!</span>(
 			<span class="string">&quot;🔖 Sealed block for proposal at {}. Hash now {:?}, previously {:?}.&quot;</span>,
-			<span class="kw-2">*</span><span class="ident">header</span>.<span class="ident">number</span>(),
-			<span class="ident">block_import_params</span>.<span class="ident">post_hash</span>(),
-			<span class="ident">header</span>.<span class="ident">hash</span>(),
+			<span class="kw-2">*</span>header.number(),
+			block_import_params.post_hash(),
+			header.hash(),
 		);
 
-		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="self">self</span>
-			.<span class="ident">block_import</span>
-			.<span class="ident">lock</span>()
-			.<span class="kw">await</span>
-			.<span class="ident">import_block</span>(<span class="ident">block_import_params</span>, <span class="ident">Default::default</span>())
-			.<span class="kw">await</span>
-		{
+		<span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self
+			</span>.block_import
+			.lock()
+			.<span class="kw">await
+			</span>.import_block(block_import_params, Default::default())
+			.<span class="kw">await
+		</span>{
 			<span class="macro">error!</span>(
-				<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
-				<span class="ident">at</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">parent</span>.<span class="ident">hash</span>(),
-				<span class="ident">error</span> <span class="op">=</span> <span class="question-mark">?</span><span class="ident">err</span>,
+				target: LOG_TARGET,
+				at = <span class="question-mark">?</span>parent.hash(),
+				error = <span class="question-mark">?</span>err,
 				<span class="string">&quot;Error importing built block.&quot;</span>,
 			);
 
-			<span class="kw">return</span> <span class="prelude-val">None</span>;
+			<span class="kw">return </span><span class="prelude-val">None</span>;
 		}
 
-		<span class="comment">// Compute info about the block after the digest is added</span>
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">post_header</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">clone</span>();
-		<span class="ident">post_header</span>.<span class="ident">digest_mut</span>().<span class="ident">logs</span>.<span class="ident">push</span>(<span class="ident">sig_digest</span>.<span class="ident">clone</span>());
-		<span class="kw">let</span> <span class="ident">post_block</span> <span class="op">=</span> <span class="ident">B::new</span>(<span class="ident">post_header</span>, <span class="ident">extrinsics</span>);
+		<span class="comment">// Compute info about the block after the digest is added
+		</span><span class="kw">let </span><span class="kw-2">mut </span>post_header = header.clone();
+		post_header.digest_mut().logs.push(sig_digest.clone());
+		<span class="kw">let </span>post_block = B::new(post_header, extrinsics);
 
-		<span class="comment">// Returning the block WITH the seal for distribution around the network.</span>
-		<span class="prelude-val">Some</span>(<span class="ident">ParachainCandidate</span> {
-			<span class="ident">block</span>: <span class="ident">post_block</span>,
-			<span class="ident">proof</span>,
+		<span class="comment">// Returning the block WITH the seal for distribution around the network.
+		</span><span class="prelude-val">Some</span>(ParachainCandidate {
+			block: post_block,
+			proof,
 		})
 	}
 }
 
-<span class="doccomment">/// Paramaters of [`build_relay_chain_consensus`].</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// I briefly tried the async keystore approach, but decided to go sync so I can copy</span>
-<span class="doccomment">/// code from Aura. Maybe after it is working, Jeremy can help me go async.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BuildNimbusConsensusParams</span><span class="op">&lt;</span><span class="ident">PF</span>, <span class="ident">BI</span>, <span class="ident">ParaClient</span>, <span class="ident">CIDP</span>, <span class="ident">DP</span><span class="op">&gt;</span> {
-	<span class="kw">pub</span> <span class="ident">para_id</span>: <span class="ident">ParaId</span>,
-	<span class="kw">pub</span> <span class="ident">proposer_factory</span>: <span class="ident">PF</span>,
-	<span class="kw">pub</span> <span class="ident">create_inherent_data_providers</span>: <span class="ident">CIDP</span>,
-	<span class="kw">pub</span> <span class="ident">block_import</span>: <span class="ident">BI</span>,
-	<span class="kw">pub</span> <span class="ident">parachain_client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ParaClient</span><span class="op">&gt;</span>,
-	<span class="kw">pub</span> <span class="ident">keystore</span>: <span class="ident">SyncCryptoStorePtr</span>,
-	<span class="kw">pub</span> <span class="ident">skip_prediction</span>: <span class="ident">bool</span>,
-	<span class="kw">pub</span> <span class="ident">additional_digests_provider</span>: <span class="ident">DP</span>,
+<span class="doccomment">/// Paramaters of [`build_relay_chain_consensus`].
+///
+/// I briefly tried the async keystore approach, but decided to go sync so I can copy
+/// code from Aura. Maybe after it is working, Jeremy can help me go async.
+</span><span class="kw">pub struct </span>BuildNimbusConsensusParams&lt;PF, BI, ParaClient, CIDP, DP&gt; {
+	<span class="kw">pub </span>para_id: ParaId,
+	<span class="kw">pub </span>proposer_factory: PF,
+	<span class="kw">pub </span>create_inherent_data_providers: CIDP,
+	<span class="kw">pub </span>block_import: BI,
+	<span class="kw">pub </span>parachain_client: Arc&lt;ParaClient&gt;,
+	<span class="kw">pub </span>keystore: SyncCryptoStorePtr,
+	<span class="kw">pub </span>skip_prediction: bool,
+	<span class="kw">pub </span>additional_digests_provider: DP,
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_consensus" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_consensus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (060e47f74 2022-08-23)" ></div></body></html>

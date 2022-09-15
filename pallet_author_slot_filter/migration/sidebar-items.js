@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["EligibleRatioToEligiblityCount",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["EligibleRatioToEligiblityCount",""]]};

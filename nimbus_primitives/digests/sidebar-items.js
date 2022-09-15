@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["CompatibleDigestItem","A digest item which is usable with aura consensus."]]});
+window.SIDEBAR_ITEMS = {"trait":[["CompatibleDigestItem","A digest item which is usable with aura consensus."]]};

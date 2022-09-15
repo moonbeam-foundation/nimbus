@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["NonZeroU32",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["NonZeroU32",""]]};

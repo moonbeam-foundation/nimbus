@@ -1,214 +1,212 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `pallets&#x2F;author-slot-filter&#x2F;src&#x2F;migration.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>migration.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../pallet_author_slot_filter/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `pallets/author-slot-filter/src/migration.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>migration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pallet_author_slot_filter/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../pallet_author_slot_filter/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pallet_author_slot_filter/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.</span>
-<span class="comment">// This file is part of Nimbus.</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.
+// This file is part of Nimbus.
 
-<span class="comment">// Nimbus is free software: you can redistribute it and/or modify</span>
-<span class="comment">// it under the terms of the GNU General Public License as published by</span>
-<span class="comment">// the Free Software Foundation, either version 3 of the License, or</span>
-<span class="comment">// (at your option) any later version.</span>
+// Nimbus is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 
-<span class="comment">// Nimbus is distributed in the hope that it will be useful,</span>
-<span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="comment">// GNU General Public License for more details.</span>
+// Nimbus is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-<span class="comment">// You should have received a copy of the GNU General Public License</span>
-<span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+// You should have received a copy of the GNU General Public License
+// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
-<span class="kw">use</span> <span class="ident">core::marker::PhantomData</span>;
-<span class="kw">use</span> <span class="ident">frame_support::traits::Get</span>;
-<span class="kw">use</span> <span class="ident">frame_support::traits::OnRuntimeUpgrade</span>;
-<span class="kw">use</span> <span class="ident">frame_support::weights::Weight</span>;
-<span class="kw">use</span> <span class="ident">sp_runtime::Percent</span>;
+</span><span class="kw">use </span>core::marker::PhantomData;
+<span class="kw">use </span>frame_support::traits::Get;
+<span class="kw">use </span>frame_support::traits::OnRuntimeUpgrade;
+<span class="kw">use </span>frame_support::weights::Weight;
+<span class="kw">use </span>sp_runtime::Percent;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">frame_support::traits::OnRuntimeUpgradeHelpersExt</span>;
+<span class="attribute">#[cfg(feature = <span class="string">&quot;try-runtime&quot;</span>)]
+</span><span class="kw">use </span>frame_support::traits::OnRuntimeUpgradeHelpersExt;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::num::NonZeroU32</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::Config</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::EligibilityValue</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::EligibleCount</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::pallet::Pallet</span>;
+<span class="kw">use </span><span class="kw">super</span>::num::NonZeroU32;
+<span class="kw">use </span><span class="kw">super</span>::pallet::Config;
+<span class="kw">use </span><span class="kw">super</span>::pallet::EligibilityValue;
+<span class="kw">use </span><span class="kw">super</span>::pallet::EligibleCount;
+<span class="kw">use </span><span class="kw">super</span>::pallet::Pallet;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EligibleRatioToEligiblityCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+<span class="kw">pub struct </span>EligibleRatioToEligiblityCount&lt;T&gt;(PhantomData&lt;T&gt;);
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">OnRuntimeUpgrade</span> <span class="kw">for</span> <span class="ident">EligibleRatioToEligiblityCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-	<span class="ident">T</span>: <span class="ident">Config</span>,
+<span class="kw">impl</span>&lt;T&gt; OnRuntimeUpgrade <span class="kw">for </span>EligibleRatioToEligiblityCount&lt;T&gt;
+<span class="kw">where
+	</span>T: Config,
 {
-	<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
-		<span class="macro">log::info!</span>(<span class="ident">target</span>: <span class="string">&quot;EligibleRatioToEligiblityCount&quot;</span>, <span class="string">&quot;starting migration&quot;</span>);
+	<span class="kw">fn </span>on_runtime_upgrade() -&gt; Weight {
+		<span class="macro">log::info!</span>(target: <span class="string">&quot;EligibleRatioToEligiblityCount&quot;</span>, <span class="string">&quot;starting migration&quot;</span>);
 
-		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_ratio</span>();
-		<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
-		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">old_value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
-		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">NonZeroU32::new</span>(<span class="ident">new_value</span>).<span class="ident">unwrap_or_else</span>(<span class="ident">EligibilityValue::default</span>);
-		<span class="op">&lt;</span><span class="ident">EligibleCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">new_value</span>);
+		<span class="kw">let </span>old_value = &lt;Pallet&lt;T&gt;&gt;::eligible_ratio();
+		<span class="kw">let </span>total_authors = &lt;T <span class="kw">as </span>Config&gt;::PotentialAuthors::get().len();
+		<span class="kw">let </span>new_value = percent_of_num(old_value, total_authors <span class="kw">as </span>u32);
+		<span class="kw">let </span>new_value = NonZeroU32::new(new_value).unwrap_or_else(EligibilityValue::default);
+		&lt;EligibleCount&lt;T&gt;&gt;::put(new_value);
 
-		<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)
+		T::DbWeight::get().reads_writes(<span class="number">1</span>, <span class="number">1</span>)
 	}
 
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">pre_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="ident">old_value</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_ratio</span>();
+	<span class="attribute">#[cfg(feature = <span class="string">&quot;try-runtime&quot;</span>)]
+	</span><span class="kw">fn </span>pre_upgrade() -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+		<span class="kw">let </span>old_value = &lt;Pallet&lt;T&gt;&gt;::eligible_ratio();
 
-		<span class="kw">let</span> <span class="ident">total_authors</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::PotentialAuthors::get</span>().<span class="ident">len</span>();
-		<span class="kw">let</span> <span class="ident">new_value</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">old_value</span>, <span class="ident">total_authors</span> <span class="kw">as</span> <span class="ident">u32</span>);
-		<span class="kw">let</span> <span class="ident">expected_value</span> <span class="op">=</span> <span class="ident">NonZeroU32::new</span>(<span class="ident">new_value</span>).<span class="ident">unwrap_or_else</span>(<span class="ident">EligibilityValue::default</span>);
+		<span class="kw">let </span>total_authors = &lt;T <span class="kw">as </span>Config&gt;::PotentialAuthors::get().len();
+		<span class="kw">let </span>new_value = percent_of_num(old_value, total_authors <span class="kw">as </span>u32);
+		<span class="kw">let </span>expected_value = NonZeroU32::new(new_value).unwrap_or_else(EligibilityValue::default);
 
-		<span class="ident"><span class="self">Self</span>::set_temp_storage</span>(<span class="ident">expected_value</span>, <span class="string">&quot;expected_eligible_count&quot;</span>);
+		<span class="self">Self</span>::set_temp_storage(expected_value, <span class="string">&quot;expected_eligible_count&quot;</span>);
 
 		<span class="prelude-val">Ok</span>(())
 	}
 
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">post_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::get_temp_storage</span>::<span class="op">&lt;</span><span class="ident">NonZeroU32</span><span class="op">&gt;</span>(<span class="string">&quot;expected_eligible_count&quot;</span>)
-			.<span class="ident">expect</span>(<span class="string">&quot;value must exist&quot;</span>);
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::eligible_count</span>();
+	<span class="attribute">#[cfg(feature = <span class="string">&quot;try-runtime&quot;</span>)]
+	</span><span class="kw">fn </span>post_upgrade() -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+		<span class="kw">let </span>expected = <span class="self">Self</span>::get_temp_storage::&lt;NonZeroU32&gt;(<span class="string">&quot;expected_eligible_count&quot;</span>)
+			.expect(<span class="string">&quot;value must exist&quot;</span>);
+		<span class="kw">let </span>actual = &lt;Pallet&lt;T&gt;&gt;::eligible_count();
 
-		<span class="macro">assert_eq!</span>(<span class="ident">expected</span>, <span class="ident">actual</span>);
+		<span class="macro">assert_eq!</span>(expected, actual);
 
 		<span class="prelude-val">Ok</span>(())
 	}
 }
 
-<span class="kw">fn</span> <span class="ident">percent_of_num</span>(<span class="ident">percent</span>: <span class="ident">Percent</span>, <span class="ident">num</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
-	<span class="ident">percent</span>.<span class="ident">mul_ceil</span>(<span class="ident">num</span> <span class="kw">as</span> <span class="ident">u32</span>)
+<span class="kw">fn </span>percent_of_num(percent: Percent, num: u32) -&gt; u32 {
+	percent.mul_ceil(num <span class="kw">as </span>u32)
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-	<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::percent_of_num</span>;
-	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+	<span class="kw">use </span><span class="kw">super</span>::percent_of_num;
+	<span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-	<span class="attribute">#[<span class="ident">test</span>]</span>
-	<span class="kw">fn</span> <span class="ident">test_percent_of_num_ceils_value</span>() {
-		<span class="kw">let</span> <span class="ident">fifty_percent</span> <span class="op">=</span> <span class="ident">Percent::from_float</span>(<span class="number">0.5</span>);
+	<span class="attribute">#[test]
+	</span><span class="kw">fn </span>test_percent_of_num_ceils_value() {
+		<span class="kw">let </span>fifty_percent = Percent::from_float(<span class="number">0.5</span>);
 
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">fifty_percent</span>, <span class="number">5</span>);
-		<span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">actual</span>);
+		<span class="kw">let </span>actual = percent_of_num(fifty_percent, <span class="number">5</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">3</span>, actual);
 
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">fifty_percent</span>, <span class="number">20</span>);
-		<span class="macro">assert_eq!</span>(<span class="number">10</span>, <span class="ident">actual</span>);
+		<span class="kw">let </span>actual = percent_of_num(fifty_percent, <span class="number">20</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">10</span>, actual);
 	}
 
-	<span class="attribute">#[<span class="ident">test</span>]</span>
-	<span class="kw">fn</span> <span class="ident">test_percent_of_num_hundred_percent_uses_full_value</span>() {
-		<span class="kw">let</span> <span class="ident">one_hundred_percent</span> <span class="op">=</span> <span class="ident">Percent::from_float</span>(<span class="number">1.0</span>);
+	<span class="attribute">#[test]
+	</span><span class="kw">fn </span>test_percent_of_num_hundred_percent_uses_full_value() {
+		<span class="kw">let </span>one_hundred_percent = Percent::from_float(<span class="number">1.0</span>);
 
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">one_hundred_percent</span>, <span class="number">5</span>);
-		<span class="macro">assert_eq!</span>(<span class="number">5</span>, <span class="ident">actual</span>);
+		<span class="kw">let </span>actual = percent_of_num(one_hundred_percent, <span class="number">5</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">5</span>, actual);
 
-		<span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">percent_of_num</span>(<span class="ident">one_hundred_percent</span>, <span class="number">20</span>);
-		<span class="macro">assert_eq!</span>(<span class="number">20</span>, <span class="ident">actual</span>);
+		<span class="kw">let </span>actual = percent_of_num(one_hundred_percent, <span class="number">20</span>);
+		<span class="macro">assert_eq!</span>(<span class="number">20</span>, actual);
 	}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pallet_author_slot_filter" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pallet_author_slot_filter" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (060e47f74 2022-08-23)" ></div></body></html>

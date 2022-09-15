@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["parachain_template_runtime"] = [{"text":"impl Contains&lt;MultiLocation&gt; for <a class=\"struct\" href=\"parachain_template_runtime/struct.ParentOrParentsExecutivePlurality.html\" title=\"struct parachain_template_runtime::ParentOrParentsExecutivePlurality\">ParentOrParentsExecutivePlurality</a>","synthetic":false,"types":["parachain_template_runtime::ParentOrParentsExecutivePlurality"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"parachain_template_runtime":[["impl Contains&lt;MultiLocation&gt; for <a class=\"struct\" href=\"parachain_template_runtime/struct.ParentOrParentsExecutivePlurality.html\" title=\"struct parachain_template_runtime::ParentOrParentsExecutivePlurality\">ParentOrParentsExecutivePlurality</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

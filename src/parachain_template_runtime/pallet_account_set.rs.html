@@ -1,12 +1,12 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `parachain-template&#x2F;runtime&#x2F;src&#x2F;pallet_account_set.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pallet_account_set.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../parachain_template_runtime/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1"> 1</span>
-<span id="2"> 2</span>
-<span id="3"> 3</span>
-<span id="4"> 4</span>
-<span id="5"> 5</span>
-<span id="6"> 6</span>
-<span id="7"> 7</span>
-<span id="8"> 8</span>
-<span id="9"> 9</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `parachain-template/runtime/src/pallet_account_set.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pallet_account_set.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../parachain_template_runtime/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../parachain_template_runtime/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../parachain_template_runtime/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
 <span id="10">10</span>
 <span id="11">11</span>
 <span id="12">12</span>
@@ -89,98 +89,96 @@
 <span id="89">89</span>
 <span id="90">90</span>
 <span id="91">91</span>
-</pre><pre class="rust"><code><span class="doccomment">//! Small pallet responsible for storing a set of accounts, and their associated session keys.</span>
-<span class="doccomment">//! This is a minimal solution where staking would be used in practice.</span>
-<span class="doccomment">//! The accounts are set and genesis and never change.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The Substrate ecosystem has a wide variety of real-world solutions and examples of what this</span>
-<span class="doccomment">//! pallet could be replaced with.</span>
-<span class="doccomment">//! Gautam&#39;s validator set pallet - https://github.com/paritytech/substrate/tree/master/frame/staking/</span>
-<span class="doccomment">//! Parity&#39;s pallet staking - https://github.com/paritytech/substrate/tree/master/frame/staking/</span>
-<span class="doccomment">//! Moonbeam&#39;s Parachain Staking - https://github.com/PureStake/moonbeam/tree/master/pallets/parachain-staking</span>
-<span class="doccomment">//! Recipe for AccountSet, VecSet, and MapSet</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Small pallet responsible for storing a set of accounts, and their associated session keys.
+//! This is a minimal solution where staking would be used in practice.
+//! The accounts are set and genesis and never change.
+//!
+//! The Substrate ecosystem has a wide variety of real-world solutions and examples of what this
+//! pallet could be replaced with.
+//! Gautam&#39;s validator set pallet - https://github.com/paritytech/substrate/tree/master/frame/staking/
+//! Parity&#39;s pallet staking - https://github.com/paritytech/substrate/tree/master/frame/staking/
+//! Moonbeam&#39;s Parachain Staking - https://github.com/PureStake/moonbeam/tree/master/pallets/parachain-staking
+//! Recipe for AccountSet, VecSet, and MapSet
 
-<span class="kw">use</span> <span class="ident">frame_support::pallet</span>;
+</span><span class="kw">use </span>frame_support::pallet;
 
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">pallet</span>::<span class="kw-2">*</span>;
+<span class="kw">pub use </span>pallet::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">pallet</span>]</span>
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pallet</span> {
+<span class="attribute">#[pallet]
+</span><span class="kw">pub mod </span>pallet {
 
-	<span class="kw">use</span> <span class="ident">frame_support::pallet_prelude</span>::<span class="kw-2">*</span>;
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-	<span class="kw">use</span> <span class="ident">log::warn</span>;
-	<span class="kw">use</span> <span class="ident">nimbus_primitives</span>::{<span class="ident">AccountLookup</span>, <span class="ident">CanAuthor</span>, <span class="ident">NimbusId</span>};
-	<span class="kw">use</span> <span class="ident">sp_std::vec::Vec</span>;
+	<span class="kw">use </span>frame_support::pallet_prelude::<span class="kw-2">*</span>;
+	<span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+	</span><span class="kw">use </span>log::warn;
+	<span class="kw">use </span>nimbus_primitives::{AccountLookup, CanAuthor, NimbusId};
+	<span class="kw">use </span>sp_std::vec::Vec;
 
-	<span class="doccomment">/// The Account Set pallet</span>
-	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
-	<span class="attribute">#[<span class="ident">pallet::without_storage_info</span>]</span>
-	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+	<span class="doccomment">/// The Account Set pallet
+	</span><span class="attribute">#[pallet::pallet]
+	#[pallet::without_storage_info]
+	</span><span class="kw">pub struct </span>Pallet&lt;T&gt;(PhantomData&lt;T&gt;);
 
-	<span class="doccomment">/// Configuration trait of this pallet.</span>
-	<span class="attribute">#[<span class="ident">pallet::config</span>]</span>
-	<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Config</span>: <span class="ident">frame_system::Config</span> {}
+	<span class="doccomment">/// Configuration trait of this pallet.
+	</span><span class="attribute">#[pallet::config]
+	</span><span class="kw">pub trait </span>Config: frame_system::Config {}
 
-	<span class="doccomment">/// The set of accounts that is stored in this pallet.</span>
-	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
-	<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">StoredAccounts</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>, <span class="ident">ValueQuery</span><span class="op">&gt;</span>;
+	<span class="doccomment">/// The set of accounts that is stored in this pallet.
+	</span><span class="attribute">#[pallet::storage]
+	</span><span class="kw">pub type </span>StoredAccounts&lt;T: Config&gt; = StorageValue&lt;<span class="kw">_</span>, Vec&lt;T::AccountId&gt;, ValueQuery&gt;;
 
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Get</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">get</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
-			<span class="ident">StoredAccounts</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>()
+	<span class="kw">impl</span>&lt;T: Config&gt; Get&lt;Vec&lt;T::AccountId&gt;&gt; <span class="kw">for </span>Pallet&lt;T&gt; {
+		<span class="kw">fn </span>get() -&gt; Vec&lt;T::AccountId&gt; {
+			StoredAccounts::&lt;T&gt;::get()
 		}
 	}
 
-	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
-	<span class="attribute">#[<span class="ident">pallet::getter</span>(<span class="kw">fn</span> <span class="ident">account_id_of</span>)]</span>
-	<span class="doccomment">/// A mapping from the AuthorIds used in the consensus layer</span>
-	<span class="doccomment">/// to the AccountIds runtime.</span>
-	<span class="kw">type</span> <span class="ident">Mapping</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageMap</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Twox64Concat</span>, <span class="ident">NimbusId</span>, <span class="ident">T::AccountId</span>, <span class="ident">OptionQuery</span><span class="op">&gt;</span>;
+	<span class="attribute">#[pallet::storage]
+	#[pallet::getter(<span class="kw">fn </span>account_id_of)]
+	</span><span class="doccomment">/// A mapping from the AuthorIds used in the consensus layer
+	/// to the AccountIds runtime.
+	</span><span class="kw">type </span>Mapping&lt;T: Config&gt; = StorageMap&lt;<span class="kw">_</span>, Twox64Concat, NimbusId, T::AccountId, OptionQuery&gt;;
 
-	<span class="attribute">#[<span class="ident">pallet::genesis_config</span>]</span>
-	<span class="doccomment">/// Genesis config for author mapping pallet</span>
-	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GenesisConfig</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> {
-		<span class="doccomment">/// The associations that should exist at chain genesis</span>
-		<span class="kw">pub</span> <span class="ident">mapping</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">T::AccountId</span>, <span class="ident">NimbusId</span>)<span class="op">&gt;</span>,
+	<span class="attribute">#[pallet::genesis_config]
+	</span><span class="doccomment">/// Genesis config for author mapping pallet
+	</span><span class="kw">pub struct </span>GenesisConfig&lt;T: Config&gt; {
+		<span class="doccomment">/// The associations that should exist at chain genesis
+		</span><span class="kw">pub </span>mapping: Vec&lt;(T::AccountId, NimbusId)&gt;,
 	}
 
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">GenesisConfig</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-			<span class="self">Self</span> { <span class="ident">mapping</span>: <span class="macro">vec!</span>[] }
+	<span class="attribute">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+	</span><span class="kw">impl</span>&lt;T: Config&gt; Default <span class="kw">for </span>GenesisConfig&lt;T&gt; {
+		<span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+			<span class="self">Self </span>{ mapping: <span class="macro">vec!</span>[] }
 		}
 	}
 
-	<span class="attribute">#[<span class="ident">pallet::genesis_build</span>]</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">GenesisBuild</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">GenesisConfig</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-			<span class="kw">if</span> <span class="self">self</span>.<span class="ident">mapping</span>.<span class="ident">is_empty</span>() {
-				<span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;account-set&quot;</span>, <span class="string">&quot;No mappings at genesis. Your chain will have no valid authors.&quot;</span>);
+	<span class="attribute">#[pallet::genesis_build]
+	</span><span class="kw">impl</span>&lt;T: Config&gt; GenesisBuild&lt;T&gt; <span class="kw">for </span>GenesisConfig&lt;T&gt; {
+		<span class="kw">fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+			<span class="kw">if </span><span class="self">self</span>.mapping.is_empty() {
+				<span class="macro">warn!</span>(target: <span class="string">&quot;account-set&quot;</span>, <span class="string">&quot;No mappings at genesis. Your chain will have no valid authors.&quot;</span>);
 			}
-			<span class="kw">for</span> (<span class="ident">account_id</span>, <span class="ident">author_id</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mapping</span> {
-				<span class="ident">Mapping</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::insert</span>(<span class="ident">author_id</span>, <span class="ident">account_id</span>);
-				<span class="ident">StoredAccounts</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::append</span>(<span class="ident">account_id</span>);
+			<span class="kw">for </span>(account_id, author_id) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.mapping {
+				Mapping::&lt;T&gt;::insert(author_id, account_id);
+				StoredAccounts::&lt;T&gt;::append(account_id);
 			}
 		}
 	}
 
-	<span class="doccomment">/// This pallet is compatible with nimbus&#39;s author filtering system. Any account stored in this pallet</span>
-	<span class="doccomment">/// is a valid author. Notice that this implementation does not have an inner filter, so it</span>
-	<span class="doccomment">/// can only be the beginning of the nimbus filter pipeline.</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">CanAuthor</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">can_author</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">T::AccountId</span>, <span class="ident">_slot</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">bool</span> {
-			<span class="ident">StoredAccounts</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">contains</span>(<span class="ident">author</span>)
+	<span class="doccomment">/// This pallet is compatible with nimbus&#39;s author filtering system. Any account stored in this pallet
+	/// is a valid author. Notice that this implementation does not have an inner filter, so it
+	/// can only be the beginning of the nimbus filter pipeline.
+	</span><span class="kw">impl</span>&lt;T: Config&gt; CanAuthor&lt;T::AccountId&gt; <span class="kw">for </span>Pallet&lt;T&gt; {
+		<span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>T::AccountId, _slot: <span class="kw-2">&amp;</span>u32) -&gt; bool {
+			StoredAccounts::&lt;T&gt;::get().contains(author)
 		}
 	}
 
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">AccountLookup</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">lookup_account</span>(<span class="ident">author</span>: <span class="kw-2">&amp;</span><span class="ident">NimbusId</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> {
-			<span class="ident">Mapping</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>(<span class="kw-2">&amp;</span><span class="ident">author</span>)
+	<span class="kw">impl</span>&lt;T: Config&gt; AccountLookup&lt;T::AccountId&gt; <span class="kw">for </span>Pallet&lt;T&gt; {
+		<span class="kw">fn </span>lookup_account(author: <span class="kw-2">&amp;</span>NimbusId) -&gt; <span class="prelude-ty">Option</span>&lt;T::AccountId&gt; {
+			Mapping::&lt;T&gt;::get(<span class="kw-2">&amp;</span>author)
 		}
 	}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="parachain_template_runtime" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="parachain_template_runtime" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (060e47f74 2022-08-23)" ></div></body></html>

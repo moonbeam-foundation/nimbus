@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Subcommand","Sub-commands supported by the collator."]],"struct":[["Cli",""],["ExportGenesisStateCommand","Command for exporting the genesis state of the parachain"],["ExportGenesisWasmCommand","Command for exporting the genesis wasm file."],["RelayChainCli",""]]});
+window.SIDEBAR_ITEMS = {"enum":[["Subcommand","Sub-commands supported by the collator."]],"struct":[["Cli",""],["RelayChainCli",""]]};

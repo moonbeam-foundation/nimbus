@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["parachain_collator"] = [{"text":"impl CliConfiguration&lt;<a class=\"struct\" href=\"parachain_collator/cli/struct.RelayChainCli.html\" title=\"struct parachain_collator::cli::RelayChainCli\">RelayChainCli</a>&gt; for <a class=\"struct\" href=\"parachain_collator/cli/struct.RelayChainCli.html\" title=\"struct parachain_collator::cli::RelayChainCli\">RelayChainCli</a>","synthetic":false,"types":["parachain_collator::cli::RelayChainCli"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"parachain_collator":[["impl CliConfiguration&lt;<a class=\"struct\" href=\"parachain_collator/cli/struct.RelayChainCli.html\" title=\"struct parachain_collator::cli::RelayChainCli\">RelayChainCli</a>&gt; for <a class=\"struct\" href=\"parachain_collator/cli/struct.RelayChainCli.html\" title=\"struct parachain_collator::cli::RelayChainCli\">RelayChainCli</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

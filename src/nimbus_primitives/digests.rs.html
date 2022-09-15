@@ -1,12 +1,12 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `nimbus-primitives&#x2F;src&#x2F;digests.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>digests.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../nimbus_primitives/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1"> 1</span>
-<span id="2"> 2</span>
-<span id="3"> 3</span>
-<span id="4"> 4</span>
-<span id="5"> 5</span>
-<span id="6"> 6</span>
-<span id="7"> 7</span>
-<span id="8"> 8</span>
-<span id="9"> 9</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `nimbus-primitives/src/digests.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>digests.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../nimbus_primitives/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../nimbus_primitives/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../nimbus_primitives/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
 <span id="10">10</span>
 <span id="11">11</span>
 <span id="12">12</span>
@@ -78,87 +78,85 @@
 <span id="78">78</span>
 <span id="79">79</span>
 <span id="80">80</span>
-</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.</span>
-<span class="comment">// This file is part of Nimbus.</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.
+// This file is part of Nimbus.
 
-<span class="comment">// Nimbus is free software: you can redistribute it and/or modify</span>
-<span class="comment">// it under the terms of the GNU General Public License as published by</span>
-<span class="comment">// the Free Software Foundation, either version 3 of the License, or</span>
-<span class="comment">// (at your option) any later version.</span>
+// Nimbus is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 
-<span class="comment">// Nimbus is distributed in the hope that it will be useful,</span>
-<span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="comment">// GNU General Public License for more details.</span>
+// Nimbus is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 
-<span class="comment">// You should have received a copy of the GNU General Public License</span>
-<span class="comment">// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+// You should have received a copy of the GNU General Public License
+// along with Nimbus.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
-<span class="doccomment">//! A convenient interface over the digests used in nimbus.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Currently Nimbus has two digests;</span>
-<span class="doccomment">//! 1. A consensus digest that contains the block author identity</span>
-<span class="doccomment">//!    This information is copied from the author inehrent.</span>
-<span class="doccomment">//!    This may be replaced with a pre-runtime digest in the future.</span>
-<span class="doccomment">//! 2. A seal digest that contains a signature over the rest of the</span>
-<span class="doccomment">//!    block including the first digest.</span>
+</span><span class="doccomment">//! A convenient interface over the digests used in nimbus.
+//!
+//! Currently Nimbus has two digests;
+//! 1. A consensus digest that contains the block author identity
+//!    This information is copied from the author inehrent.
+//!    This may be replaced with a pre-runtime digest in the future.
+//! 2. A seal digest that contains a signature over the rest of the
+//!    block including the first digest.
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">NimbusId</span>, <span class="ident">NimbusSignature</span>, <span class="ident">NIMBUS_ENGINE_ID</span>};
-<span class="kw">use</span> <span class="ident">parity_scale_codec::Encode</span>;
-<span class="kw">use</span> <span class="ident">sp_runtime::generic::DigestItem</span>;
+</span><span class="kw">use crate</span>::{NimbusId, NimbusSignature, NIMBUS_ENGINE_ID};
+<span class="kw">use </span>parity_scale_codec::Encode;
+<span class="kw">use </span>sp_runtime::generic::DigestItem;
 
-<span class="doccomment">/// A digest item which is usable with aura consensus.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">CompatibleDigestItem</span>: <span class="ident">Sized</span> {
-	<span class="doccomment">/// Construct a pre-runtime digest from the given AuthorId</span>
-	<span class="kw">fn</span> <span class="ident">nimbus_pre_digest</span>(<span class="ident">author</span>: <span class="ident">NimbusId</span>) -&gt; <span class="self">Self</span>;
+<span class="doccomment">/// A digest item which is usable with aura consensus.
+</span><span class="kw">pub trait </span>CompatibleDigestItem: Sized {
+	<span class="doccomment">/// Construct a pre-runtime digest from the given AuthorId
+	</span><span class="kw">fn </span>nimbus_pre_digest(author: NimbusId) -&gt; <span class="self">Self</span>;
 
-	<span class="doccomment">/// If this item is a nimbus pre-runtime digest, return the author</span>
-	<span class="kw">fn</span> <span class="ident">as_nimbus_pre_digest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span>;
+	<span class="doccomment">/// If this item is a nimbus pre-runtime digest, return the author
+	</span><span class="kw">fn </span>as_nimbus_pre_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusId&gt;;
 
-	<span class="doccomment">/// Construct a seal digest item from the given signature</span>
-	<span class="kw">fn</span> <span class="ident">nimbus_seal</span>(<span class="ident">signature</span>: <span class="ident">NimbusSignature</span>) -&gt; <span class="self">Self</span>;
+	<span class="doccomment">/// Construct a seal digest item from the given signature
+	</span><span class="kw">fn </span>nimbus_seal(signature: NimbusSignature) -&gt; <span class="self">Self</span>;
 
-	<span class="doccomment">/// If this item is a nimbus seal, return the signature.</span>
-	<span class="kw">fn</span> <span class="ident">as_nimbus_seal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusSignature</span><span class="op">&gt;</span>;
+	<span class="doccomment">/// If this item is a nimbus seal, return the signature.
+	</span><span class="kw">fn </span>as_nimbus_seal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusSignature&gt;;
 
-	<span class="doccomment">/// This will be deprecated in the future</span>
-	<span class="doccomment">/// Construct a consensus digest from the given AuthorId</span>
-	<span class="kw">fn</span> <span class="ident">nimbus_consensus_digest</span>(<span class="ident">author</span>: <span class="ident">NimbusId</span>) -&gt; <span class="self">Self</span>;
+	<span class="doccomment">/// This will be deprecated in the future
+	/// Construct a consensus digest from the given AuthorId
+	</span><span class="kw">fn </span>nimbus_consensus_digest(author: NimbusId) -&gt; <span class="self">Self</span>;
 
-	<span class="doccomment">/// This will be deprecated in the future</span>
-	<span class="doccomment">/// If this item is a nimbus consensus digest, return the author</span>
-	<span class="kw">fn</span> <span class="ident">as_nimbus_consensus_digest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span>;
+	<span class="doccomment">/// This will be deprecated in the future
+	/// If this item is a nimbus consensus digest, return the author
+	</span><span class="kw">fn </span>as_nimbus_consensus_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusId&gt;;
 }
 
-<span class="kw">impl</span> <span class="ident">CompatibleDigestItem</span> <span class="kw">for</span> <span class="ident">DigestItem</span> {
-	<span class="kw">fn</span> <span class="ident">nimbus_pre_digest</span>(<span class="ident">author</span>: <span class="ident">NimbusId</span>) -&gt; <span class="self">Self</span> {
-		<span class="ident">DigestItem::PreRuntime</span>(<span class="ident">NIMBUS_ENGINE_ID</span>, <span class="ident">author</span>.<span class="ident">encode</span>())
+<span class="kw">impl </span>CompatibleDigestItem <span class="kw">for </span>DigestItem {
+	<span class="kw">fn </span>nimbus_pre_digest(author: NimbusId) -&gt; <span class="self">Self </span>{
+		DigestItem::PreRuntime(NIMBUS_ENGINE_ID, author.encode())
 	}
 
-	<span class="kw">fn</span> <span class="ident">as_nimbus_pre_digest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span> {
-		<span class="self">self</span>.<span class="ident">pre_runtime_try_to</span>(<span class="kw-2">&amp;</span><span class="ident">NIMBUS_ENGINE_ID</span>)
+	<span class="kw">fn </span>as_nimbus_pre_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusId&gt; {
+		<span class="self">self</span>.pre_runtime_try_to(<span class="kw-2">&amp;</span>NIMBUS_ENGINE_ID)
 	}
 
-	<span class="kw">fn</span> <span class="ident">nimbus_seal</span>(<span class="ident">signature</span>: <span class="ident">NimbusSignature</span>) -&gt; <span class="self">Self</span> {
-		<span class="ident">DigestItem::Seal</span>(<span class="ident">NIMBUS_ENGINE_ID</span>, <span class="ident">signature</span>.<span class="ident">encode</span>())
+	<span class="kw">fn </span>nimbus_seal(signature: NimbusSignature) -&gt; <span class="self">Self </span>{
+		DigestItem::Seal(NIMBUS_ENGINE_ID, signature.encode())
 	}
 
-	<span class="kw">fn</span> <span class="ident">as_nimbus_seal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusSignature</span><span class="op">&gt;</span> {
-		<span class="self">self</span>.<span class="ident">seal_try_to</span>(<span class="kw-2">&amp;</span><span class="ident">NIMBUS_ENGINE_ID</span>)
+	<span class="kw">fn </span>as_nimbus_seal(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusSignature&gt; {
+		<span class="self">self</span>.seal_try_to(<span class="kw-2">&amp;</span>NIMBUS_ENGINE_ID)
 	}
 
-	<span class="comment">// Remove this once deprecated</span>
-	<span class="kw">fn</span> <span class="ident">nimbus_consensus_digest</span>(<span class="ident">author</span>: <span class="ident">NimbusId</span>) -&gt; <span class="self">Self</span> {
-		<span class="ident">DigestItem::Consensus</span>(<span class="ident">NIMBUS_ENGINE_ID</span>, <span class="ident">author</span>.<span class="ident">encode</span>())
+	<span class="comment">// Remove this once deprecated
+	</span><span class="kw">fn </span>nimbus_consensus_digest(author: NimbusId) -&gt; <span class="self">Self </span>{
+		DigestItem::Consensus(NIMBUS_ENGINE_ID, author.encode())
 	}
 
-	<span class="comment">// Remove this once deprecated. I don&#39;t think it is used anyway.</span>
-	<span class="comment">// Notice that it calls the pre_runtime helper function.</span>
-	<span class="kw">fn</span> <span class="ident">as_nimbus_consensus_digest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NimbusId</span><span class="op">&gt;</span> {
-		<span class="self">self</span>.<span class="ident">pre_runtime_try_to</span>(<span class="kw-2">&amp;</span><span class="ident">NIMBUS_ENGINE_ID</span>)
+	<span class="comment">// Remove this once deprecated. I don&#39;t think it is used anyway.
+	// Notice that it calls the pre_runtime helper function.
+	</span><span class="kw">fn </span>as_nimbus_consensus_digest(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;NimbusId&gt; {
+		<span class="self">self</span>.pre_runtime_try_to(<span class="kw-2">&amp;</span>NIMBUS_ENGINE_ID)
 	}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_primitives" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="nimbus_primitives" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (060e47f74 2022-08-23)" ></div></body></html>
