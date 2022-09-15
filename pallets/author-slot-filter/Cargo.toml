@@ -21,14 +21,14 @@ sp-std = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v
 frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", optional = true, default-features = false }
 
 [dev-dependencies]
-frame-support-test = { version = "3.0.0", git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26" }
-sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26"}
+frame-support-test = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26", version = "3.0.0" }
+sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.26" }
 
 [features]
 default = [ "std" ]
 std = [
-	"frame-support/std",
 	"frame-benchmarking/std",
+	"frame-support/std",
 	"frame-system/std",
 	"log/std",
 	"nimbus-primitives/std",
@@ -40,9 +40,6 @@ std = [
 	"sp-std/std",
 ]
 
-runtime-benchmarks = [
-	"frame-benchmarking",
-	"nimbus-primitives/runtime-benchmarks"
-]
+runtime-benchmarks = [ "frame-benchmarking", "nimbus-primitives/runtime-benchmarks" ]
 
 try-runtime = [ "frame-support/try-runtime" ]
