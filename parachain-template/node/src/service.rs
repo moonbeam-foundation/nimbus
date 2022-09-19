@@ -25,7 +25,7 @@ use cumulus_primitives_parachain_inherent::{
 };
 use cumulus_relay_chain_inprocess_interface::build_inprocess_relay_chain;
 use cumulus_relay_chain_interface::{RelayChainError, RelayChainInterface, RelayChainResult};
-use cumulus_relay_chain_rpc_interface::RelayChainRPCInterface;
+use cumulus_relay_chain_rpc_interface::{create_client_and_start_worker, RelayChainRpcInterface};
 
 use polkadot_service::CollatorPair;
 
@@ -181,10 +181,10 @@ async fn build_relay_chain_interface(
 	Option<CollatorPair>,
 )> {
 	match collator_options.relay_chain_rpc_url {
-		Some(relay_chain_url) => Ok((
-			Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>,
-			None,
-		)),
+		Some(relay_chain_url) => {
+            let client = create_client_and_start_worker(relay_chain_url, task_manager).await?;
+            Ok((Arc::new(RelayChainRpcInterface::new(client)) as Arc<_>, None))
+        },
 		None => build_inprocess_relay_chain(
 			polkadot_config,
 			parachain_config,
@@ -250,10 +250,6 @@ where
 		bool,
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
-	if matches!(parachain_config.role, Role::Light) {
-		return Err("Light client not supported!".into());
-	}
-
 	let parachain_config = prepare_node_config(parachain_config);
 
 	let params = new_partial::<RuntimeApi, Executor>(&parachain_config, true)?;
@@ -546,6 +542,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 				keystore: keystore_container.sync_keystore(),
 				client: client.clone(),
 				additional_digests_provider: (),
+				_phantom: Default::default(),
 			})),
 			create_inherent_data_providers: move |block, _extra_args| {
 				let downward_xcm_receiver = downward_xcm_receiver.clone();
