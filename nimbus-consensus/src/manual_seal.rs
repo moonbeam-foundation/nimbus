@@ -40,7 +40,7 @@ pub struct NimbusManualSealConsensusDataProvider<C, DP = (), P = ()> {
 	/// Additional digests provider
 	pub additional_digests_provider: DP,
 
-	_phantom: PhantomData<P>,
+	pub _phantom: PhantomData<P>,
 
 }
 

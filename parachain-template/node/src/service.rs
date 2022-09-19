@@ -32,7 +32,7 @@ use polkadot_service::CollatorPair;
 // Substrate Imports
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
-use sc_network::NetworkService;
+use sc_network::{NetworkBlock, NetworkService};
 use sc_service::{Configuration, PartialComponents, Role, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
 use sp_api::ConstructRuntimeApi;
@@ -230,7 +230,7 @@ where
 	Executor: sc_executor::NativeExecutionDispatch + 'static,
 	RB: Fn(
 			Arc<TFullClient<Block, RuntimeApi, Executor>>,
-		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
+		) -> Result<crate::rpc::RpcExtension, sc_service::Error>
 		+ Send
 		+ 'static,
 	BIC: FnOnce(
@@ -392,7 +392,7 @@ pub async fn start_parachain_node(
 		polkadot_config,
 		collator_options,
 		id,
-		|_| Ok(jsonrpsee::RpcModule::new(())),
+		|_| Ok(crate::rpc::RpcExtension::new(())),
 		|client,
 		 prometheus_registry,
 		 telemetry,
