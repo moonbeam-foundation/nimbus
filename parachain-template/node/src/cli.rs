@@ -35,7 +35,7 @@ pub enum Subcommand {
 
 	/// Sub-commands concerned with benchmarking.
 	/// The pallet benchmarking moved to the `pallet` sub-command.
-	#[clap(subcommand)]
+	#[command(subcommand)]
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 }
 
@@ -44,14 +44,14 @@ pub enum Subcommand {
 #[clap(args_conflicts_with_subcommands = true)]
 #[clap(subcommand_negates_reqs = true)]
 pub struct Cli {
-	#[clap(subcommand)]
+	#[command(subcommand)]
 	pub subcommand: Option<Subcommand>,
 
-	#[clap(flatten)]
+	#[command(flatten)]
 	pub run: cumulus_client_cli::RunCmd,
 
 	/// Relaychain arguments
-	#[clap(raw = true, value_parser)]
+	#[arg(raw = true, value_parser)]
 	pub relay_chain_args: Vec<String>,
 }
 

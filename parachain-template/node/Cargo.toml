@@ -17,7 +17,7 @@ name = "parachain-collator"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "3.2.6", features = [ "derive" ] }
+clap = { version = "4.0.9", features = [ "derive" ] }
 codec = { package = "parity-scale-codec", version = "3.0.0" }
 derive_more = "0.99.2"
 flume = "0.10.9"
