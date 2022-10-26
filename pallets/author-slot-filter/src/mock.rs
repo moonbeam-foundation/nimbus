@@ -63,7 +63,7 @@ impl frame_system::Config for Test {
 	type AccountId = u64;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type BlockHashCount = BlockHashCount;
 	type Version = ();
 	type PalletInfo = PalletInfo;
@@ -77,7 +77,7 @@ impl frame_system::Config for Test {
 }
 
 impl pallet_testing::Config for Test {
-	type Event = Event;
+	type RuntimeEvent = RuntimeEvent;
 	type RandomnessSource = TestRandomness<Self>;
 	type PotentialAuthors = Authors;
 	type WeightInfo = ();
