@@ -41,7 +41,6 @@ pub struct NimbusManualSealConsensusDataProvider<C, DP = (), P = ()> {
 	pub additional_digests_provider: DP,
 
 	pub _phantom: PhantomData<P>,
-
 }
 
 impl<B, C, DP, P> ConsensusDataProvider<B> for NimbusManualSealConsensusDataProvider<C, DP, P>
