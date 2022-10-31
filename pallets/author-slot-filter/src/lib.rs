@@ -93,9 +93,9 @@ pub mod pallet {
 		for i in 0..num_eligible {
 			// A context identifier for grabbing the randomness. Consists of three parts
 			// 1. Constant string *b"filter" - to identify this pallet
-			// 2. First 2 bytes of index.to_be_bytes when selecting the ith eligible author
+			// 2. First 2 bytes of index.to_le_bytes when selecting the ith eligible author
 			// 3. First 4 bytes of seed.to_be_bytes
-			let mut first_two_bytes_of_index = &i.to_be_bytes()[..2];
+			let mut first_two_bytes_of_index = &i.to_le_bytes()[..2];
 			let mut first_four_bytes_of_seed = &seed.to_be_bytes()[..4];
 			let mut constant_string: [u8; 6] = [b'f', b'i', b'l', b't', b'e', b'r'];
 			let mut subject: [u8; 12] = [0u8; 12];
