@@ -321,9 +321,9 @@
 		<span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..num_eligible {
 			<span class="comment">// A context identifier for grabbing the randomness. Consists of three parts
 			// 1. Constant string *b&quot;filter&quot; - to identify this pallet
-			// 2. First 2 bytes of index.to_be_bytes when selecting the ith eligible author
+			// 2. First 2 bytes of index.to_le_bytes when selecting the ith eligible author
 			// 3. First 4 bytes of seed.to_be_bytes
-			</span><span class="kw">let </span><span class="kw-2">mut </span>first_two_bytes_of_index = <span class="kw-2">&amp;</span>i.to_be_bytes()[..<span class="number">2</span>];
+			</span><span class="kw">let </span><span class="kw-2">mut </span>first_two_bytes_of_index = <span class="kw-2">&amp;</span>i.to_le_bytes()[..<span class="number">2</span>];
 			<span class="kw">let </span><span class="kw-2">mut </span>first_four_bytes_of_seed = <span class="kw-2">&amp;</span>seed.to_be_bytes()[..<span class="number">4</span>];
 			<span class="kw">let </span><span class="kw-2">mut </span>constant_string: [u8; <span class="number">6</span>] = [<span class="string">b&#39;f&#39;</span>, <span class="string">b&#39;i&#39;</span>, <span class="string">b&#39;l&#39;</span>, <span class="string">b&#39;t&#39;</span>, <span class="string">b&#39;e&#39;</span>, <span class="string">b&#39;r&#39;</span>];
 			<span class="kw">let </span><span class="kw-2">mut </span>subject: [u8; <span class="number">12</span>] = [<span class="number">0u8</span>; <span class="number">12</span>];
