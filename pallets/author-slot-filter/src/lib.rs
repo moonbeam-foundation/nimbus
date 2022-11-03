@@ -125,11 +125,6 @@ pub mod pallet {
 	// of this block is eligible in this slot. We calculate that result on demand and do not
 	// record it in storage (although we do emit a debugging event for now).
 	impl<T: Config> CanAuthor<T::AccountId> for Pallet<T> {
-		#[cfg(feature = "try-runtime")]
-		// With `try-runtime` the local author should always be able to author a block.
-		fn can_author(author: &T::AccountId, slot: &u32) -> bool {
-			true
-		}
 		#[cfg(not(feature = "try-runtime"))]
 		fn can_author(author: &T::AccountId, slot: &u32) -> bool {
 			// Compute pseudo-random subset of potential authors

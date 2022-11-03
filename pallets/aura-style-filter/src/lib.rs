@@ -66,11 +66,6 @@ pub mod pallet {
 	// of this block is eligible at this slot. We calculate that result on demand and do not
 	// record it instorage.
 	impl<T: Config> nimbus_primitives::CanAuthor<T::AccountId> for Pallet<T> {
-		#[cfg(feature = "try-runtime")]
-		// With `try-runtime` the local author should always be able to author a block.
-		fn can_author(author: &T::AccountId, slot: &u32) -> bool {
-			true
-		}
 		#[cfg(not(feature = "try-runtime"))]
 		fn can_author(account: &T::AccountId, slot: &u32) -> bool {
 			let active: Vec<T::AccountId> = T::PotentialAuthors::get();
