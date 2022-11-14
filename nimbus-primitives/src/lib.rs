@@ -113,6 +113,12 @@ impl SlotBeacon for IntervalBeacon {
 /// There may be another variant where the caller only supplies a slot and the
 /// implementation replies with a complete set of eligible authors.
 pub trait CanAuthor<AuthorId> {
+	#[cfg(feature = "try-runtime")]
+	// With `try-runtime` the local author should always be able to author a block.
+	fn can_author(author: &AuthorId, slot: &u32) -> bool {
+		true
+	}
+	#[cfg(not(feature = "try-runtime"))]
 	fn can_author(author: &AuthorId, slot: &u32) -> bool;
 	#[cfg(feature = "runtime-benchmarks")]
 	fn get_authors(_slot: &u32) -> Vec<AuthorId> {
