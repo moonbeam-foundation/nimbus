@@ -177,6 +177,12 @@
 <span id="177">177</span>
 <span id="178">178</span>
 <span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
@@ -292,7 +298,13 @@
 /// There may be another variant where the caller only supplies a slot and the
 /// implementation replies with a complete set of eligible authors.
 </span><span class="kw">pub trait </span>CanAuthor&lt;AuthorId&gt; {
-	<span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>AuthorId, slot: <span class="kw-2">&amp;</span>u32) -&gt; bool;
+	<span class="attribute">#[cfg(feature = <span class="string">&quot;try-runtime&quot;</span>)]
+	</span><span class="comment">// With `try-runtime` the local author should always be able to author a block.
+	</span><span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>AuthorId, slot: <span class="kw-2">&amp;</span>u32) -&gt; bool {
+		<span class="bool-val">true
+	</span>}
+	<span class="attribute">#[cfg(not(feature = <span class="string">&quot;try-runtime&quot;</span>))]
+	</span><span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>AuthorId, slot: <span class="kw-2">&amp;</span>u32) -&gt; bool;
 	<span class="attribute">#[cfg(feature = <span class="string">&quot;runtime-benchmarks&quot;</span>)]
 	</span><span class="kw">fn </span>get_authors(_slot: <span class="kw-2">&amp;</span>u32) -&gt; Vec&lt;AuthorId&gt; {
 		<span class="macro">vec!</span>[]

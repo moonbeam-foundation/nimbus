@@ -226,6 +226,7 @@
 <span id="226">226</span>
 <span id="227">227</span>
 <span id="228">228</span>
+<span id="229">229</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright 2019-2022 PureStake Inc.
 // This file is part of Nimbus.
 
@@ -353,7 +354,8 @@
 	// of this block is eligible in this slot. We calculate that result on demand and do not
 	// record it in storage (although we do emit a debugging event for now).
 	</span><span class="kw">impl</span>&lt;T: Config&gt; CanAuthor&lt;T::AccountId&gt; <span class="kw">for </span>Pallet&lt;T&gt; {
-		<span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>T::AccountId, slot: <span class="kw-2">&amp;</span>u32) -&gt; bool {
+		<span class="attribute">#[cfg(not(feature = <span class="string">&quot;try-runtime&quot;</span>))]
+		</span><span class="kw">fn </span>can_author(author: <span class="kw-2">&amp;</span>T::AccountId, slot: <span class="kw-2">&amp;</span>u32) -&gt; bool {
 			<span class="comment">// Compute pseudo-random subset of potential authors
 			</span><span class="kw">let </span>(eligible, ineligible) =
 				compute_pseudo_random_subset::&lt;T&gt;(T::PotentialAuthors::get(), slot);
