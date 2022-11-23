@@ -20,7 +20,7 @@ sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkad
 substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.32" }
 
 # Polkadot dependencies
-polkadot-client = { git = "https://github.com/paritytech/polkadot", default-features = false , branch = "release-v0.9.31" }
+polkadot-client = { git = "https://github.com/paritytech/polkadot", default-features = false , branch = "release-v0.9.32" }
 
 # Cumulus dependencies
 cumulus-client-consensus-common = { git = "https://github.com/paritytech/cumulus", branch = "polkadot-v0.9.32" }
