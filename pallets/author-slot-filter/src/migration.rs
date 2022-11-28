@@ -18,17 +18,15 @@ use core::marker::PhantomData;
 use frame_support::traits::Get;
 use frame_support::traits::OnRuntimeUpgrade;
 use frame_support::weights::Weight;
+use parity_scale_codec::{Decode, Encode};
 use sp_runtime::Percent;
-
-#[cfg(feature = "try-runtime")]
-use frame_support::traits::OnRuntimeUpgradeHelpersExt;
+use sp_std::vec::Vec;
 
 use super::num::NonZeroU32;
 use super::pallet::Config;
 use super::pallet::EligibilityValue;
 use super::pallet::EligibleCount;
 use super::pallet::Pallet;
-
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
 impl<T> OnRuntimeUpgrade for EligibleRatioToEligiblityCount<T>
@@ -48,22 +46,21 @@ where
 	}
 
 	#[cfg(feature = "try-runtime")]
-	fn pre_upgrade() -> Result<(), &'static str> {
+	fn pre_upgrade() -> Result<Vec<u8>, &'static str> {
 		let old_value = <Pallet<T>>::eligible_ratio();
 
 		let total_authors = <T as Config>::PotentialAuthors::get().len();
 		let new_value = percent_of_num(old_value, total_authors as u32);
 		let expected_value = NonZeroU32::new(new_value).unwrap_or_else(EligibilityValue::default);
 
-		Self::set_temp_storage(expected_value, "expected_eligible_count");
-
-		Ok(())
+		Ok(expected_value.encode())
 	}
 
 	#[cfg(feature = "try-runtime")]
-	fn post_upgrade() -> Result<(), &'static str> {
-		let expected = Self::get_temp_storage::<NonZeroU32>("expected_eligible_count")
-			.expect("value must exist");
+	fn post_upgrade(state: Vec<u8>) -> Result<(), &'static str> {
+		let expected: NonZeroU32 =
+			Decode::decode(&mut &state[..]).expect("pre_upgrade provides a valid state; qed");
+
 		let actual = <Pallet<T>>::eligible_count();
 
 		assert_eq!(expected, actual);

@@ -25,15 +25,15 @@ use cumulus_primitives_parachain_inherent::{
 };
 use cumulus_relay_chain_inprocess_interface::build_inprocess_relay_chain;
 use cumulus_relay_chain_interface::{RelayChainError, RelayChainInterface, RelayChainResult};
-use cumulus_relay_chain_rpc_interface::RelayChainRPCInterface;
+use cumulus_relay_chain_minimal_node::build_minimal_relay_chain_node;
 
 use polkadot_service::CollatorPair;
 
 // Substrate Imports
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
-use sc_network::NetworkService;
-use sc_service::{Configuration, PartialComponents, Role, TFullBackend, TFullClient, TaskManager};
+use sc_network::{NetworkBlock, NetworkService};
+use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
 use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
@@ -181,10 +181,9 @@ async fn build_relay_chain_interface(
 	Option<CollatorPair>,
 )> {
 	match collator_options.relay_chain_rpc_url {
-		Some(relay_chain_url) => Ok((
-			Arc::new(RelayChainRPCInterface::new(relay_chain_url).await?) as Arc<_>,
-			None,
-		)),
+		Some(relay_chain_url) => {
+			build_minimal_relay_chain_node(polkadot_config, task_manager, relay_chain_url).await
+		}
 		None => build_inprocess_relay_chain(
 			polkadot_config,
 			parachain_config,
@@ -230,7 +229,7 @@ where
 	Executor: sc_executor::NativeExecutionDispatch + 'static,
 	RB: Fn(
 			Arc<TFullClient<Block, RuntimeApi, Executor>>,
-		) -> Result<jsonrpsee::RpcModule<()>, sc_service::Error>
+		) -> Result<crate::rpc::RpcExtension, sc_service::Error>
 		+ Send
 		+ 'static,
 	BIC: FnOnce(
@@ -250,10 +249,6 @@ where
 		bool,
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
-	if matches!(parachain_config.role, Role::Light) {
-		return Err("Light client not supported!".into());
-	}
-
 	let parachain_config = prepare_node_config(parachain_config);
 
 	let params = new_partial::<RuntimeApi, Executor>(&parachain_config, true)?;
@@ -283,7 +278,7 @@ where
 	let prometheus_registry = parachain_config.prometheus_registry().cloned();
 	let transaction_pool = params.transaction_pool.clone();
 	let import_queue = cumulus_client_service::SharedImportQueue::new(params.import_queue);
-	let (network, system_rpc_tx, start_network) =
+	let (network, system_rpc_tx, tx_handler_controller, start_network) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &parachain_config,
 			client: client.clone(),
@@ -321,6 +316,7 @@ where
 		backend: backend.clone(),
 		network: network.clone(),
 		system_rpc_tx,
+		tx_handler_controller,
 		telemetry: telemetry.as_mut(),
 	})?;
 
@@ -370,7 +366,6 @@ where
 			relay_chain_interface,
 			relay_chain_slot_duration,
 			import_queue,
-			collator_options,
 		};
 
 		start_full_node(params)?;
@@ -396,7 +391,7 @@ pub async fn start_parachain_node(
 		polkadot_config,
 		collator_options,
 		id,
-		|_| Ok(jsonrpsee::RpcModule::new(())),
+		|_| Ok(crate::rpc::RpcExtension::new(())),
 		|client,
 		 prometheus_registry,
 		 telemetry,
@@ -470,7 +465,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		other: (mut telemetry, _),
 	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 
-	let (network, system_rpc_tx, network_starter) =
+	let (network, system_rpc_tx, tx_handler_controller, network_starter) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
 			client: client.clone(),
@@ -518,6 +513,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		backend,
 		system_rpc_tx,
 		config,
+		tx_handler_controller,
 		telemetry: telemetry.as_mut(),
 	})?;
 
@@ -546,6 +542,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 				keystore: keystore_container.sync_keystore(),
 				client: client.clone(),
 				additional_digests_provider: (),
+				_phantom: Default::default(),
 			})),
 			create_inherent_data_providers: move |block, _extra_args| {
 				let downward_xcm_receiver = downward_xcm_receiver.clone();
@@ -563,6 +560,8 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 						current_para_block: 0,
 						relay_offset: 0,
 						relay_blocks_per_para_block: 0,
+						para_blocks_per_relay_epoch: 0,
+						relay_randomness_config: (),
 						xcm_config: MockXcmConfig::new(
 							&*client_for_xcm,
 							block,

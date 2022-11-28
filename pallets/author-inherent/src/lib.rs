@@ -108,7 +108,7 @@ pub mod pallet {
 				<Author<T>>::put(&author);
 			}
 
-			T::DbWeight::get().write
+			T::DbWeight::get().writes(1)
 		}
 	}
 

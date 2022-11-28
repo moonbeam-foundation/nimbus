@@ -24,7 +24,7 @@ use sp_runtime::{Digest, DigestItem};
 
 #[test]
 fn kick_off_authorship_validation_is_mandatory() {
-	use frame_support::weights::{DispatchClass, GetDispatchInfo};
+	use frame_support::dispatch::{DispatchClass, GetDispatchInfo};
 
 	let info = crate::Call::<Test>::kick_off_authorship_validation {}.get_dispatch_info();
 	assert_eq!(info.class, DispatchClass::Mandatory);
