@@ -30,6 +30,7 @@ use nimbus_primitives::{
 	CompatibleDigestItem, DigestsProvider, NimbusApi, NimbusId, NIMBUS_KEY_ID,
 };
 use parking_lot::Mutex;
+use sc_client_api::backend::Backend;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_api::{BlockId, ProvideRuntimeApi};
 use sp_application_crypto::{ByteArray, CryptoTypePublicPair};
@@ -52,11 +53,11 @@ pub use manual_seal::NimbusManualSealConsensusDataProvider;
 const LOG_TARGET: &str = "filtering-consensus";
 
 /// The implementation of the relay-chain provided consensus for parachains.
-pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP = ()> {
+pub struct NimbusConsensus<B: BlockT, PF, BI, BE, ParaClient, CIDP, DP = ()> {
 	para_id: ParaId,
 	proposer_factory: Arc<Mutex<PF>>,
 	create_inherent_data_providers: Arc<CIDP>,
-	block_import: Arc<futures::lock::Mutex<ParachainBlockImport<BI>>>,
+	block_import: Arc<futures::lock::Mutex<ParachainBlockImport<B, BI, BE>>>,
 	parachain_client: Arc<ParaClient>,
 	keystore: SyncCryptoStorePtr,
 	skip_prediction: bool,
@@ -64,7 +65,9 @@ pub struct NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP = ()> {
 	_phantom: PhantomData<B>,
 }
 
-impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP> {
+impl<B: BlockT, PF, BI, BE, ParaClient, CIDP, DP> Clone
+	for NimbusConsensus<B, PF, BI, BE, ParaClient, CIDP, DP>
+{
 	fn clone(&self) -> Self {
 		Self {
 			para_id: self.para_id,
@@ -80,11 +83,12 @@ impl<B, PF, BI, ParaClient, CIDP, DP> Clone for NimbusConsensus<B, PF, BI, ParaC
 	}
 }
 
-impl<B, PF, BI, ParaClient, CIDP, DP> NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
+impl<B, PF, BI, BE, ParaClient, CIDP, DP> NimbusConsensus<B, PF, BI, BE, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	PF: 'static,
 	BI: 'static,
+	BE: Backend<B> + 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
 	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static,
@@ -96,11 +100,12 @@ where
 			proposer_factory,
 			create_inherent_data_providers,
 			block_import,
+			backend,
 			parachain_client,
 			keystore,
 			skip_prediction,
 			additional_digests_provider,
-		}: BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP>,
+		}: BuildNimbusConsensusParams<PF, BI, BE, ParaClient, CIDP, DP>,
 	) -> Box<dyn ParachainConsensus<B>>
 	where
 		Self: ParachainConsensus<B>,
@@ -111,6 +116,7 @@ where
 			create_inherent_data_providers: Arc::new(create_inherent_data_providers),
 			block_import: Arc::new(futures::lock::Mutex::new(ParachainBlockImport::new(
 				block_import,
+				backend,
 			))),
 			parachain_client,
 			keystore,
@@ -147,6 +153,7 @@ where
 
 		inherent_data_providers
 			.create_inherent_data()
+			.await
 			.map_err(|e| {
 				tracing::error!(
 					target: LOG_TARGET,
@@ -266,11 +273,12 @@ where
 }
 
 #[async_trait::async_trait]
-impl<B, PF, BI, ParaClient, CIDP, DP> ParachainConsensus<B>
-	for NimbusConsensus<B, PF, BI, ParaClient, CIDP, DP>
+impl<B, PF, BI, BE, ParaClient, CIDP, DP> ParachainConsensus<B>
+	for NimbusConsensus<B, PF, BI, BE, ParaClient, CIDP, DP>
 where
 	B: BlockT,
 	BI: BlockImport<B> + Send + Sync + 'static,
+	BE: Backend<B> + Send + Sync + 'static,
 	PF: Environment<B> + Send + Sync + 'static,
 	PF::Proposer: Proposer<
 		B,
@@ -431,11 +439,12 @@ where
 ///
 /// I briefly tried the async keystore approach, but decided to go sync so I can copy
 /// code from Aura. Maybe after it is working, Jeremy can help me go async.
-pub struct BuildNimbusConsensusParams<PF, BI, ParaClient, CIDP, DP> {
+pub struct BuildNimbusConsensusParams<PF, BI, BE, ParaClient, CIDP, DP> {
 	pub para_id: ParaId,
 	pub proposer_factory: PF,
 	pub create_inherent_data_providers: CIDP,
 	pub block_import: BI,
+	pub backend: Arc<BE>,
 	pub parachain_client: Arc<ParaClient>,
 	pub keystore: SyncCryptoStorePtr,
 	pub skip_prediction: bool,
