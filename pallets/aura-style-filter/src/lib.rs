@@ -28,7 +28,7 @@
 //!    Whereas sc-consensus-aura includes the entire consensus stack including block signing, digest
 //!    formats, and slot prediction. This is a lot of overhead for a sipmle round robin
 //!    consensus that basically boils down to this function
-//!    https://github.com/paritytech/substrate/blob/0f849efc/client/consensus/aura/src/lib.rs#L91-L106
+//!    https://github.com/purestake/substrate/blob/0f849efc/client/consensus/aura/src/lib.rs#L91-L106
 //!
 //! 2. The Nimbus framework places the author checking logic in the runtime which makes it relatively
 //!    easy for relay chain validators to confirm the author is valid.

@@ -55,7 +55,7 @@ impl SubstrateCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/paritytech/cumulus/issues/new".into()
+		"https://github.com/purestake/cumulus/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
@@ -95,7 +95,7 @@ impl SubstrateCli for RelayChainCli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/paritytech/cumulus/issues/new".into()
+		"https://github.com/purestake/cumulus/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
@@ -268,7 +268,9 @@ pub fn run() -> Result<()> {
 				let id = ParaId::from(para_id);
 
 				let parachain_account =
-				AccountIdConversion::<polkadot_primitives::v2::AccountId>::into_account_truncating(&id);
+					AccountIdConversion::<polkadot_primitives::AccountId>::into_account_truncating(
+						&id,
+					);
 
 				let state_version =
 					RelayChainCli::native_runtime_version(&config.chain_spec).state_version();
