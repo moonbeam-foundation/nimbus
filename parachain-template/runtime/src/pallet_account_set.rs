@@ -6,7 +6,7 @@
 //! pallet could be replaced with.
 //! Gautam's validator set pallet - https://github.com/paritytech/substrate/tree/master/frame/staking/
 //! Parity's pallet staking - https://github.com/paritytech/substrate/tree/master/frame/staking/
-//! Moonbeam's Parachain Staking - https://github.com/paritytech/moonbeam/tree/master/pallets/parachain-staking
+//! Moonbeam's Parachain Staking - https://github.com/PureStake/moonbeam/tree/master/pallets/parachain-staking
 //! Recipe for AccountSet, VecSet, and MapSet
 
 use frame_support::pallet;
