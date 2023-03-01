@@ -5,7 +5,7 @@ description = "FRAME pallet template for defining custom runtime logic."
 edition = "2021"
 homepage = "https://substrate.dev"
 license = "Unlicense"
-repository = "https://github.com/purestake/substrate/"
+repository = "https://github.com/paritytech/substrate/"
 version = "0.1.0"
 
 [package.metadata.docs.rs]

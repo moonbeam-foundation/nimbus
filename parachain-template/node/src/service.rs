@@ -40,7 +40,6 @@ use sp_api::ConstructRuntimeApi;
 use sp_keystore::SyncCryptoStorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
-// use sp_client_db::Backend;
 
 /// Native executor instance.
 pub struct TemplateRuntimeExecutor;
