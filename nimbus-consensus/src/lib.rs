@@ -32,7 +32,7 @@ use nimbus_primitives::{
 use parking_lot::Mutex;
 use sc_client_api::backend::Backend;
 use sc_consensus::{BlockImport, BlockImportParams};
-use sp_api::{BlockId, ProvideRuntimeApi};
+use sp_api::ProvideRuntimeApi;
 use sp_application_crypto::{ByteArray, CryptoTypePublicPair};
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
@@ -214,8 +214,6 @@ where
 		return None;
 	}
 
-	let at = BlockId::Hash(parent.hash());
-
 	// Iterate keys until we find an eligible one, or run out of candidates.
 	// If we are skipping prediction, then we author with the first key we find.
 	// prediction skipping only really makes sense when there is a single key in the keystore.
@@ -224,7 +222,7 @@ where
 		// That I should be passing Vec<u8> across the wasm boundary?
 		NimbusApi::can_author(
 			&*client.runtime_api(),
-			&at,
+			parent.hash(),
 			NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
 			slot_number,
 			parent,
@@ -299,18 +297,16 @@ where
 	) -> Option<ParachainCandidate<B>> {
 		// Determine if runtime change
 		let runtime_upgraded = if *parent.number() > sp_runtime::traits::Zero::zero() {
-			let at = BlockId::Hash(parent.hash());
-			let parent_at = BlockId::<B>::Hash(*parent.parent_hash());
 			use sp_api::Core as _;
 			let previous_runtime_version: sp_api::RuntimeVersion = self
 				.parachain_client
 				.runtime_api()
-				.version(&parent_at)
+				.version(*parent.parent_hash())
 				.expect("Runtime api access to not error.");
 			let runtime_version: sp_api::RuntimeVersion = self
 				.parachain_client
 				.runtime_api()
-				.version(&at)
+				.version(parent.hash())
 				.expect("Runtime api access to not error.");
 
 			previous_runtime_version != runtime_version
@@ -409,7 +405,7 @@ where
 			.block_import
 			.lock()
 			.await
-			.import_block(block_import_params, Default::default())
+			.import_block(block_import_params)
 			.await
 		{
 			error!(
