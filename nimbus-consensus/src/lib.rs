@@ -172,19 +172,18 @@ where
 /// to implement the `skip_prediction` feature.
 pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<CryptoTypePublicPair> {
 	// Get all the available keys
-	let available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
-		.expect("keystore should return the keys it has");
-
-	// Print a more helpful message than "not eligible" when there are no keys at all.
-	if available_keys.is_empty() {
-		warn!(
-			target: LOG_TARGET,
-			"🔏 No Nimbus keys available. We will not be able to author."
-		);
-		return None;
+	match SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID) {
+		Ok(available_keys) => 	if available_keys.is_empty() {
+			warn!(
+				target: LOG_TARGET,
+				"🔏 No Nimbus keys available. We will not be able to author."
+			);
+			None
+		} else {
+			Some(available_keys[0].clone())
+		}
+		_ => None
 	}
-
-	Some(available_keys[0].clone())
 }
 
 /// Grab the first eligible nimbus key from the keystore
@@ -203,7 +202,7 @@ where
 {
 	// Get all the available keys
 	let available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID)
-		.expect("keystore should return the keys it has");
+		.ok()?;
 
 	// Print a more helpful message than "not eligible" when there are no keys at all.
 	if available_keys.is_empty() {
@@ -222,14 +221,18 @@ where
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
-		NimbusApi::can_author(
-			&*client.runtime_api(),
-			&at,
-			NimbusId::from_slice(&type_public_pair.1).expect("Provided keys should be valid"),
-			slot_number,
-			parent,
-		)
-		.expect("NimbusAPI should not return error")
+		if let Ok(nimbus_id) = NimbusId::from_slice(&type_public_pair.1) {
+			NimbusApi::can_author(
+				&*client.runtime_api(),
+				&at,
+				nimbus_id,
+				slot_number,
+				parent,
+			)
+			.unwrap_or_default()
+		} else {
+			false
+		}
 	});
 
 	// If there are no eligible keys, print the log, and exit early.
@@ -305,13 +308,11 @@ where
 			let previous_runtime_version: sp_api::RuntimeVersion = self
 				.parachain_client
 				.runtime_api()
-				.version(&parent_at)
-				.expect("Runtime api access to not error.");
+				.version(&parent_at).ok()?;
 			let runtime_version: sp_api::RuntimeVersion = self
 				.parachain_client
 				.runtime_api()
-				.version(&at)
-				.expect("Runtime api access to not error.");
+				.version(&at).ok()?;
 
 			previous_runtime_version != runtime_version
 		} else {
