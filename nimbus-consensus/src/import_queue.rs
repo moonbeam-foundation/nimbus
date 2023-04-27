@@ -70,9 +70,11 @@ where
 		// Or when we are importing state only and can not verify the seal.
 		if block_params.with_state() || block_params.state_action.skip_execution_checks() {
 			// When we are importing only the state of a block, it will be the best block.
-			block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::Custom(block_params.with_state()));
+			block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::Custom(
+				block_params.with_state(),
+			));
 
-			return Ok((block_params, None))
+			return Ok((block_params, None));
 		}
 
 		debug!(
