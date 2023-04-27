@@ -81,7 +81,7 @@ where
 			.header
 			.digest_mut()
 			.pop()
-			.expect("Block should have at least one digest on it");
+			.ok_or("Block should have at least one digest on it")?;
 
 		let signature = seal
 			.as_nimbus_seal()
@@ -114,7 +114,7 @@ where
 				}
 				_ => None,
 			})
-			.expect("Expected one consensus or pre-runtime digest that contains author id bytes");
+			.ok_or("Expected one consensus or pre-runtime digest that contains author id bytes")?;
 
 		debug!(
 			target: crate::LOG_TARGET,
