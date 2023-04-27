@@ -55,7 +55,22 @@ where
 	async fn verify(
 		&mut self,
 		mut block_params: BlockImportParams<Block, ()>,
-	) -> Result<BlockImportParams<Block, ()>, String> {
+	) -> Result<
+			BlockImportParams<Block, ()>,
+		String,
+	> {
+		// Skip checks that include execution, if being told so or when importing only state.
+		//
+		// This is done for example when gap syncing and it is expected that the block after the gap
+		// was checked/chosen properly, e.g. by warp syncing to this block using a finality proof.
+		// Or when we are importing state only and can not verify the seal.
+		if block_params.with_state() || block_params.state_action.skip_execution_checks() {
+			// When we are importing only the state of a block, it will be the best block.
+			block_params.fork_choice = Some(sc_consensus::ForkChoiceStrategy::Custom(block_params.with_state()));
+
+			return Ok(block_params)
+		}
+
 		debug!(
 			target: crate::LOG_TARGET,
 			"🪲 Header hash before popping digest {:?}",
