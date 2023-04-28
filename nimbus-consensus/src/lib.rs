@@ -221,8 +221,14 @@ where
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
 		if let Ok(nimbus_id) = NimbusId::from_slice(&type_public_pair.1) {
-			NimbusApi::can_author(&*client.runtime_api(), &at, nimbus_id, slot_number, parent)
-				.unwrap_or_default()
+			NimbusApi::can_author(
+				&*client.runtime_api(),
+				parent.hash(),
+				nimbus_id,
+				slot_number,
+				parent,
+			)
+			.unwrap_or_default()
 		} else {
 			false
 		}
@@ -299,10 +305,13 @@ where
 			let previous_runtime_version: sp_api::RuntimeVersion = self
 				.parachain_client
 				.runtime_api()
-				.version(&parent_at)
+				.version(parent.hash())
 				.ok()?;
-			let runtime_version: sp_api::RuntimeVersion =
-				self.parachain_client.runtime_api().version(&at).ok()?;
+			let runtime_version: sp_api::RuntimeVersion = self
+				.parachain_client
+				.runtime_api()
+				.version(parent.hash())
+				.ok()?;
 
 			previous_runtime_version != runtime_version
 		} else {
