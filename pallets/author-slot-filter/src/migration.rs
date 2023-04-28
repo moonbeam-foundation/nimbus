@@ -20,7 +20,6 @@ use frame_support::traits::OnRuntimeUpgrade;
 use frame_support::weights::Weight;
 use sp_runtime::Percent;
 
-
 use super::num::NonZeroU32;
 use super::pallet::Config;
 use super::pallet::EligibilityValue;
