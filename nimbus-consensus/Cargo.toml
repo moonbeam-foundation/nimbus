@@ -20,7 +20,7 @@ sp-runtime = { git = "https://github.com/PureStake/substrate", branch = "moonbea
 substrate-prometheus-endpoint = { git = "https://github.com/PureStake/substrate", branch = "moonbeam-polkadot-v0.9.40" }
 
 # Polkadot dependencies
-polkadot-client = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.40" }
+# polkadot-client = { git = "https://github.com/PureStake/polkadot", default-features = false , branch = "moonbeam-polkadot-v0.9.40" }
 
 # Cumulus dependencies
 cumulus-client-consensus-common = { git = "https://github.com/PureStake/cumulus", branch = "moonbeam-polkadot-v0.9.40" }
