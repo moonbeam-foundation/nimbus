@@ -26,7 +26,9 @@ use sp_runtime::generic::DigestItem;
 use sp_runtime::traits::BlockNumberProvider;
 use sp_runtime::ConsensusEngineId;
 #[cfg(feature = "runtime-benchmarks")]
-use sp_std::vec::{self, Vec};
+use sp_std::vec;
+#[cfg(feature = "runtime-benchmarks")]
+use sp_std::vec::Vec;
 
 pub mod digests;
 mod inherents;
