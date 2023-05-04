@@ -48,7 +48,7 @@ where
 	B: BlockT,
 	C: ProvideRuntimeApi<B> + Send + Sync,
 	C::Api: NimbusApi<B>,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + Send + Sync,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash, InherentData> + Send + Sync,
 	P: Send + Sync,
 {
 	type Transaction = TransactionFor<C, B>;
@@ -83,7 +83,7 @@ where
 				let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
 				logs.extend(
 					self.additional_digests_provider
-						.provide_digests(nimbus_id, parent.hash()),
+						.provide_digests(nimbus_id, parent.hash(), inherents.clone()),
 				);
 				Ok(Digest { logs })
 			}

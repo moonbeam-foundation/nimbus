@@ -91,7 +91,7 @@ where
 	BE: Backend<B> + 'static,
 	ParaClient: ProvideRuntimeApi<B> + 'static,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash, InherentData> + 'static,
 {
 	/// Create a new instance of nimbus consensus.
 	pub fn build(
@@ -291,7 +291,7 @@ where
 	ParaClient: ProvideRuntimeApi<B> + Send + Sync + 'static,
 	ParaClient::Api: NimbusApi<B>,
 	CIDP: CreateInherentDataProviders<B, (PHash, PersistedValidationData, NimbusId)> + 'static,
-	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash> + 'static + Send + Sync,
+	DP: DigestsProvider<NimbusId, <B as BlockT>::Hash, InherentData> + 'static + Send + Sync,
 {
 	async fn produce_candidate(
 		&mut self,
@@ -362,7 +362,7 @@ where
 		let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
 		logs.extend(
 			self.additional_digests_provider
-				.provide_digests(nimbus_id, parent.hash()),
+				.provide_digests(nimbus_id, parent.hash(), inherent_data.clone())
 		);
 		let inherent_digests = sp_runtime::generic::Digest { logs };
 
