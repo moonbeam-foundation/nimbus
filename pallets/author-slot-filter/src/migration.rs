@@ -18,15 +18,20 @@ use core::marker::PhantomData;
 use frame_support::traits::Get;
 use frame_support::traits::OnRuntimeUpgrade;
 use frame_support::weights::Weight;
-use parity_scale_codec::{Decode, Encode};
 use sp_runtime::Percent;
-use sp_std::vec::Vec;
 
 use super::num::NonZeroU32;
 use super::pallet::Config;
 use super::pallet::EligibilityValue;
 use super::pallet::EligibleCount;
 use super::pallet::Pallet;
+
+#[cfg(feature = "try-runtime")]
+use {
+	parity_scale_codec::{Decode, Encode},
+	sp_std::vec::Vec,
+};
+
 pub struct EligibleRatioToEligiblityCount<T>(PhantomData<T>);
 
 impl<T> OnRuntimeUpgrade for EligibleRatioToEligiblityCount<T>

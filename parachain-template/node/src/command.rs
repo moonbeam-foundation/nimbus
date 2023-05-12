@@ -227,7 +227,8 @@ pub fn run() -> Result<()> {
 				}
 				#[cfg(feature = "runtime-benchmarks")]
 				BenchmarkCmd::Storage(cmd) => runner.sync_run(|config| {
-					let partials = new_partial(&config)?;
+					let partials =
+						new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 					let db = partials.backend.expose_db();
 					let storage = partials.backend.expose_storage();
 

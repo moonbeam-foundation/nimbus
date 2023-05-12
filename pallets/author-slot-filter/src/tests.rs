@@ -44,7 +44,7 @@ fn test_migration_works_for_converting_existing_eligible_ratio_to_eligible_count
 		let eligible_author_count = input_eligible_ratio.mul_ceil(total_author_count) as u32;
 		let expected_eligible_count = NonZeroU32::new_unchecked(eligible_author_count);
 		let expected_weight =
-			Weight::from_ref_time(TestDbWeight::get().write + TestDbWeight::get().read);
+			Weight::from_parts(TestDbWeight::get().write + TestDbWeight::get().read, 0);
 
 		<EligibleRatio<Test>>::put(input_eligible_ratio);
 
@@ -65,7 +65,7 @@ fn test_migration_works_for_converting_existing_zero_eligible_ratio_to_default_e
 		let input_eligible_ratio = Percent::from_percent(0);
 		let expected_eligible_count = EligibilityValue::default();
 		let expected_weight =
-			Weight::from_ref_time(TestDbWeight::get().write + TestDbWeight::get().read);
+			Weight::from_parts(TestDbWeight::get().write + TestDbWeight::get().read, 0);
 
 		<EligibleRatio<Test>>::put(input_eligible_ratio);
 
@@ -87,7 +87,7 @@ fn test_migration_inserts_default_value_for_missing_eligible_ratio() {
 		let expected_default_eligible_count =
 			NonZeroU32::new_unchecked(default_eligible_ratio.mul_ceil(Authors::get().len() as u32));
 		let expected_weight =
-			Weight::from_ref_time(TestDbWeight::get().write + TestDbWeight::get().read);
+			Weight::from_parts(TestDbWeight::get().write + TestDbWeight::get().read, 0);
 
 		let actual_weight = migration::EligibleRatioToEligiblityCount::<Test>::on_runtime_upgrade();
 		assert_eq!(expected_weight, actual_weight);
