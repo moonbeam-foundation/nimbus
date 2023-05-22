@@ -153,6 +153,7 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		/// Update the eligible count. Intended to be called by governance.
+		#[pallet::call_index(0)]
 		#[pallet::weight(T::WeightInfo::set_eligible())]
 		pub fn set_eligible(
 			origin: OriginFor<T>,

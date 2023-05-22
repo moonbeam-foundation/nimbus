@@ -4,9 +4,7 @@
 use std::{sync::Arc, time::Duration};
 
 // Local Runtime Types
-use parachain_template_runtime::{
-	opaque::Block, AccountId, Balance, Hash, Index as Nonce, RuntimeApi,
-};
+use parachain_template_runtime::{opaque::Block, AccountId, Balance, Index as Nonce, RuntimeApi};
 
 use nimbus_consensus::{
 	BuildNimbusConsensusParams, NimbusConsensus, NimbusManualSealConsensusDataProvider,
@@ -24,7 +22,7 @@ use cumulus_primitives_parachain_inherent::{
 	MockValidationDataInherentDataProvider, MockXcmConfig,
 };
 use cumulus_relay_chain_inprocess_interface::build_inprocess_relay_chain;
-use cumulus_relay_chain_interface::{RelayChainError, RelayChainInterface, RelayChainResult};
+use cumulus_relay_chain_interface::{RelayChainInterface, RelayChainResult};
 use cumulus_relay_chain_minimal_node::build_minimal_relay_chain_node;
 
 use polkadot_service::CollatorPair;
@@ -33,7 +31,8 @@ use polkadot_service::CollatorPair;
 use sc_consensus::ImportQueue;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
-use sc_network::{NetworkBlock, NetworkService};
+use sc_network::NetworkBlock;
+use sc_network_sync::SyncingService;
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
 use sp_api::ConstructRuntimeApi;
@@ -250,7 +249,7 @@ where
 				TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<Executor>>,
 			>,
 		>,
-		Arc<NetworkService<Block, Hash>>,
+		Arc<SyncingService<Block>>,
 		SyncCryptoStorePtr,
 		bool,
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
@@ -272,10 +271,7 @@ where
 		collator_options.clone(),
 	)
 	.await
-	.map_err(|e| match e {
-		RelayChainError::ServiceError(polkadot_service::Error::Sub(x)) => x,
-		s => s.to_string().into(),
-	})?;
+	.map_err(|e| sc_service::Error::Application(Box::new(e) as Box<_>))?;
 
 	let block_announce_validator = BlockAnnounceValidator::new(relay_chain_interface.clone(), id);
 
@@ -285,7 +281,7 @@ where
 	let transaction_pool = params.transaction_pool.clone();
 	let import_queue_service = params.import_queue.service();
 
-	let (network, system_rpc_tx, tx_handler_controller, start_network) =
+	let (network, system_rpc_tx, tx_handler_controller, start_network, sync_service) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &parachain_config,
 			client: client.clone(),
@@ -295,7 +291,7 @@ where
 			block_announce_validator_builder: Some(Box::new(|_| {
 				Box::new(block_announce_validator)
 			})),
-			warp_sync: None,
+			warp_sync_params: None,
 		})?;
 
 	let rpc_extensions_builder = {
@@ -322,17 +318,21 @@ where
 		keystore: params.keystore_container.sync_keystore(),
 		backend: backend.clone(),
 		network: network.clone(),
+		sync_service: sync_service.clone(),
 		system_rpc_tx,
 		tx_handler_controller,
 		telemetry: telemetry.as_mut(),
 	})?;
 
 	let announce_block = {
-		let network = network.clone();
-		Arc::new(move |hash, data| network.announce_block(hash, data))
+		let sync_service = sync_service.clone();
+		Arc::new(move |hash, data| sync_service.announce_block(hash, data))
 	};
 
 	let relay_chain_slot_duration = Duration::from_secs(6);
+	let overseer_handle = relay_chain_interface
+		.overseer_handle()
+		.map_err(|e| sc_service::Error::Application(Box::new(e)))?;
 
 	if validator {
 		let parachain_consensus = build_consensus(
@@ -343,7 +343,7 @@ where
 			&task_manager,
 			relay_chain_interface.clone(),
 			transaction_pool,
-			network,
+			sync_service,
 			params.keystore_container.sync_keystore(),
 			force_authoring,
 		)?;
@@ -360,6 +360,7 @@ where
 			spawner,
 			parachain_consensus,
 			import_queue: import_queue_service,
+			recovery_handle: Box::new(overseer_handle),
 			collator_key: collator_key.expect("Command line arguments do not allow this. qed"),
 			relay_chain_slot_duration,
 		};
@@ -374,6 +375,7 @@ where
 			relay_chain_interface,
 			relay_chain_slot_duration,
 			import_queue: import_queue_service,
+			recovery_handle: Box::new(overseer_handle),
 		};
 
 		start_full_node(params)?;
@@ -475,7 +477,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		other: (mut telemetry, _),
 	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 
-	let (network, system_rpc_tx, tx_handler_controller, network_starter) =
+	let (network, system_rpc_tx, tx_handler_controller, network_starter, sync_service) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
 			client: client.clone(),
@@ -483,7 +485,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			spawn_handle: task_manager.spawn_handle(),
 			import_queue,
 			block_announce_validator_builder: None,
-			warp_sync: None,
+			warp_sync_params: None,
 		})?;
 
 	if config.offchain_worker.enabled {
@@ -522,6 +524,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		rpc_builder: rpc_extensions_builder,
 		backend,
 		system_rpc_tx,
+		sync_service: sync_service.clone(),
 		config,
 		tx_handler_controller,
 		telemetry: telemetry.as_mut(),
