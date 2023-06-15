@@ -25,14 +25,14 @@ use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{BlockT, HeaderT, ProvideRuntimeApi, TransactionFor};
 use sp_application_crypto::ByteArray;
 use sp_inherents::InherentData;
-use sp_keystore::SyncCryptoStorePtr;
+use sp_keystore::KeystorePtr;
 use sp_runtime::{Digest, DigestItem};
 use std::{marker::PhantomData, sync::Arc};
 
 /// Provides nimbus-compatible pre-runtime digests for use with manual seal consensus
 pub struct NimbusManualSealConsensusDataProvider<C, DP = (), P = ()> {
 	/// Shared reference to keystore
-	pub keystore: SyncCryptoStorePtr,
+	pub keystore: KeystorePtr,
 
 	/// Shared reference to the client
 	pub client: Arc<C>,
