@@ -15,15 +15,15 @@ targets = [ "x86_64-unknown-linux-gnu" ]
 codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false, features = [ "derive" ] }
 scale-info = { version = "2.0.0", default-features = false, features = [ "derive" ] }
 
-frame-benchmarking = { git = "https://github.com/paritytech/substrate", optional = true, default-features = false, branch = "polkadot-v0.9.40" }
-frame-support = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.40" }
-frame-system = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.40" }
+frame-benchmarking = { git = "https://github.com/PureStake/substrate", optional = true, default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
+frame-support = { git = "https://github.com/PureStake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
+frame-system = { git = "https://github.com/PureStake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
 
 [dev-dependencies]
 serde = { version = "1.0.119" }
-sp-core = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.40" }
-sp-io = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.40" }
-sp-runtime = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.40" }
+sp-core = { git = "https://github.com/PureStake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
+sp-io = { git = "https://github.com/PureStake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
+sp-runtime = { git = "https://github.com/PureStake/substrate", default-features = false, branch = "moonbeam-polkadot-v0.9.43" }
 
 [features]
 default = [ "std" ]
