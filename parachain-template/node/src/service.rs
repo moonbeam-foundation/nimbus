@@ -31,7 +31,7 @@ use polkadot_service::CollatorPair;
 use sc_consensus::ImportQueue;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
-use sc_network::NetworkBlock;
+use sc_network::{NetworkBlock, config::FullNetworkConfiguration};
 use sc_network_sync::SyncingService;
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
@@ -281,6 +281,8 @@ where
 	let transaction_pool = params.transaction_pool.clone();
 	let import_queue_service = params.import_queue.service();
 
+	let net_config = FullNetworkConfiguration::new(&parachain_config.network);
+
 	let (network, system_rpc_tx, tx_handler_controller, start_network, sync_service) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &parachain_config,
@@ -292,6 +294,7 @@ where
 				Box::new(block_announce_validator)
 			})),
 			warp_sync_params: None,
+			net_config
 		})?;
 
 	let rpc_extensions_builder = {
@@ -343,7 +346,7 @@ where
 			&task_manager,
 			relay_chain_interface.clone(),
 			transaction_pool,
-			sync_service,
+			sync_service.clone(),
 			params.keystore_container.keystore(),
 			force_authoring,
 		)?;
@@ -363,6 +366,7 @@ where
 			recovery_handle: Box::new(overseer_handle),
 			collator_key: collator_key.expect("Command line arguments do not allow this. qed"),
 			relay_chain_slot_duration,
+			sync_service
 		};
 
 		start_collator(params).await?;
@@ -376,6 +380,7 @@ where
 			relay_chain_slot_duration,
 			import_queue: import_queue_service,
 			recovery_handle: Box::new(overseer_handle),
+			sync_service
 		};
 
 		start_full_node(params)?;
@@ -477,6 +482,8 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 		other: (mut telemetry, _),
 	} = new_partial::<RuntimeApi, TemplateRuntimeExecutor>(&config, false)?;
 
+	let net_config = FullNetworkConfiguration::new(&config.network);
+
 	let (network, system_rpc_tx, tx_handler_controller, network_starter, sync_service) =
 		sc_service::build_network(sc_service::BuildNetworkParams {
 			config: &config,
@@ -486,6 +493,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			import_queue,
 			block_announce_validator_builder: None,
 			warp_sync_params: None,
+			net_config
 		})?;
 
 	if config.offchain_worker.enabled {
