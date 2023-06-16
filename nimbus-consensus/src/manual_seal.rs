@@ -77,7 +77,7 @@ where
 		// If we aren't eligible, return an appropriate error
 		match maybe_key {
 			Some(key) => {
-				let nimbus_id = NimbusId::from_slice(&key.1).map_err(|_| {
+				let nimbus_id = NimbusId::from_slice(&key).map_err(|_| {
 					Error::StringError(String::from("invalid nimbus id (wrong length)"))
 				})?;
 				let mut logs = vec![CompatibleDigestItem::nimbus_pre_digest(nimbus_id.clone())];
@@ -122,7 +122,7 @@ where
 			.map_err(|_| Error::StringError(String::from("invalid nimbus id (wrong length)")))?;
 
 		let sig_digest =
-			crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.into());
+			crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.to_raw_vec(), &1u8);
 
 		params.post_digests.push(sig_digest);
 

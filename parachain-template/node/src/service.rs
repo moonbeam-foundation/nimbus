@@ -36,7 +36,7 @@ use sc_network_sync::SyncingService;
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
 use sp_api::ConstructRuntimeApi;
-use sp_keystore::SyncCryptoStorePtr;
+use sp_keystore::KeystorePtr;
 use sp_runtime::traits::BlakeTwo256;
 use substrate_prometheus_endpoint::Registry;
 
@@ -250,7 +250,7 @@ where
 			>,
 		>,
 		Arc<SyncingService<Block>>,
-		SyncCryptoStorePtr,
+		KeystorePtr,
 		bool,
 	) -> Result<Box<dyn ParachainConsensus<Block>>, sc_service::Error>,
 {
@@ -315,7 +315,7 @@ where
 		transaction_pool: transaction_pool.clone(),
 		task_manager: &mut task_manager,
 		config: parachain_config,
-		keystore: params.keystore_container.sync_keystore(),
+		keystore: params.keystore_container.keystore(),
 		backend: backend.clone(),
 		network: network.clone(),
 		sync_service: sync_service.clone(),
@@ -344,7 +344,7 @@ where
 			relay_chain_interface.clone(),
 			transaction_pool,
 			sync_service,
-			params.keystore_container.sync_keystore(),
+			params.keystore_container.keystore(),
 			force_authoring,
 		)?;
 
@@ -518,7 +518,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 	sc_service::spawn_tasks(sc_service::SpawnTasksParams {
 		network,
 		client: client.clone(),
-		keystore: keystore_container.sync_keystore(),
+		keystore: keystore_container.keystore(),
 		task_manager: &mut task_manager,
 		transaction_pool: transaction_pool.clone(),
 		rpc_builder: rpc_extensions_builder,
@@ -552,7 +552,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			pool: transaction_pool.clone(),
 			select_chain,
 			consensus_data_provider: Some(Box::new(NimbusManualSealConsensusDataProvider {
-				keystore: keystore_container.sync_keystore(),
+				keystore: keystore_container.keystore(),
 				client: client.clone(),
 				additional_digests_provider: (),
 				_phantom: Default::default(),

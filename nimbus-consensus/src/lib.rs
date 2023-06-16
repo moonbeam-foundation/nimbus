@@ -43,9 +43,7 @@ use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use sp_core::{
-	crypto::CryptoTypeId
-};
+use sp_core::{sr25519, ed25519, ecdsa};
 use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
@@ -251,19 +249,28 @@ where
 pub(crate) fn seal_header<B>(
 	header: &B::Header,
 	keystore: &dyn Keystore,
-	type_public_pair: &CryptoTypeId,
+	public_pair: &Vec<u8>,
+	crypto_algorithm: &u8
 ) -> DigestItem
 where
 	B: BlockT,
 {
 	let pre_hash = header.hash();
 
+	// Choose the CryptoTypeId to use
+	let crypto_id = match *crypto_algorithm {
+		1 => sr25519::CRYPTO_ID,
+		2 => ed25519::CRYPTO_ID,
+		3 => ecdsa::CRYPTO_ID,
+		_ => sr25519::CRYPTO_ID
+	};
+
 	let raw_sig = Keystore::sign_with(
 		&*keystore,
 		NIMBUS_KEY_ID,
-		*type_public_pair,
-		pre_hash.as_ref(),
-		[1u8].as_ref()
+		crypto_id,
+		public_pair,
+		pre_hash.as_ref()
 	)
 	.expect("Keystore should be able to sign")
 	.expect("We already checked that the key was present");
@@ -392,7 +399,7 @@ where
 
 		let (header, extrinsics) = block.clone().deconstruct();
 
-		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair);
+		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair, &1u8);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
