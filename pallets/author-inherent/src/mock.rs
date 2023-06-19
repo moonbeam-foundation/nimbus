@@ -98,6 +98,7 @@ impl AccountLookup<u64> for MockAccountLookup {
 }
 
 impl pallet_testing::Config for Test {
+	type AuthorId = u64;
 	type AccountLookup = MockAccountLookup;
 	type CanAuthor = ();
 	type SlotBeacon = DummyBeacon;

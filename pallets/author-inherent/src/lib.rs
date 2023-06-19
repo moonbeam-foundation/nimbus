@@ -24,7 +24,7 @@ use frame_support::traits::{FindAuthor, Get};
 use nimbus_primitives::{
 	AccountLookup, CanAuthor, NimbusId, SlotBeacon, INHERENT_IDENTIFIER, NIMBUS_ENGINE_ID,
 };
-use parity_scale_codec::{Decode, Encode};
+use parity_scale_codec::{Decode, Encode, FullCodec};
 use sp_inherents::{InherentIdentifier, IsFatalError};
 use sp_runtime::{ConsensusEngineId, RuntimeString};
 
@@ -56,17 +56,20 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		/// A type to convert between AuthorId and AccountId. This is useful when you want to associate
-		/// Block authoring behavior with an AccoutId for rewards or slashing. If you do not need to
-		/// hold an AccountID responsible for authoring use `()` which acts as an identity mapping.
-		type AccountLookup: AccountLookup<Self::AccountId>;
+		/// Type used to refer to a block author.
+		type AuthorId: sp_std::fmt::Debug + PartialEq + Clone + FullCodec + TypeInfo + MaxEncodedLen;
+
+		/// A type to convert between NimbusId and AuthorId. This is useful when you want to associate
+		/// Block authoring behavior with an AuthorId for rewards or slashing. If you do not need to
+		/// hold an AuthorId responsible for authoring use `()` which acts as an identity mapping.
+		type AccountLookup: AccountLookup<Self::AuthorId>;
 
 		/// The final word on whether the reported author can author at this height.
 		/// This will be used when executing the inherent. This check is often stricter than the
 		/// Preliminary check, because it can use more data.
 		/// If the pallet that implements this trait depends on an inherent, that inherent **must**
 		/// be included before this one.
-		type CanAuthor: CanAuthor<Self::AccountId>;
+		type CanAuthor: CanAuthor<Self::AuthorId>;
 
 		/// Some way of determining the current slot for purposes of verifying the author's eligibility
 		type SlotBeacon: SlotBeacon;
@@ -90,7 +93,7 @@ pub mod pallet {
 
 	/// Author of current block.
 	#[pallet::storage]
-	pub type Author<T: Config> = StorageValue<_, T::AccountId, OptionQuery>;
+	pub type Author<T: Config> = StorageValue<_, T::AuthorId, OptionQuery>;
 
 	/// The highest slot that has been seen in the history of this chain.
 	/// This is a strictly-increasing value.
@@ -170,8 +173,8 @@ pub mod pallet {
 		}
 	}
 
-	impl<T: Config> FindAuthor<T::AccountId> for Pallet<T> {
-		fn find_author<'a, I>(digests: I) -> Option<T::AccountId>
+	impl<T: Config> FindAuthor<T::AuthorId> for Pallet<T> {
+		fn find_author<'a, I>(digests: I) -> Option<T::AuthorId>
 		where
 			I: 'a + IntoIterator<Item = (ConsensusEngineId, &'a [u8])>,
 		{
@@ -191,8 +194,8 @@ pub mod pallet {
 		}
 	}
 
-	impl<T: Config> Get<T::AccountId> for Pallet<T> {
-		fn get() -> T::AccountId {
+	impl<T: Config> Get<T::AuthorId> for Pallet<T> {
+		fn get() -> T::AuthorId {
 			Author::<T>::get().expect("Block author not inserted into Author Inherent Pallet")
 		}
 	}
