@@ -31,7 +31,7 @@ use polkadot_service::CollatorPair;
 use sc_consensus::ImportQueue;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
 use sc_executor::NativeElseWasmExecutor;
-use sc_network::{NetworkBlock, config::FullNetworkConfiguration};
+use sc_network::{config::FullNetworkConfiguration, NetworkBlock};
 use sc_network_sync::SyncingService;
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
@@ -294,7 +294,7 @@ where
 				Box::new(block_announce_validator)
 			})),
 			warp_sync_params: None,
-			net_config
+			net_config,
 		})?;
 
 	let rpc_extensions_builder = {
@@ -366,7 +366,7 @@ where
 			recovery_handle: Box::new(overseer_handle),
 			collator_key: collator_key.expect("Command line arguments do not allow this. qed"),
 			relay_chain_slot_duration,
-			sync_service
+			sync_service,
 		};
 
 		start_collator(params).await?;
@@ -380,7 +380,7 @@ where
 			relay_chain_slot_duration,
 			import_queue: import_queue_service,
 			recovery_handle: Box::new(overseer_handle),
-			sync_service
+			sync_service,
 		};
 
 		start_full_node(params)?;
@@ -493,7 +493,7 @@ pub fn start_instant_seal_node(config: Configuration) -> Result<TaskManager, sc_
 			import_queue,
 			block_announce_validator_builder: None,
 			warp_sync_params: None,
-			net_config
+			net_config,
 		})?;
 
 	if config.offchain_worker.enabled {

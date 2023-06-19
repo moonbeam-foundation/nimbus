@@ -37,13 +37,13 @@ use sp_application_crypto::ByteArray;
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
+use sp_core::{crypto::CryptoTypeId, sr25519};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
 use sp_keystore::{Keystore, KeystorePtr};
 use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
 };
-use sp_core::{sr25519, ed25519, ecdsa};
 use std::convert::TryInto;
 use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tracing::error;
@@ -250,27 +250,19 @@ pub(crate) fn seal_header<B>(
 	header: &B::Header,
 	keystore: &dyn Keystore,
 	public_pair: &Vec<u8>,
-	crypto_algorithm: &u8
+	crypto_id: &CryptoTypeId,
 ) -> DigestItem
 where
 	B: BlockT,
 {
 	let pre_hash = header.hash();
 
-	// Choose the CryptoTypeId to use
-	let crypto_id = match *crypto_algorithm {
-		1 => sr25519::CRYPTO_ID,
-		2 => ed25519::CRYPTO_ID,
-		3 => ecdsa::CRYPTO_ID,
-		_ => sr25519::CRYPTO_ID
-	};
-
 	let raw_sig = Keystore::sign_with(
 		&*keystore,
 		NIMBUS_KEY_ID,
-		crypto_id,
+		*crypto_id,
 		public_pair,
-		pre_hash.as_ref()
+		pre_hash.as_ref(),
 	)
 	.expect("Keystore should be able to sign")
 	.expect("We already checked that the key was present");
@@ -399,7 +391,12 @@ where
 
 		let (header, extrinsics) = block.clone().deconstruct();
 
-		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair, &1u8);
+		let sig_digest = seal_header::<B>(
+			&header,
+			&*self.keystore,
+			&type_public_pair,
+			&sr25519::CRYPTO_ID,
+		);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());

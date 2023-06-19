@@ -24,6 +24,7 @@ use sc_consensus::BlockImportParams;
 use sc_consensus_manual_seal::{ConsensusDataProvider, Error};
 use sp_api::{BlockT, HeaderT, ProvideRuntimeApi, TransactionFor};
 use sp_application_crypto::ByteArray;
+use sp_core::sr25519;
 use sp_inherents::InherentData;
 use sp_keystore::KeystorePtr;
 use sp_runtime::{Digest, DigestItem};
@@ -121,8 +122,12 @@ where
 		let nimbus_public = NimbusId::from_slice(&claimed_author)
 			.map_err(|_| Error::StringError(String::from("invalid nimbus id (wrong length)")))?;
 
-		let sig_digest =
-			crate::seal_header::<B>(&params.header, &*self.keystore, &nimbus_public.to_raw_vec(), &1u8);
+		let sig_digest = crate::seal_header::<B>(
+			&params.header,
+			&*self.keystore,
+			&nimbus_public.to_raw_vec(),
+			&sr25519::CRYPTO_ID,
+		);
 
 		params.post_digests.push(sig_digest);
 
