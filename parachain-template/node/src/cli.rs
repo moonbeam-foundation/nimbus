@@ -64,7 +64,7 @@ pub struct RelayChainCli {
 	pub chain_id: Option<String>,
 
 	/// The base path that should be used by the relay chain.
-	pub base_path: Option<PathBuf>,
+	pub base_path: PathBuf,
 }
 
 impl RelayChainCli {
@@ -77,7 +77,7 @@ impl RelayChainCli {
 		let chain_id = extension.map(|e| e.relay_chain.clone());
 		let base_path = para_config.base_path.path().join("polkadot");
 		Self {
-			base_path: Some(base_path),
+			base_path,
 			chain_id,
 			base: clap::Parser::parse_from(relay_chain_args),
 		}

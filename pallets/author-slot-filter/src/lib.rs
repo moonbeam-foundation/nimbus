@@ -41,6 +41,7 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
+#[allow(deprecated)]
 #[pallet]
 pub mod pallet {
 

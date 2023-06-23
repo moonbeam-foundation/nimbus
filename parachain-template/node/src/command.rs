@@ -340,7 +340,7 @@ impl CliConfiguration<Self> for RelayChainCli {
 		Ok(self
 			.shared_params()
 			.base_path()?
-			.or_else(|| self.base_path.clone().map(Into::into)))
+			.or_else(|| Some(self.base_path.clone().into())))
 	}
 
 	fn rpc_addr(&self, default_listen_port: u16) -> Result<Option<SocketAddr>> {
