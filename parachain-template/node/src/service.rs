@@ -30,7 +30,9 @@ use polkadot_service::CollatorPair;
 // Substrate Imports
 use sc_consensus::ImportQueue;
 use sc_consensus_manual_seal::{run_instant_seal, InstantSealParams};
-use sc_executor::{NativeElseWasmExecutor, WasmExecutor, DEFAULT_HEAP_ALLOC_STRATEGY, HeapAllocStrategy};
+use sc_executor::{
+	HeapAllocStrategy, NativeElseWasmExecutor, WasmExecutor, DEFAULT_HEAP_ALLOC_STRATEGY,
+};
 use sc_network::{config::FullNetworkConfiguration, NetworkBlock};
 use sc_network_sync::SyncingService;
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
@@ -107,17 +109,19 @@ where
 		})
 		.transpose()?;
 
-	let heap_pages = config.default_heap_pages.map_or(DEFAULT_HEAP_ALLOC_STRATEGY, |h| {
-			HeapAllocStrategy::Static { extra_pages: h as _ }
-	});
+	let heap_pages = config
+		.default_heap_pages
+		.map_or(DEFAULT_HEAP_ALLOC_STRATEGY, |h| HeapAllocStrategy::Static {
+			extra_pages: h as _,
+		});
 
 	let wasm = WasmExecutor::builder()
-			.with_execution_method(config.wasm_method)
-			.with_onchain_heap_alloc_strategy(heap_pages)
-			.with_offchain_heap_alloc_strategy(heap_pages)
-			.with_max_runtime_instances(config.max_runtime_instances)
-			.with_runtime_cache_size(config.runtime_cache_size)
-			.build();
+		.with_execution_method(config.wasm_method)
+		.with_onchain_heap_alloc_strategy(heap_pages)
+		.with_offchain_heap_alloc_strategy(heap_pages)
+		.with_max_runtime_instances(config.max_runtime_instances)
+		.with_runtime_cache_size(config.runtime_cache_size)
+		.build();
 
 	let executor = sc_executor::NativeElseWasmExecutor::<Executor>::new_with_wasm_executor(wasm);
 
