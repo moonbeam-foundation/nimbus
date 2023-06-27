@@ -33,12 +33,13 @@ use parking_lot::Mutex;
 use sc_client_api::backend::Backend;
 use sc_consensus::{BlockImport, BlockImportParams};
 use sp_api::ProvideRuntimeApi;
-use sp_application_crypto::{ByteArray, CryptoTypePublicPair};
+use sp_application_crypto::ByteArray;
 use sp_consensus::{
 	BlockOrigin, EnableProofRecording, Environment, ProofRecording, Proposal, Proposer,
 };
+use sp_core::{crypto::CryptoTypeId, sr25519};
 use sp_inherents::{CreateInherentDataProviders, InherentData, InherentDataProvider};
-use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
+use sp_keystore::{Keystore, KeystorePtr};
 use sp_runtime::{
 	traits::{Block as BlockT, Header as HeaderT},
 	DigestItem,
@@ -59,7 +60,7 @@ pub struct NimbusConsensus<B: BlockT, PF, BI, BE, ParaClient, CIDP, DP = ()> {
 	create_inherent_data_providers: Arc<CIDP>,
 	block_import: Arc<futures::lock::Mutex<ParachainBlockImport<B, BI, BE>>>,
 	parachain_client: Arc<ParaClient>,
-	keystore: SyncCryptoStorePtr,
+	keystore: KeystorePtr,
 	skip_prediction: bool,
 	additional_digests_provider: Arc<DP>,
 	_phantom: PhantomData<B>,
@@ -170,9 +171,9 @@ where
 /// and intend to perform an operation with it regardless of whether it is
 /// expected to be eligible. Concretely, this is used in the consensus worker
 /// to implement the `skip_prediction` feature.
-pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<CryptoTypePublicPair> {
+pub(crate) fn first_available_key(keystore: &dyn Keystore) -> Option<Vec<u8>> {
 	// Get all the available keys
-	match SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID) {
+	match Keystore::keys(keystore, NIMBUS_KEY_ID) {
 		Ok(available_keys) => {
 			if available_keys.is_empty() {
 				warn!(
@@ -194,16 +195,16 @@ pub(crate) fn first_available_key(keystore: &dyn SyncCryptoStore) -> Option<Cryp
 /// This is the standard way of determining which key to author with.
 pub(crate) fn first_eligible_key<B: BlockT, C>(
 	client: Arc<C>,
-	keystore: &dyn SyncCryptoStore,
+	keystore: &dyn Keystore,
 	parent: &B::Header,
 	slot_number: u32,
-) -> Option<CryptoTypePublicPair>
+) -> Option<Vec<u8>>
 where
 	C: ProvideRuntimeApi<B>,
 	C::Api: NimbusApi<B>,
 {
 	// Get all the available keys
-	let available_keys = SyncCryptoStore::keys(keystore, NIMBUS_KEY_ID).ok()?;
+	let available_keys = Keystore::keys(keystore, NIMBUS_KEY_ID).ok()?;
 
 	// Print a more helpful message than "not eligible" when there are no keys at all.
 	if available_keys.is_empty() {
@@ -220,7 +221,7 @@ where
 	let maybe_key = available_keys.into_iter().find(|type_public_pair| {
 		// Have to convert to a typed NimbusId to pass to the runtime API. Maybe this is a clue
 		// That I should be passing Vec<u8> across the wasm boundary?
-		if let Ok(nimbus_id) = NimbusId::from_slice(&type_public_pair.1) {
+		if let Ok(nimbus_id) = NimbusId::from_slice(&type_public_pair) {
 			NimbusApi::can_author(
 				&*client.runtime_api(),
 				parent.hash(),
@@ -247,18 +248,20 @@ where
 
 pub(crate) fn seal_header<B>(
 	header: &B::Header,
-	keystore: &dyn SyncCryptoStore,
-	type_public_pair: &CryptoTypePublicPair,
+	keystore: &dyn Keystore,
+	public_pair: &Vec<u8>,
+	crypto_id: &CryptoTypeId,
 ) -> DigestItem
 where
 	B: BlockT,
 {
 	let pre_hash = header.hash();
 
-	let raw_sig = SyncCryptoStore::sign_with(
+	let raw_sig = Keystore::sign_with(
 		&*keystore,
 		NIMBUS_KEY_ID,
-		type_public_pair,
+		*crypto_id,
+		public_pair,
 		pre_hash.as_ref(),
 	)
 	.expect("Keystore should be able to sign")
@@ -344,7 +347,7 @@ where
 			.map_err(|e| error!(target: LOG_TARGET, error = ?e, "Could not create proposer."))
 			.ok()?;
 
-		let nimbus_id = NimbusId::from_slice(&type_public_pair.1)
+		let nimbus_id = NimbusId::from_slice(&type_public_pair)
 			.map_err(
 				|e| error!(target: LOG_TARGET, error = ?e, "Invalid Nimbus ID (wrong length)."),
 			)
@@ -388,7 +391,12 @@ where
 
 		let (header, extrinsics) = block.clone().deconstruct();
 
-		let sig_digest = seal_header::<B>(&header, &*self.keystore, &type_public_pair);
+		let sig_digest = seal_header::<B>(
+			&header,
+			&*self.keystore,
+			&type_public_pair,
+			&sr25519::CRYPTO_ID,
+		);
 
 		let mut block_import_params = BlockImportParams::new(BlockOrigin::Own, header.clone());
 		block_import_params.post_digests.push(sig_digest.clone());
@@ -446,7 +454,7 @@ pub struct BuildNimbusConsensusParams<PF, BI, BE, ParaClient, CIDP, DP> {
 	pub block_import: BI,
 	pub backend: Arc<BE>,
 	pub parachain_client: Arc<ParaClient>,
-	pub keystore: SyncCryptoStorePtr,
+	pub keystore: KeystorePtr,
 	pub skip_prediction: bool,
 	pub additional_digests_provider: DP,
 }
