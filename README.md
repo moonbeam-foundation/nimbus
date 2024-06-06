@@ -1,3 +1,5 @@
+## ⚠️ Nimbus has been migrated to [Moonkit](https://github.com/Moonsong-Labs/moonkit)
+
 # Cumulo -- Nimbus ⛈️
 
 Nimbus is a framework for building parachain consensus systems on [cumulus](https://github.com/paritytech/cumulus)-based parachains.
